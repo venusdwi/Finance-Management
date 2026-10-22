@@ -79,10 +79,10 @@
 
             // Modal & Form State
             const [isModalOpen, setIsModalOpen] = useState(false);
-            const [transType, setTransType] = useState("expense"); // "income" atau "expense"
+            const [transType, setTransType] = useState("expense"); 
             const [formAmount, setFormAmount] = useState("");
-            const [formAlloc, setFormAlloc] = useState("needs"); // "needs", "wants", "savings"
-            const [formCategory, setFormCategory] = useState(""); // Default Kosong
+            const [formAlloc, setFormAlloc] = useState("needs"); 
+            const [formCategory, setFormCategory] = useState(""); 
             const [formNote, setFormNote] = useState("");
             const [isLoading, setIsLoading] = useState(false);
 
@@ -101,19 +101,19 @@
                 }
             }, [darkMode]);
 
-            // Render ulang ikon lucide secara aman
+            // Render ikon lucide secara aman
             useEffect(() => {
                 if (window.lucide) {
                     window.lucide.createIcons();
                 }
-            }, [isLocked, isModalOpen, transactions, darkMode]);
+            });
 
-            // Audio Chime Feedback Keren & Lebih Nyaring
+            // Audio Chime Sukses Lebih Keren & Nyaring
             const playChime = () => {
                 try {
-                    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                    const AudioContext = window.AudioContext || window.webkitAudioContext;
+                    const ctx = new AudioContext();
                     
-                    // Mainkan nada akor bertahap yang lebih kencang dan keren
                     const playNote = (freq, startTime, duration) => {
                         const osc = ctx.createOscillator();
                         const gain = ctx.createGain();
@@ -121,8 +121,8 @@
                         osc.type = "sine";
                         osc.frequency.setValueAtTime(freq, ctx.currentTime + startTime);
                         
-                        // Volume lebih keras (0.35)
-                        gain.gain.setValueAtTime(0.35, ctx.currentTime + startTime);
+                        // Volume diset lebih besar agar terdengar jelas
+                        gain.gain.setValueAtTime(0.4, ctx.currentTime + startTime);
                         gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + startTime + duration);
                         
                         osc.connect(gain);
@@ -132,10 +132,11 @@
                         osc.stop(ctx.currentTime + startTime + duration);
                     };
 
-                    // Nada Unlocked Modern / Futuristic Chime (C5 -> G5 -> C6)
-                    playNote(523.25, 0.0, 0.15); // C5
-                    playNote(783.99, 0.08, 0.20); // G5
-                    playNote(1046.50, 0.16, 0.35); // C6
+                    // Nada akor modern sukses (C5 -> E5 -> G5 -> C6)
+                    playNote(523.25, 0.0, 0.12);  // C5
+                    playNote(659.25, 0.08, 0.12); // E5
+                    playNote(783.99, 0.16, 0.15); // G5
+                    playNote(1046.50, 0.24, 0.35); // C6
                 } catch (e) {
                     console.log("Audio non-active", e);
                 }
@@ -154,10 +155,9 @@
                     setPinInput(newPin);
                     setPinError(false);
                     
-                    // Otomatis cek jika sudah 6 digit
                     if (newPin.length === 6) {
                         if (newPin === PIN_CODE) {
-                            playChime(); // Suara sukses modern saat PIN benar
+                            playChime(); 
                             setTimeout(() => {
                                 setIsLocked(false);
                                 setPinInput("");
@@ -267,7 +267,6 @@
                     setIsLoading(false);
                     setIsModalOpen(false);
 
-                    // Reset Form
                     setFormAmount("");
                     setFormCategory("");
                     setFormNote("");
@@ -276,10 +275,9 @@
                 }, 500);
             };
 
-            // Switch Alokasi di Form Modal
             const handleAllocChange = (allocKey) => {
                 setFormAlloc(allocKey);
-                setFormCategory(""); // Reset kategori agar tidak terpilih otomatis
+                setFormCategory(""); 
             };
 
             if (isLocked) {
