@@ -44,9 +44,33 @@
   <style>
     /* Global Clean Tap & Instant Shadow Cleanups */
     *, *::before, *::after {
-      transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+      transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
       -webkit-tap-highlight-color: transparent !important;
+      -webkit-touch-callout: none !important;
+      user-select: none !important;
       outline: none !important;
+    }
+
+    input, select, textarea {
+      user-select: text !important;
+    }
+
+    /* Keypad specific styling to completely remove persistent gray click highlight */
+    .keypad-btn {
+      -webkit-tap-highlight-color: transparent !important;
+      -webkit-user-select: none !important;
+      user-select: none !important;
+      outline: none !important;
+    }
+    .keypad-btn:focus, .keypad-btn:active, .keypad-btn:focus-visible {
+      outline: none !important;
+      box-shadow: none !important;
+      background-color: inherit;
+    }
+
+    /* Prevent accidental pull-to-refresh page reload */
+    html, body {
+      overscroll-behavior-y: contain;
     }
 
     /* Prevent scrolling when PIN screen or Modals are active */
@@ -55,9 +79,10 @@
       touch-action: none !important;
     }
 
-    button:focus, button:active, input:focus, select:focus {
+    button:focus, button:active, input:focus, select:focus, a:focus, a:active {
       outline: none !important;
       box-shadow: none !important;
+      -webkit-tap-highlight-color: transparent !important;
     }
 
     /* Custom Scrollbar */
@@ -118,18 +143,18 @@
 
         <!-- Keypad -->
         <div class="grid grid-cols-3 gap-3 max-w-[280px] mx-auto relative z-30 my-3">
-          <button type="button" onclick="appendPin('1')" class="w-full h-14 rounded-2xl bg-slate-100 dark:bg-slate-800/90 hover:bg-slate-200 dark:hover:bg-slate-700 active:bg-slate-300 dark:active:bg-slate-600 text-slate-800 dark:text-white text-xl sm:text-2xl font-bold border border-slate-200 dark:border-slate-700 shadow-sm transition-all duration-75 flex items-center justify-center select-none">1</button>
-          <button type="button" onclick="appendPin('2')" class="w-full h-14 rounded-2xl bg-slate-100 dark:bg-slate-800/90 hover:bg-slate-200 dark:hover:bg-slate-700 active:bg-slate-300 dark:active:bg-slate-600 text-slate-800 dark:text-white text-xl sm:text-2xl font-bold border border-slate-200 dark:border-slate-700 shadow-sm transition-all duration-75 flex items-center justify-center select-none">2</button>
-          <button type="button" onclick="appendPin('3')" class="w-full h-14 rounded-2xl bg-slate-100 dark:bg-slate-800/90 hover:bg-slate-200 dark:hover:bg-slate-700 active:bg-slate-300 dark:active:bg-slate-600 text-slate-800 dark:text-white text-xl sm:text-2xl font-bold border border-slate-200 dark:border-slate-700 shadow-sm transition-all duration-75 flex items-center justify-center select-none">3</button>
-          <button type="button" onclick="appendPin('4')" class="w-full h-14 rounded-2xl bg-slate-100 dark:bg-slate-800/90 hover:bg-slate-200 dark:hover:bg-slate-700 active:bg-slate-300 dark:active:bg-slate-600 text-slate-800 dark:text-white text-xl sm:text-2xl font-bold border border-slate-200 dark:border-slate-700 shadow-sm transition-all duration-75 flex items-center justify-center select-none">4</button>
-          <button type="button" onclick="appendPin('5')" class="w-full h-14 rounded-2xl bg-slate-100 dark:bg-slate-800/90 hover:bg-slate-200 dark:hover:bg-slate-700 active:bg-slate-300 dark:active:bg-slate-600 text-slate-800 dark:text-white text-xl sm:text-2xl font-bold border border-slate-200 dark:border-slate-700 shadow-sm transition-all duration-75 flex items-center justify-center select-none">5</button>
-          <button type="button" onclick="appendPin('6')" class="w-full h-14 rounded-2xl bg-slate-100 dark:bg-slate-800/90 hover:bg-slate-200 dark:hover:bg-slate-700 active:bg-slate-300 dark:active:bg-slate-600 text-slate-800 dark:text-white text-xl sm:text-2xl font-bold border border-slate-200 dark:border-slate-700 shadow-sm transition-all duration-75 flex items-center justify-center select-none">6</button>
-          <button type="button" onclick="appendPin('7')" class="w-full h-14 rounded-2xl bg-slate-100 dark:bg-slate-800/90 hover:bg-slate-200 dark:hover:bg-slate-700 active:bg-slate-300 dark:active:bg-slate-600 text-slate-800 dark:text-white text-xl sm:text-2xl font-bold border border-slate-200 dark:border-slate-700 shadow-sm transition-all duration-75 flex items-center justify-center select-none">7</button>
-          <button type="button" onclick="appendPin('8')" class="w-full h-14 rounded-2xl bg-slate-100 dark:bg-slate-800/90 hover:bg-slate-200 dark:hover:bg-slate-700 active:bg-slate-300 dark:active:bg-slate-600 text-slate-800 dark:text-white text-xl sm:text-2xl font-bold border border-slate-200 dark:border-slate-700 shadow-sm transition-all duration-75 flex items-center justify-center select-none">8</button>
-          <button type="button" onclick="appendPin('9')" class="w-full h-14 rounded-2xl bg-slate-100 dark:bg-slate-800/90 hover:bg-slate-200 dark:hover:bg-slate-700 active:bg-slate-300 dark:active:bg-slate-600 text-slate-800 dark:text-white text-xl sm:text-2xl font-bold border border-slate-200 dark:border-slate-700 shadow-sm transition-all duration-75 flex items-center justify-center select-none">9</button>
-          <button type="button" onclick="clearPin()" class="w-full h-14 rounded-2xl bg-rose-500/10 hover:bg-rose-500/20 active:bg-rose-500/30 text-rose-500 text-xs font-bold border border-rose-500/20 shadow-sm transition-all duration-75 flex items-center justify-center select-none">HAPUS</button>
-          <button type="button" onclick="appendPin('0')" class="w-full h-14 rounded-2xl bg-slate-100 dark:bg-slate-800/90 hover:bg-slate-200 dark:hover:bg-slate-700 active:bg-slate-300 dark:active:bg-slate-600 text-slate-800 dark:text-white text-xl sm:text-2xl font-bold border border-slate-200 dark:border-slate-700 shadow-sm transition-all duration-75 flex items-center justify-center select-none">0</button>
-          <button type="button" onclick="deletePinDigit()" class="w-full h-14 rounded-2xl bg-slate-100 dark:bg-slate-800/90 hover:bg-slate-200 dark:hover:bg-slate-700 active:bg-slate-300 dark:active:bg-slate-600 text-slate-800 dark:text-white text-lg sm:text-xl border border-slate-200 dark:border-slate-700 shadow-sm transition-all duration-75 flex items-center justify-center select-none"><i class="fa-solid fa-backspace"></i></button>
+          <button type="button" onclick="appendPin('1')" class="keypad-btn w-full h-14 rounded-2xl bg-slate-100 dark:bg-slate-800/90 text-slate-800 dark:text-white text-xl sm:text-2xl font-bold border border-slate-200 dark:border-slate-700 shadow-sm transition-none flex items-center justify-center select-none">1</button>
+          <button type="button" onclick="appendPin('2')" class="keypad-btn w-full h-14 rounded-2xl bg-slate-100 dark:bg-slate-800/90 text-slate-800 dark:text-white text-xl sm:text-2xl font-bold border border-slate-200 dark:border-slate-700 shadow-sm transition-none flex items-center justify-center select-none">2</button>
+          <button type="button" onclick="appendPin('3')" class="keypad-btn w-full h-14 rounded-2xl bg-slate-100 dark:bg-slate-800/90 text-slate-800 dark:text-white text-xl sm:text-2xl font-bold border border-slate-200 dark:border-slate-700 shadow-sm transition-none flex items-center justify-center select-none">3</button>
+          <button type="button" onclick="appendPin('4')" class="keypad-btn w-full h-14 rounded-2xl bg-slate-100 dark:bg-slate-800/90 text-slate-800 dark:text-white text-xl sm:text-2xl font-bold border border-slate-200 dark:border-slate-700 shadow-sm transition-none flex items-center justify-center select-none">4</button>
+          <button type="button" onclick="appendPin('5')" class="keypad-btn w-full h-14 rounded-2xl bg-slate-100 dark:bg-slate-800/90 text-slate-800 dark:text-white text-xl sm:text-2xl font-bold border border-slate-200 dark:border-slate-700 shadow-sm transition-none flex items-center justify-center select-none">5</button>
+          <button type="button" onclick="appendPin('6')" class="keypad-btn w-full h-14 rounded-2xl bg-slate-100 dark:bg-slate-800/90 text-slate-800 dark:text-white text-xl sm:text-2xl font-bold border border-slate-200 dark:border-slate-700 shadow-sm transition-none flex items-center justify-center select-none">6</button>
+          <button type="button" onclick="appendPin('7')" class="keypad-btn w-full h-14 rounded-2xl bg-slate-100 dark:bg-slate-800/90 text-slate-800 dark:text-white text-xl sm:text-2xl font-bold border border-slate-200 dark:border-slate-700 shadow-sm transition-none flex items-center justify-center select-none">7</button>
+          <button type="button" onclick="appendPin('8')" class="keypad-btn w-full h-14 rounded-2xl bg-slate-100 dark:bg-slate-800/90 text-slate-800 dark:text-white text-xl sm:text-2xl font-bold border border-slate-200 dark:border-slate-700 shadow-sm transition-none flex items-center justify-center select-none">8</button>
+          <button type="button" onclick="appendPin('9')" class="keypad-btn w-full h-14 rounded-2xl bg-slate-100 dark:bg-slate-800/90 text-slate-800 dark:text-white text-xl sm:text-2xl font-bold border border-slate-200 dark:border-slate-700 shadow-sm transition-none flex items-center justify-center select-none">9</button>
+          <button type="button" onclick="clearPin()" class="keypad-btn w-full h-14 rounded-2xl bg-rose-500/10 text-rose-500 text-xs font-bold border border-rose-500/20 shadow-sm transition-none flex items-center justify-center select-none">HAPUS</button>
+          <button type="button" onclick="appendPin('0')" class="keypad-btn w-full h-14 rounded-2xl bg-slate-100 dark:bg-slate-800/90 text-slate-800 dark:text-white text-xl sm:text-2xl font-bold border border-slate-200 dark:border-slate-700 shadow-sm transition-none flex items-center justify-center select-none">0</button>
+          <button type="button" onclick="deletePinDigit()" class="keypad-btn w-full h-14 rounded-2xl bg-slate-100 dark:bg-slate-800/90 text-slate-800 dark:text-white text-lg sm:text-xl border border-slate-200 dark:border-slate-700 shadow-sm transition-none flex items-center justify-center select-none"><i class="fa-solid fa-backspace"></i></button>
         </div>
       </div>
     </div>
@@ -660,6 +685,7 @@
     let userPin = localStorage.getItem('fm_user_pin') || "030427";
     let enteredPin = "";
     let transactions = JSON.parse(localStorage.getItem('fm_transactions')) || [];
+    let isUnlocked = sessionStorage.getItem('fm_is_unlocked') === 'true';
 
     // Formatter helpers
     function formatCurrency(amount) {
@@ -690,8 +716,18 @@
 
     // DOM Initializations
     document.addEventListener("DOMContentLoaded", () => {
-      // Lock scroll initially for PIN screen
-      document.body.classList.add('lock-scroll');
+      // Check session state to prevent lock screen on soft reloads/pull-to-refresh
+      if (isUnlocked) {
+        document.body.classList.remove('lock-scroll');
+        const pinScreen = document.getElementById('pinScreen');
+        if (pinScreen) {
+          pinScreen.classList.add('opacity-0', 'pointer-events-none');
+          pinScreen.style.display = 'none';
+        }
+      } else {
+        // Lock scroll initially for PIN screen
+        document.body.classList.add('lock-scroll');
+      }
 
       const dateEl = document.getElementById('date');
       if (dateEl) dateEl.valueAsDate = new Date();
@@ -702,7 +738,7 @@
 
       // Native hidden keyboard synchronization
       const pinHiddenInput = document.getElementById('pinHiddenInput');
-      if (pinHiddenInput) {
+      if (pinHiddenInput && !isUnlocked) {
         pinHiddenInput.focus();
         pinHiddenInput.addEventListener('input', (e) => {
           const val = e.target.value;
@@ -872,6 +908,10 @@
     function checkPin() {
       if (enteredPin === userPin) {
         playSuccessSound();
+        // Save unlock state for current session (prevents locking on pull-down refresh)
+        isUnlocked = true;
+        sessionStorage.setItem('fm_is_unlocked', 'true');
+
         // Enable page scrolling when PIN is correct
         document.body.classList.remove('lock-scroll');
         const pinScreen = document.getElementById('pinScreen');
@@ -953,6 +993,9 @@
 
     function lockApp() {
       clearPin();
+      isUnlocked = false;
+      sessionStorage.removeItem('fm_is_unlocked');
+
       // Lock page scrolling when locking app
       document.body.classList.add('lock-scroll');
       const pinScreen = document.getElementById('pinScreen');
@@ -1012,6 +1055,14 @@
 
     function openModal() {
       document.body.classList.add('lock-scroll');
+      
+      // Automatically set the transaction date to today's date whenever modal opens
+      const dateEl = document.getElementById('date');
+      if (dateEl) {
+        const today = new Date().toISOString().split('T')[0];
+        dateEl.value = today;
+      }
+
       const modal = document.getElementById('transactionModal');
       const container = document.getElementById('modalContainer');
       modal.classList.remove('opacity-0', 'pointer-events-none');
@@ -1293,4 +1344,3 @@
   </script>
 </body>
 </html>
-```
