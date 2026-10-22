@@ -3,19 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Finance Management - Pengelolaan Keuangan Rumah Tangga</title>
+  <title>Finance Management</title>
   
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
-  
-  <!-- Font Awesome Icons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  
-  <!-- Google Fonts: Plus Jakarta Sans -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-
   <script>
     tailwind.config = {
       darkMode: 'class',
@@ -23,202 +14,128 @@
         extend: {
           colors: {
             brand: {
-              50: '#eef2ff',
-              100: '#e0e7ff',
-              500: '#6366f1',
-              600: '#4f46e5',
-              700: '#4338ca',
+              50: '#eff6ff',
+              100: '#dbeafe',
+              200: '#bfdbfe',
+              300: '#93c5fd',
+              400: '#60a5fa',
+              500: '#3b82f6',
+              600: '#2563eb',
+              700: '#1d4ed8',
+              800: '#1e40af',
+              900: '#1e3a8a',
             },
-            darkbg: '#0f172a',
-            darkcard: '#1e293b',
-            darkborder: '#334155'
-          },
-          fontFamily: {
-            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            darkbg: '#070a13',
+            darkcard: '#0f172a',
+            darkborder: '#1e293b'
           }
         }
       }
     }
   </script>
+  
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- Google Fonts Inter & Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@700;800;900&display=swap" rel="stylesheet">
+
+  <!-- jsPDF & autoTable for Monthly PDF Report Download -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
 
   <style>
-    /* Global Clean Tap & Instant Shadow Cleanups */
+    /* Smooth global theme transition */
     *, *::before, *::after {
-      transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
-      -webkit-tap-highlight-color: transparent !important;
-      -webkit-touch-callout: none !important;
-      user-select: none !important;
-      outline: none !important;
+      transition: background-color 300ms ease-in-out, border-color 300ms ease-in-out, color 300ms ease-in-out, fill 300ms ease-in-out, stroke 300ms ease-in-out;
     }
 
-    input, select, textarea {
-      user-select: text !important;
-    }
-
-    /* Keypad specific styling to completely remove persistent gray click highlight */
-    .keypad-btn {
-      -webkit-tap-highlight-color: transparent !important;
-      -webkit-user-select: none !important;
-      user-select: none !important;
-      outline: none !important;
-    }
-    .keypad-btn:focus, .keypad-btn:active, .keypad-btn:focus-visible {
-      outline: none !important;
-      box-shadow: none !important;
-      background-color: inherit;
-    }
-
-    /* Prevent accidental pull-to-refresh page reload */
-    html, body {
+    body {
+      font-family: 'Inter', sans-serif;
       overscroll-behavior-y: contain;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
     }
 
-    /* Prevent scrolling when PIN screen or Modals are active */
-    body.lock-scroll {
+    .brand-title {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      letter-spacing: -0.03em;
+    }
+
+    .lock-scroll {
       overflow: hidden !important;
-      touch-action: none !important;
+      height: 100vh !important;
     }
 
-    button:focus, button:active, input:focus, select:focus, a:focus, a:active {
+    button, input, select {
+      outline: none !important;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    button:focus, button:active, .keypad-btn:focus, .keypad-btn:active {
       outline: none !important;
       box-shadow: none !important;
-      -webkit-tap-highlight-color: transparent !important;
     }
 
-    /* Custom Scrollbar */
-    ::-webkit-scrollbar {
-      width: 6px;
-      height: 6px;
+    /* Stealth Privacy Flash Animation */
+    @keyframes privacyFlash {
+      0% { transform: scale(1.25); filter: brightness(1.6); }
+      100% { transform: scale(1); filter: brightness(1); }
     }
-    ::-webkit-scrollbar-track {
-      background: transparent;
-    }
-    ::-webkit-scrollbar-thumb {
-      background: #cbd5e1;
-      border-radius: 9999px;
-    }
-    .dark ::-webkit-scrollbar-thumb {
-      background: #334155;
-    }
-    
-    /* Animation effects */
-    @keyframes pulseGlow {
-      0%, 100% { opacity: 0.6; transform: scale(1); }
-      50% { opacity: 0.9; transform: scale(1.05); }
-    }
-    .animate-glow {
-      animation: pulseGlow 4s infinite ease-in-out;
+    .stealth-active {
+      animation: privacyFlash 180ms ease-out forwards;
     }
   </style>
 </head>
-<body class="bg-slate-50 dark:bg-darkbg text-slate-800 dark:text-slate-100 font-sans min-h-screen transition-colors duration-300 flex flex-col justify-between selection:bg-brand-500 selection:text-white pb-20 md:pb-0">
+<body class="bg-slate-50 dark:bg-darkbg text-slate-800 dark:text-slate-100 min-h-screen pb-24 relative">
 
-  <!-- ==================== LOCK SCREEN / PIN ACCESS ==================== -->
-  <div id="pinScreen" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/95 backdrop-blur-xl transition-all duration-500 p-4">
-    <div class="max-w-sm w-full bg-white dark:bg-darkcard border border-slate-200 dark:border-darkborder rounded-3xl p-7 shadow-2xl text-center relative overflow-hidden">
-      <!-- Glow effect decorative circles -->
-      <div class="absolute -top-12 -right-12 w-32 h-32 bg-brand-500/20 rounded-full blur-3xl animate-glow"></div>
-      <div class="absolute -bottom-12 -left-12 w-32 h-32 bg-emerald-500/20 rounded-full blur-3xl animate-glow"></div>
-
-      <div class="relative z-10">
-        <div class="w-16 h-16 bg-brand-500/10 text-brand-600 dark:text-brand-500 rounded-2xl flex items-center justify-center mx-auto mb-3 text-2xl shadow-inner">
-          <i class="fa-solid fa-shield-halved"></i>
-        </div>
-
-        <h2 class="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">Finance Management</h2>
-        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Masukkan PIN untuk mengakses aplikasi</p>
-        
-        <!-- Enlarged Circular PIN Dots Indicator -->
-        <div class="flex justify-center items-center gap-3.5 my-7" id="pinDots">
-          <div class="w-5 h-5 rounded-full border-2 border-slate-300 dark:border-slate-600 bg-transparent transition-all duration-200" id="dot-0"></div>
-          <div class="w-5 h-5 rounded-full border-2 border-slate-300 dark:border-slate-600 bg-transparent transition-all duration-200" id="dot-1"></div>
-          <div class="w-5 h-5 rounded-full border-2 border-slate-300 dark:border-slate-600 bg-transparent transition-all duration-200" id="dot-2"></div>
-          <div class="w-5 h-5 rounded-full border-2 border-slate-300 dark:border-slate-600 bg-transparent transition-all duration-200" id="dot-3"></div>
-          <div class="w-5 h-5 rounded-full border-2 border-slate-300 dark:border-slate-600 bg-transparent transition-all duration-200" id="dot-4"></div>
-          <div class="w-5 h-5 rounded-full border-2 border-slate-300 dark:border-slate-600 bg-transparent transition-all duration-200" id="dot-5"></div>
-        </div>
-
-        <!-- Hidden input field to capture native keyboard -->
-        <input type="password" id="pinHiddenInput" maxlength="6" pattern="\d*" inputmode="numeric" class="opacity-0 absolute inset-0 w-full h-full cursor-pointer z-10" autofocus>
-
-        <!-- Keypad -->
-        <div class="grid grid-cols-3 gap-3 max-w-[280px] mx-auto relative z-30 my-3">
-          <button type="button" onclick="appendPin('1')" class="keypad-btn w-full h-14 rounded-2xl bg-slate-100 dark:bg-slate-800/90 text-slate-800 dark:text-white text-xl sm:text-2xl font-bold border border-slate-200 dark:border-slate-700 shadow-sm transition-none flex items-center justify-center select-none">1</button>
-          <button type="button" onclick="appendPin('2')" class="keypad-btn w-full h-14 rounded-2xl bg-slate-100 dark:bg-slate-800/90 text-slate-800 dark:text-white text-xl sm:text-2xl font-bold border border-slate-200 dark:border-slate-700 shadow-sm transition-none flex items-center justify-center select-none">2</button>
-          <button type="button" onclick="appendPin('3')" class="keypad-btn w-full h-14 rounded-2xl bg-slate-100 dark:bg-slate-800/90 text-slate-800 dark:text-white text-xl sm:text-2xl font-bold border border-slate-200 dark:border-slate-700 shadow-sm transition-none flex items-center justify-center select-none">3</button>
-          <button type="button" onclick="appendPin('4')" class="keypad-btn w-full h-14 rounded-2xl bg-slate-100 dark:bg-slate-800/90 text-slate-800 dark:text-white text-xl sm:text-2xl font-bold border border-slate-200 dark:border-slate-700 shadow-sm transition-none flex items-center justify-center select-none">4</button>
-          <button type="button" onclick="appendPin('5')" class="keypad-btn w-full h-14 rounded-2xl bg-slate-100 dark:bg-slate-800/90 text-slate-800 dark:text-white text-xl sm:text-2xl font-bold border border-slate-200 dark:border-slate-700 shadow-sm transition-none flex items-center justify-center select-none">5</button>
-          <button type="button" onclick="appendPin('6')" class="keypad-btn w-full h-14 rounded-2xl bg-slate-100 dark:bg-slate-800/90 text-slate-800 dark:text-white text-xl sm:text-2xl font-bold border border-slate-200 dark:border-slate-700 shadow-sm transition-none flex items-center justify-center select-none">6</button>
-          <button type="button" onclick="appendPin('7')" class="keypad-btn w-full h-14 rounded-2xl bg-slate-100 dark:bg-slate-800/90 text-slate-800 dark:text-white text-xl sm:text-2xl font-bold border border-slate-200 dark:border-slate-700 shadow-sm transition-none flex items-center justify-center select-none">7</button>
-          <button type="button" onclick="appendPin('8')" class="keypad-btn w-full h-14 rounded-2xl bg-slate-100 dark:bg-slate-800/90 text-slate-800 dark:text-white text-xl sm:text-2xl font-bold border border-slate-200 dark:border-slate-700 shadow-sm transition-none flex items-center justify-center select-none">8</button>
-          <button type="button" onclick="appendPin('9')" class="keypad-btn w-full h-14 rounded-2xl bg-slate-100 dark:bg-slate-800/90 text-slate-800 dark:text-white text-xl sm:text-2xl font-bold border border-slate-200 dark:border-slate-700 shadow-sm transition-none flex items-center justify-center select-none">9</button>
-          <button type="button" onclick="clearPin()" class="keypad-btn w-full h-14 rounded-2xl bg-rose-500/10 text-rose-500 text-xs font-bold border border-rose-500/20 shadow-sm transition-none flex items-center justify-center select-none">HAPUS</button>
-          <button type="button" onclick="appendPin('0')" class="keypad-btn w-full h-14 rounded-2xl bg-slate-100 dark:bg-slate-800/90 text-slate-800 dark:text-white text-xl sm:text-2xl font-bold border border-slate-200 dark:border-slate-700 shadow-sm transition-none flex items-center justify-center select-none">0</button>
-          <button type="button" onclick="deletePinDigit()" class="keypad-btn w-full h-14 rounded-2xl bg-slate-100 dark:bg-slate-800/90 text-slate-800 dark:text-white text-lg sm:text-xl border border-slate-200 dark:border-slate-700 shadow-sm transition-none flex items-center justify-center select-none"><i class="fa-solid fa-backspace"></i></button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ==================== HEADER / NAVBAR ==================== -->
-  <header class="bg-white/80 dark:bg-darkcard/80 backdrop-blur-md border-b border-slate-200 dark:border-darkborder sticky top-0 z-40">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-      <div class="flex items-center space-x-3">
-        <div class="w-10 h-10 bg-gradient-to-br from-blue-600 via-indigo-600 to-slate-900 rounded-xl flex items-center justify-center text-white font-bold text-lg shadow-md shadow-blue-600/30 border border-blue-400/30">
-          <i class="fa-solid fa-wallet"></i>
+  <!-- ==================== HEADER ==================== -->
+  <header class="bg-white/80 dark:bg-darkcard/80 backdrop-blur-md border-b border-slate-200 dark:border-darkborder sticky top-0 z-30">
+    <div class="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <!-- Logo Icon Biru Mewah -->
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-700 via-blue-600 to-indigo-500 text-white flex items-center justify-center font-bold text-lg shadow-lg shadow-blue-600/30 border border-blue-400/30">
+          <i class="fa-solid fa-chart-line"></i>
         </div>
         <div>
-          <h1 class="text-lg font-bold text-slate-900 dark:text-white leading-tight">Finance Management</h1>
-          <p class="text-xs text-slate-500 dark:text-slate-400">Pengelolaan Keuangan Rumah Tangga</p>
+          <h1 class="brand-title font-black text-lg tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-blue-600 via-blue-500 to-indigo-400">Finance Management</h1>
+          <p class="text-[10px] text-slate-400 dark:text-slate-500 font-medium -mt-0.5">Pengelolaan Keuangan Cerdas</p>
         </div>
       </div>
 
-      <div class="flex items-center space-x-3">
-        <button id="themeToggle" onclick="toggleTheme()" class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all flex items-center justify-center select-none" title="Ubah Mode Tema">
-          <i class="fa-solid fa-moon text-lg hidden dark:block"></i>
-          <i class="fa-solid fa-sun text-lg block dark:hidden"></i>
+      <div class="flex items-center gap-2">
+        <!-- Toggle Theme (Matching Dark Gray Style in both modes) -->
+        <button onclick="toggleTheme()" class="w-10 h-10 rounded-xl bg-slate-800 text-slate-300 hover:bg-slate-700 flex items-center justify-center select-none border border-slate-700/50" title="Ubah Tema">
+          <i class="fa-solid fa-moon dark:hidden text-sm"></i>
+          <i class="fa-solid fa-sun hidden dark:block text-amber-400 text-sm"></i>
         </button>
-        
-        <button onclick="lockApp()" class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all flex items-center justify-center select-none" title="Kunci Aplikasi">
+
+        <!-- Lock App Manual -->
+        <button onclick="lockApp()" class="w-10 h-10 rounded-xl bg-slate-800 text-slate-300 hover:bg-slate-700 flex items-center justify-center select-none border border-slate-700/50" title="Kunci Aplikasi">
           <i class="fa-solid fa-lock text-sm"></i>
         </button>
       </div>
     </div>
   </header>
 
-  <!-- ==================== MAIN CONTENT AREA ==================== -->
-  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full flex-1">
-    
+  <!-- ==================== MAIN CONTENT CONTAINER ==================== -->
+  <main class="max-w-4xl mx-auto px-4 pt-6 space-y-6">
+
     <!-- DASHBOARD VIEW -->
-    <div id="viewDashboard" class="tab-view block space-y-8">
-      <!-- Top Action Banner -->
-      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div>
-          <h2 class="text-2xl font-bold text-slate-900 dark:text-white">Ringkasan Keuangan</h2>
-          <p class="text-sm text-slate-500 dark:text-slate-400">Pantau dan kelola arus kas rumah tangga Anda dengan mudah.</p>
-        </div>
-        
-        <button onclick="openModal()" class="hidden md:flex w-full sm:w-auto px-5 py-3 bg-brand-600 hover:bg-brand-700 text-white font-medium rounded-xl shadow-lg shadow-brand-500/25 transition-all items-center justify-center gap-2 select-none">
-          <i class="fa-solid fa-plus"></i>
-          <span>Tambah Transaksi</span>
-        </button>
-      </div>
+    <div id="viewDashboard" class="tab-view space-y-6">
 
-      <!-- SUMMARY CARDS GRID -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">
-        <!-- Total Balance Card (Luxurious Blue Glassmorphism Design) -->
-        <div class="bg-gradient-to-br from-blue-700 via-indigo-800 to-slate-900 text-white rounded-3xl p-6 sm:p-7 shadow-xl shadow-blue-900/30 relative overflow-hidden border border-blue-400/30 backdrop-blur-md flex flex-col justify-between transition-all duration-300 hover:shadow-2xl hover:shadow-blue-600/40 min-h-[200px]">
-          <!-- Ambient Glow Circles -->
-          <div class="absolute -right-8 -top-8 w-36 h-36 bg-cyan-400/25 rounded-full blur-2xl animate-glow"></div>
-          <div class="absolute -left-10 -bottom-10 w-40 h-40 bg-blue-500/20 rounded-full blur-3xl animate-glow"></div>
-
+      <!-- TOP CARDS: SALDO & RINGKASAN ARUS KAS -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- Card Total Sisa Saldo -->
+        <div class="bg-gradient-to-br from-blue-700 via-blue-800 to-indigo-950 text-white rounded-3xl p-6 sm:p-7 shadow-xl shadow-blue-900/20 relative overflow-hidden flex flex-col justify-between min-h-[200px]">
+          <div class="absolute -right-6 -bottom-6 w-32 h-32 bg-white/10 rounded-full blur-2xl pointer-events-none"></div>
           <div class="relative z-10">
-            <div class="flex justify-between items-center mb-4">
-              <span class="text-xs font-semibold uppercase tracking-wider text-blue-200/80 bg-white/10 px-3 py-1 rounded-full border border-white/15 backdrop-blur-sm">
-                Sisa Saldo Utama
-              </span>
-              <span class="w-10 h-10 bg-white/15 border border-white/20 rounded-2xl flex items-center justify-center text-white shadow-inner backdrop-blur-md">
-                <i class="fa-solid fa-vault text-lg"></i>
+            <div class="flex items-center justify-between mb-4">
+              <span class="text-xs font-semibold uppercase tracking-wider text-blue-200/80">Sisa Saldo Kas</span>
+              <span class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-xs backdrop-blur-md">
+                <i class="fa-solid fa-wallet"></i>
               </span>
             </div>
             <p class="text-3xl sm:text-4xl font-black tracking-tight mb-2 text-white drop-shadow-md" id="totalBalance">Rp 0</p>
@@ -230,17 +147,16 @@
           </div>
         </div>
 
-        <!-- Combined Single-Column Income & Expense Card (Merged & Streamlined) -->
+        <!-- Combined Single-Column Income & Expense Card -->
         <div class="bg-white dark:bg-darkcard rounded-3xl p-6 sm:p-7 shadow-sm border border-slate-200 dark:border-darkborder flex flex-col justify-between min-h-[200px]">
           <div class="flex items-center justify-between mb-5">
             <div class="flex items-center gap-2">
-              <div class="w-2.5 h-2.5 rounded-full bg-brand-500"></div>
+              <div class="w-2.5 h-2.5 rounded-full bg-blue-500"></div>
               <span class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Arus Kas Ringkas</span>
             </div>
             <span class="text-xs px-2.5 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 font-medium">Mutasi Saldo</span>
           </div>
 
-          <!-- Merged Row Layout for Pemasukan and Pengeluaran -->
           <div class="grid grid-cols-2 gap-4 items-center bg-slate-50 dark:bg-slate-800/40 p-4 rounded-2xl border border-slate-100 dark:border-slate-800/80">
             <!-- Pemasukan Column -->
             <div class="flex flex-col gap-1 pr-2 border-r border-slate-200 dark:border-slate-700/60">
@@ -276,12 +192,12 @@
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
           <div>
             <h3 class="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
-              <i class="fa-solid fa-chart-pie text-brand-500"></i>
+              <i class="fa-solid fa-chart-pie text-blue-500"></i>
               Alokasi Anggaran 50 / 30 / 20 (Gajian)
             </h3>
             <p class="text-xs text-slate-500 dark:text-slate-400">Garis warna berkurang otomatis saat terjadi pengeluaran pada kategori terkait</p>
           </div>
-          <span class="text-xs px-3 py-1 bg-brand-500/10 text-brand-600 dark:text-brand-400 font-medium rounded-full border border-brand-500/20">
+          <span class="text-xs px-3 py-1 bg-blue-500/10 text-blue-600 dark:text-blue-400 font-medium rounded-full border border-blue-500/20">
             Metode Finansial Ideal
           </span>
         </div>
@@ -298,7 +214,7 @@
               <span id="needsRemainText" class="font-medium text-slate-600 dark:text-slate-300">Rp 0</span>
             </div>
             <div class="w-full bg-slate-200 dark:bg-slate-700 h-3 rounded-full overflow-hidden">
-              <div id="needsBar" class="bg-blue-500 h-full rounded-full transition-all duration-500" style="width: 0%"></div>
+              <div id="needsBar" class="bg-blue-500 h-full rounded-full" style="width: 0%"></div>
             </div>
           </div>
 
@@ -313,7 +229,7 @@
               <span id="wantsRemainText" class="font-medium text-slate-600 dark:text-slate-300">Rp 0</span>
             </div>
             <div class="w-full bg-slate-200 dark:bg-slate-700 h-3 rounded-full overflow-hidden">
-              <div id="wantsBar" class="bg-amber-500 h-full rounded-full transition-all duration-500" style="width: 0%"></div>
+              <div id="wantsBar" class="bg-amber-500 h-full rounded-full" style="width: 0%"></div>
             </div>
           </div>
 
@@ -328,7 +244,7 @@
               <span id="savingsRemainText" class="font-medium text-slate-600 dark:text-slate-300">Rp 0</span>
             </div>
             <div class="w-full bg-slate-200 dark:bg-slate-700 h-3 rounded-full overflow-hidden">
-              <div id="savingsBar" class="bg-emerald-500 h-full rounded-full transition-all duration-500" style="width: 0%"></div>
+              <div id="savingsBar" class="bg-emerald-500 h-full rounded-full" style="width: 0%"></div>
             </div>
           </div>
         </div>
@@ -393,12 +309,12 @@
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-2">
           <div>
             <h3 class="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
-              <i class="fa-solid fa-chart-pie text-brand-500"></i>
+              <i class="fa-solid fa-chart-pie text-blue-500"></i>
               Alokasi Anggaran Gajian (50 / 30 / 20)
             </h3>
             <p class="text-xs text-slate-500 dark:text-slate-400">Otomatis dihitung saat Anda memasukkan transaksi Pemasukan kategori "Gajian"</p>
           </div>
-          <span class="text-xs px-3 py-1 bg-brand-500/10 text-brand-600 dark:text-brand-400 font-medium rounded-full border border-brand-500/20">
+          <span class="text-xs px-3 py-1 bg-blue-500/10 text-blue-600 dark:text-blue-400 font-medium rounded-full border border-blue-500/20">
             Metode Finansial Ideal
           </span>
         </div>
@@ -433,9 +349,19 @@
 
     <!-- LAPORAN VIEW -->
     <div id="viewLaporan" class="tab-view hidden space-y-6">
-      <div>
-        <h2 class="text-2xl font-bold text-slate-900 dark:text-white">Laporan Keuangan</h2>
-        <p class="text-sm text-slate-500 dark:text-slate-400">Analisis pengeluaran dan kesehatan finansial rumah tangga.</p>
+      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+          <h2 class="text-2xl font-bold text-slate-900 dark:text-white">Laporan Keuangan</h2>
+          <p class="text-sm text-slate-500 dark:text-slate-400">Analisis pengeluaran dan cetak laporan bulanan secara rinci.</p>
+        </div>
+
+        <div class="flex items-center gap-2 bg-white dark:bg-darkcard p-2 rounded-2xl border border-slate-200 dark:border-darkborder shadow-sm w-full sm:w-auto">
+          <input type="month" id="reportMonthPicker" class="px-3 py-1.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-semibold text-slate-800 dark:text-slate-100 focus:outline-none">
+          <button onclick="downloadMonthlyPDF()" class="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-2 shadow-md shadow-rose-600/20 whitespace-nowrap select-none">
+            <i class="fa-solid fa-file-pdf text-sm"></i>
+            <span>Unduh PDF Bulanan</span>
+          </button>
+        </div>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -448,10 +374,10 @@
           <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50 space-y-2">
             <div class="flex justify-between text-xs font-semibold">
               <span class="text-slate-500">Rasio Tabungan</span>
-              <span id="savingsRatioText" class="text-brand-500">0%</span>
+              <span id="savingsRatioText" class="text-blue-500">0%</span>
             </div>
             <div class="w-full bg-slate-200 dark:bg-slate-700 h-2.5 rounded-full overflow-hidden">
-              <div id="savingsRatioBar" class="bg-brand-500 h-full transition-all duration-500" style="width: 0%"></div>
+              <div id="savingsRatioBar" class="bg-blue-500 h-full" style="width: 0%"></div>
             </div>
             <p id="healthAnalysisText" class="text-xs text-slate-500 dark:text-slate-400 pt-1">Belum ada data transaksi yang cukup untuk dianalisis.</p>
           </div>
@@ -460,7 +386,7 @@
         <!-- Breakdown Pengeluaran per Kategori -->
         <div class="bg-white dark:bg-darkcard rounded-2xl p-6 shadow-sm border border-slate-200 dark:border-darkborder space-y-4">
           <h3 class="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
-            <i class="fa-solid fa-chart-column text-brand-500"></i>
+            <i class="fa-solid fa-chart-column text-blue-500"></i>
             Pengeluaran per Kategori
           </h3>
           <div id="categoryBreakdown" class="space-y-3 text-xs">
@@ -481,141 +407,191 @@
         <!-- Keamanan PIN & Ubah PIN -->
         <div class="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-800">
           <div>
-            <h4 class="font-bold text-slate-800 dark:text-white">Kunci & Ubah PIN Access</h4>
-            <p class="text-xs text-slate-500">Gunakan PIN 6 angka untuk mengamankan data Anda.</p>
+            <h4 class="font-bold text-slate-900 dark:text-white text-sm">Keamanan PIN</h4>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Ganti kode PIN 6 angka akses aplikasi Anda.</p>
           </div>
-          <div class="flex items-center gap-2">
-            <button onclick="openChangePinModal()" class="px-4 py-2 bg-brand-500/10 hover:bg-brand-500/20 text-brand-600 dark:text-brand-400 rounded-xl text-xs font-semibold transition-all select-none">
-              Ubah PIN
-            </button>
-          </div>
-        </div>
-
-        <!-- Mode Tampilan -->
-        <div class="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-800">
-          <div>
-            <h4 class="font-bold text-slate-800 dark:text-white">Mode Tampilan</h4>
-            <p class="text-xs text-slate-500">Pilih tema Gelap atau Terang untuk kenyamanan mata.</p>
-          </div>
-          <button onclick="toggleTheme()" class="px-4 py-2 bg-brand-500/10 text-brand-600 dark:text-brand-400 rounded-xl text-xs font-semibold transition-all select-none">
-            Ganti Tema
+          <button onclick="openChangePinModal()" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-medium shadow-md shadow-blue-500/20 select-none">
+            Ubah PIN
           </button>
         </div>
 
-        <!-- Reset Data -->
-        <div class="flex items-center justify-between">
+        <!-- Hapus Data Transaksi -->
+        <div class="flex items-center justify-between pt-2">
           <div>
-            <h4 class="font-bold text-rose-500">Reset Semua Data</h4>
-            <p class="text-xs text-slate-500">Menghapus seluruh catatan riwayat transaksi dari penyimpanan lokal.</p>
+            <h4 class="font-bold text-rose-600 dark:text-rose-400 text-sm">Hapus Semua Data</h4>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Bersihkan seluruh catatan transaksi dari penyimpanan lokal.</p>
           </div>
-          <button onclick="resetAllData()" class="px-4 py-2 bg-rose-500/10 hover:bg-rose-500/20 text-rose-500 rounded-xl text-xs font-semibold transition-all select-none">
-            Hapus Semua Data
+          <button onclick="resetAllData()" class="px-4 py-2 bg-rose-500/10 hover:bg-rose-500/20 text-rose-600 dark:text-rose-400 border border-rose-500/20 rounded-xl text-xs font-semibold select-none">
+            Reset Data
           </button>
         </div>
       </div>
     </div>
+
   </main>
 
-  <!-- ==================== BOTTOM INTERACTIVE NAV BAR ==================== -->
-  <div class="fixed bottom-0 left-0 right-0 z-40 bg-white/90 dark:bg-darkcard/90 backdrop-blur-lg border-t border-slate-200 dark:border-darkborder px-2 sm:px-4 py-2 transition-all">
-    <div class="max-w-md mx-auto flex justify-between items-center relative">
-      <button onclick="switchTab('Dashboard')" id="navDashboard" class="nav-btn flex flex-col items-center justify-center w-14 sm:w-16 py-1 text-brand-600 dark:text-brand-400 transition-colors select-none">
-        <i class="fa-solid fa-table-columns text-lg mb-0.5"></i>
-        <span class="text-[10px] font-semibold">Dashboard</span>
+  <!-- ==================== BOTTOM NAVIGATION BAR ==================== -->
+  <nav class="fixed bottom-0 left-0 right-0 z-40 bg-white/90 dark:bg-darkcard/90 backdrop-blur-lg border-t border-slate-200 dark:border-darkborder px-4 py-2">
+    <div class="max-w-md mx-auto flex items-center justify-between">
+      <button onclick="switchTab('Dashboard')" id="navDashboard" class="nav-btn flex flex-col items-center justify-center w-14 sm:w-16 py-1 text-blue-600 dark:text-blue-400 select-none">
+        <i class="fa-solid fa-house text-lg"></i>
+        <span class="text-[10px] font-medium mt-1">Beranda</span>
       </button>
 
-      <button onclick="switchTab('Tabungan')" id="navTabungan" class="nav-btn flex flex-col items-center justify-center w-14 sm:w-16 py-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors select-none">
-        <i class="fa-solid fa-piggy-bank text-lg mb-0.5"></i>
-        <span class="text-[10px] font-semibold">Tabungan</span>
+      <button onclick="switchTab('Tabungan')" id="navTabungan" class="nav-btn flex flex-col items-center justify-center w-14 sm:w-16 py-1 text-slate-400 select-none">
+        <i class="fa-solid fa-piggy-bank text-lg"></i>
+        <span class="text-[10px] font-medium mt-1">Alokasi</span>
       </button>
 
-      <!-- Center Plus Button perfectly aligned in-line with items -->
-      <div class="flex items-center justify-center w-14 sm:w-16">
-        <button onclick="openModal()" class="w-11 h-11 bg-brand-600 hover:bg-brand-700 text-white rounded-2xl flex items-center justify-center shadow-lg shadow-brand-500/30 transition-all select-none">
-          <i class="fa-solid fa-plus text-lg"></i>
-        </button>
+      <!-- SEJAJAR (+) BUTTON -->
+      <button onclick="openModal()" class="w-14 sm:w-16 flex flex-col items-center justify-center py-1 select-none">
+        <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-blue-700 via-blue-600 to-indigo-500 text-white flex items-center justify-center text-lg shadow-lg shadow-blue-600/30 active:scale-95">
+          <i class="fa-solid fa-plus"></i>
+        </div>
+      </button>
+
+      <button onclick="switchTab('Laporan')" id="navLaporan" class="nav-btn flex flex-col items-center justify-center w-14 sm:w-16 py-1 text-slate-400 select-none">
+        <i class="fa-solid fa-chart-line text-lg"></i>
+        <span class="text-[10px] font-medium mt-1">Laporan</span>
+      </button>
+
+      <button onclick="switchTab('Pengaturan')" id="navPengaturan" class="nav-btn flex flex-col items-center justify-center w-14 sm:w-16 py-1 text-slate-400 select-none">
+        <i class="fa-solid fa-gear text-lg"></i>
+        <span class="text-[10px] font-medium mt-1">Setelan</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- ==================== LOCK / PIN ACCESS SCREEN ==================== -->
+  <div id="pinScreen" class="fixed inset-0 z-[100] flex flex-col items-center justify-center p-4 overflow-hidden select-none bg-slate-950">
+    
+    <!-- Latar Belakang Biru Elegan Mewah -->
+    <div class="absolute inset-0 bg-gradient-to-br from-slate-950 via-blue-950 to-slate-950 opacity-95"></div>
+    
+    <!-- Ambient Radial Light Effects -->
+    <div class="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-blue-600/20 rounded-full blur-[100px] pointer-events-none"></div>
+    <div class="absolute bottom-1/4 left-1/2 -translate-x-1/2 translate-y-1/2 w-80 h-80 bg-indigo-600/15 rounded-full blur-[90px] pointer-events-none"></div>
+
+    <!-- Container Utama Akses PIN -->
+    <div class="relative z-10 w-full max-w-sm flex flex-col items-center">
+      
+      <!-- Brand & Icon Header -->
+      <div class="mb-8 text-center flex flex-col items-center">
+        <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500 via-blue-600 to-indigo-800 flex items-center justify-center text-white text-2xl shadow-xl shadow-blue-600/30 border border-blue-400/30 mb-4">
+          <i class="fa-solid fa-chart-line text-blue-100"></i>
+        </div>
+        <h1 class="brand-title text-3xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-blue-200 via-blue-400 to-indigo-300 drop-shadow-sm">
+          Finance Management
+        </h1>
+        <p class="text-xs text-blue-300/70 font-medium tracking-widest uppercase mt-1">Masukkan PIN Akses Anda</p>
       </div>
 
-      <button onclick="switchTab('Laporan')" id="navLaporan" class="nav-btn flex flex-col items-center justify-center w-14 sm:w-16 py-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors select-none">
-        <i class="fa-solid fa-chart-line text-lg mb-0.5"></i>
-        <span class="text-[10px] font-semibold">Laporan</span>
-      </button>
+      <!-- Card PIN Input -->
+      <div class="w-full bg-slate-900/80 backdrop-blur-2xl border border-blue-500/20 rounded-3xl p-6 sm:p-8 shadow-2xl shadow-blue-950/50 flex flex-col items-center">
+        
+        <!-- Indicator Dots -->
+        <div class="flex items-center justify-center gap-3 mb-8" id="pinDots">
+          <div id="dot-0" class="w-4 h-4 rounded-full border-2 border-blue-500/40 bg-transparent transition-all duration-150"></div>
+          <div id="dot-1" class="w-4 h-4 rounded-full border-2 border-blue-500/40 bg-transparent transition-all duration-150"></div>
+          <div id="dot-2" class="w-4 h-4 rounded-full border-2 border-blue-500/40 bg-transparent transition-all duration-150"></div>
+          <div id="dot-3" class="w-4 h-4 rounded-full border-2 border-blue-500/40 bg-transparent transition-all duration-150"></div>
+          <div id="dot-4" class="w-4 h-4 rounded-full border-2 border-blue-500/40 bg-transparent transition-all duration-150"></div>
+          <div id="dot-5" class="w-4 h-4 rounded-full border-2 border-blue-500/40 bg-transparent transition-all duration-150"></div>
+        </div>
 
-      <button onclick="switchTab('Pengaturan')" id="navPengaturan" class="nav-btn flex flex-col items-center justify-center w-14 sm:w-16 py-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors select-none">
-        <i class="fa-solid fa-gear text-lg mb-0.5"></i>
-        <span class="text-[10px] font-semibold">Pengaturan</span>
-      </button>
+        <!-- Keypad Grid -->
+        <div class="grid grid-cols-3 gap-3 sm:gap-4 w-full">
+          <button type="button" onclick="appendPin('1')" class="keypad-btn h-12 sm:h-14 bg-blue-950/40 hover:bg-blue-900/50 active:bg-blue-800/60 border border-blue-500/20 rounded-2xl text-xl font-bold text-blue-100 flex items-center justify-center">1</button>
+          <button type="button" onclick="appendPin('2')" class="keypad-btn h-12 sm:h-14 bg-blue-950/40 hover:bg-blue-900/50 active:bg-blue-800/60 border border-blue-500/20 rounded-2xl text-xl font-bold text-blue-100 flex items-center justify-center">2</button>
+          <button type="button" onclick="appendPin('3')" class="keypad-btn h-12 sm:h-14 bg-blue-950/40 hover:bg-blue-900/50 active:bg-blue-800/60 border border-blue-500/20 rounded-2xl text-xl font-bold text-blue-100 flex items-center justify-center">3</button>
+          <button type="button" onclick="appendPin('4')" class="keypad-btn h-12 sm:h-14 bg-blue-950/40 hover:bg-blue-900/50 active:bg-blue-800/60 border border-blue-500/20 rounded-2xl text-xl font-bold text-blue-100 flex items-center justify-center">4</button>
+          <button type="button" onclick="appendPin('5')" class="keypad-btn h-12 sm:h-14 bg-blue-950/40 hover:bg-blue-900/50 active:bg-blue-800/60 border border-blue-500/20 rounded-2xl text-xl font-bold text-blue-100 flex items-center justify-center">5</button>
+          <button type="button" onclick="appendPin('6')" class="keypad-btn h-12 sm:h-14 bg-blue-950/40 hover:bg-blue-900/50 active:bg-blue-800/60 border border-blue-500/20 rounded-2xl text-xl font-bold text-blue-100 flex items-center justify-center">6</button>
+          <button type="button" onclick="appendPin('7')" class="keypad-btn h-12 sm:h-14 bg-blue-950/40 hover:bg-blue-900/50 active:bg-blue-800/60 border border-blue-500/20 rounded-2xl text-xl font-bold text-blue-100 flex items-center justify-center">7</button>
+          <button type="button" onclick="appendPin('8')" class="keypad-btn h-12 sm:h-14 bg-blue-950/40 hover:bg-blue-900/50 active:bg-blue-800/60 border border-blue-500/20 rounded-2xl text-xl font-bold text-blue-100 flex items-center justify-center">8</button>
+          <button type="button" onclick="appendPin('9')" class="keypad-btn h-12 sm:h-14 bg-blue-950/40 hover:bg-blue-900/50 active:bg-blue-800/60 border border-blue-500/20 rounded-2xl text-xl font-bold text-blue-100 flex items-center justify-center">9</button>
+          <button type="button" onclick="clearPin()" class="keypad-btn h-12 sm:h-14 bg-rose-950/40 hover:bg-rose-900/60 active:bg-rose-800/70 border border-rose-500/30 rounded-2xl text-xs sm:text-sm font-bold text-rose-300 flex items-center justify-center gap-1 shadow-inner select-none">
+            <i class="fa-solid fa-rotate-left text-xs"></i> Hapus
+          </button>
+          <button type="button" onclick="appendPin('0')" class="keypad-btn h-12 sm:h-14 bg-blue-950/40 hover:bg-blue-900/50 active:bg-blue-800/60 border border-blue-500/20 rounded-2xl text-xl font-bold text-blue-100 flex items-center justify-center">0</button>
+          <button type="button" onclick="deletePinDigit()" class="keypad-btn h-12 sm:h-14 bg-blue-950/40 hover:bg-blue-900/50 active:bg-blue-800/60 border border-blue-500/20 rounded-2xl text-lg text-blue-300 flex items-center justify-center" title="Hapus Digit Terakhir">
+            <i class="fa-solid fa-backspace"></i>
+          </button>
+        </div>
+
+      </div>
+
+      <p class="mt-6 text-[11px] text-blue-300/50 flex items-center gap-1.5 font-medium">
+        <i class="fa-solid fa-shield-halved text-blue-400"></i>
+        <span>Sistem Akses Keamanan Terenkripsi</span>
+      </p>
+
     </div>
   </div>
 
   <!-- ==================== MODAL TAMBAH TRANSAKSI ==================== -->
-  <div id="transactionModal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm opacity-0 pointer-events-none transition-all duration-300 p-4">
-    <div class="bg-white dark:bg-darkcard border border-slate-200 dark:border-darkborder rounded-3xl max-w-lg w-full p-6 shadow-2xl transition-all transform scale-95" id="modalContainer">
+  <div id="transactionModal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm opacity-0 pointer-events-none p-4">
+    <div class="bg-white dark:bg-darkcard border border-slate-200 dark:border-darkborder rounded-3xl max-w-lg w-full p-6 shadow-2xl transform scale-95" id="modalContainer">
       <div class="flex justify-between items-center mb-6">
         <h3 class="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
-          <i class="fa-solid fa-pen-to-square text-brand-500"></i>
+          <i class="fa-solid fa-pen-to-square text-blue-500"></i>
           Tambah Transaksi Baru
         </h3>
-        <button onclick="closeModal()" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center justify-center transition-all select-none">
+        <button onclick="closeModal()" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center justify-center select-none">
           <i class="fa-solid fa-xmark"></i>
         </button>
       </div>
 
       <form id="transactionForm" onsubmit="handleFormSubmit(event)" class="space-y-4">
-        <!-- Jenis Transaksi -->
         <div>
           <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2">Tipe Transaksi</label>
           <div class="grid grid-cols-2 gap-3">
             <label class="cursor-pointer select-none">
               <input type="radio" name="type" value="pemasukan" class="peer hidden" checked onchange="updateCategories()">
-              <div class="p-3 text-center border border-slate-200 dark:border-slate-700 rounded-xl peer-checked:border-emerald-500 peer-checked:bg-emerald-50 dark:peer-checked:bg-emerald-500/10 peer-checked:text-emerald-600 dark:peer-checked:text-emerald-400 font-medium transition-all text-sm">
+              <div class="p-3 text-center border border-slate-200 dark:border-slate-700 rounded-xl peer-checked:border-emerald-500 peer-checked:bg-emerald-50 dark:peer-checked:bg-emerald-500/10 peer-checked:text-emerald-600 dark:peer-checked:text-emerald-400 font-medium text-sm">
                 <i class="fa-solid fa-circle-arrow-down mr-1"></i> Pemasukan
               </div>
             </label>
             <label class="cursor-pointer select-none">
               <input type="radio" name="type" value="pengeluaran" class="peer hidden" onchange="updateCategories()">
-              <div class="p-3 text-center border border-slate-200 dark:border-slate-700 rounded-xl peer-checked:border-rose-500 peer-checked:bg-rose-50 dark:peer-checked:bg-rose-500/10 peer-checked:text-rose-600 dark:peer-checked:text-rose-400 font-medium transition-all text-sm">
+              <div class="p-3 text-center border border-slate-200 dark:border-slate-700 rounded-xl peer-checked:border-rose-500 peer-checked:bg-rose-50 dark:peer-checked:bg-rose-500/10 peer-checked:text-rose-600 dark:peer-checked:text-rose-400 font-medium text-sm">
                 <i class="fa-solid fa-circle-arrow-up mr-1"></i> Pengeluaran
               </div>
             </label>
           </div>
         </div>
 
-        <!-- Jumlah Nominal Boxed Input -->
         <div>
           <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">Nominal (Rp)</label>
           <div class="relative flex items-center">
             <span class="absolute left-3.5 text-sm font-bold text-slate-400 dark:text-slate-500">Rp</span>
-            <input type="text" id="amount" required placeholder="0" inputmode="numeric" oninput="formatNumberInput(this)" class="w-full pl-10 pr-4 py-3 bg-slate-50 dark:bg-slate-800/80 border-2 border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 font-bold text-lg focus:outline-none transition-all shadow-inner">
+            <input type="text" id="amount" required placeholder="0" inputmode="numeric" oninput="formatNumberInput(this)" class="w-full pl-10 pr-4 py-3 bg-slate-50 dark:bg-slate-800/80 border-2 border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 font-bold text-lg focus:outline-none shadow-inner">
           </div>
         </div>
 
-        <!-- Kategori -->
         <div>
           <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">Kategori</label>
-          <select id="category" required class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-800 dark:text-slate-100 text-sm focus:outline-none">
+          <select id="category" required onchange="checkSalaryNotice()" class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-800 dark:text-slate-100 text-sm focus:outline-none">
             <!-- Dynamic Injection -->
           </select>
-          <p id="salaryNotice" class="text-[11px] text-brand-500 dark:text-brand-400 mt-1.5 hidden flex items-center gap-1">
+          <p id="salaryNotice" class="text-[11px] text-blue-500 dark:text-blue-400 mt-1.5 hidden flex items-center gap-1">
             <i class="fa-solid fa-magic"></i> Pemasukan Gajian ini akan otomatis dibagikan 50% Kebutuhan, 30% Keinginan, & 20% Tabungan!
           </p>
         </div>
 
-        <!-- Tanggal -->
         <div>
           <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">Tanggal</label>
           <input type="date" id="date" required class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-800 dark:text-slate-100 text-sm focus:outline-none">
         </div>
 
-        <!-- Keterangan / Catatan -->
         <div>
           <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">Catatan / Keterangan</label>
           <input type="text" id="description" placeholder="Contoh: Gaji Bulan Ini, Beli Token Listrik" class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-800 dark:text-slate-100 text-sm focus:outline-none">
         </div>
 
         <div class="flex items-center gap-3 pt-4">
-          <button type="button" id="btnCancelTx" onclick="closeModal()" class="w-1/2 py-3 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-medium rounded-xl transition-all text-sm select-none">Batal</button>
-          <button type="submit" id="btnSaveTx" class="w-1/2 py-3 bg-brand-600 hover:bg-brand-700 text-white font-medium rounded-xl shadow-lg shadow-brand-500/25 transition-all text-sm flex items-center justify-center gap-2 select-none">
+          <button type="button" id="btnCancelTx" onclick="closeModal()" class="w-1/2 py-3 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-medium rounded-xl text-sm select-none">Batal</button>
+          <button type="submit" id="btnSaveTx" class="w-1/2 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-xl shadow-lg shadow-blue-500/25 text-sm flex items-center justify-center gap-2 select-none">
             <span id="btnSaveText">Simpan Transaksi</span>
             <i id="btnSaveSpinner" class="fa-solid fa-spinner fa-spin hidden"></i>
           </button>
@@ -625,7 +601,7 @@
   </div>
 
   <!-- ==================== NOTIFIKASI TOAST ELEGAN ==================== -->
-  <div id="toastNotification" class="fixed top-5 right-5 z-50 flex items-center gap-3 bg-white/90 dark:bg-darkcard/90 backdrop-blur-md border border-emerald-500/30 text-slate-800 dark:text-white px-5 py-4 rounded-2xl shadow-xl transform translate-y-[-150%] opacity-0 transition-all duration-500">
+  <div id="toastNotification" class="fixed top-5 right-5 z-50 flex items-center gap-3 bg-white/90 dark:bg-darkcard/90 backdrop-blur-md border border-emerald-500/30 text-slate-800 dark:text-white px-5 py-4 rounded-2xl shadow-xl transform translate-y-[-150%] opacity-0 transition-all duration-300">
     <div class="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center text-lg flex-shrink-0">
       <i class="fa-solid fa-circle-check"></i>
     </div>
@@ -636,14 +612,14 @@
   </div>
 
   <!-- ==================== MODAL UBAH PIN ==================== -->
-  <div id="changePinModal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm opacity-0 pointer-events-none transition-all duration-300 p-4">
-    <div class="bg-white dark:bg-darkcard border border-slate-200 dark:border-darkborder rounded-3xl max-w-sm w-full p-6 shadow-2xl transition-all transform scale-95" id="changePinModalContainer">
+  <div id="changePinModal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm opacity-0 pointer-events-none p-4">
+    <div class="bg-white dark:bg-darkcard border border-slate-200 dark:border-darkborder rounded-3xl max-w-sm w-full p-6 shadow-2xl transform scale-95" id="changePinModalContainer">
       <div class="flex justify-between items-center mb-4">
         <h3 class="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
-          <i class="fa-solid fa-key text-brand-500"></i>
+          <i class="fa-solid fa-key text-blue-500"></i>
           Ubah PIN Akses
         </h3>
-        <button onclick="closeChangePinModal()" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center justify-center transition-all select-none">
+        <button onclick="closeChangePinModal()" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center justify-center select-none">
           <i class="fa-solid fa-xmark"></i>
         </button>
       </div>
@@ -667,8 +643,8 @@
         <div id="pinChangeError" class="text-xs text-rose-500 font-medium hidden text-center"></div>
 
         <div class="flex items-center gap-3 pt-2">
-          <button type="button" onclick="closeChangePinModal()" class="w-1/2 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-medium rounded-xl transition-all text-sm select-none">Batal</button>
-          <button type="submit" class="w-1/2 py-2.5 bg-brand-600 hover:bg-brand-700 text-white font-medium rounded-xl shadow-md shadow-brand-500/25 transition-all text-sm select-none">Simpan PIN</button>
+          <button type="button" onclick="closeChangePinModal()" class="w-1/2 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-medium rounded-xl text-sm select-none">Batal</button>
+          <button type="submit" class="w-1/2 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-xl shadow-md shadow-blue-500/25 text-sm select-none">Simpan PIN</button>
         </div>
       </form>
     </div>
@@ -716,7 +692,6 @@
 
     // DOM Initializations
     document.addEventListener("DOMContentLoaded", () => {
-      // Check session state to prevent lock screen on soft reloads/pull-to-refresh
       if (isUnlocked) {
         document.body.classList.remove('lock-scroll');
         const pinScreen = document.getElementById('pinScreen');
@@ -725,36 +700,24 @@
           pinScreen.style.display = 'none';
         }
       } else {
-        // Lock scroll initially for PIN screen
         document.body.classList.add('lock-scroll');
       }
 
       const dateEl = document.getElementById('date');
       if (dateEl) dateEl.valueAsDate = new Date();
       
+      const monthPicker = document.getElementById('reportMonthPicker');
+      if (monthPicker) {
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        monthPicker.value = `${year}-${month}`;
+      }
+
       initTheme();
       updateCategories();
       renderDashboard();
 
-      // Native hidden keyboard synchronization
-      const pinHiddenInput = document.getElementById('pinHiddenInput');
-      if (pinHiddenInput && !isUnlocked) {
-        pinHiddenInput.focus();
-        pinHiddenInput.addEventListener('input', (e) => {
-          const val = e.target.value;
-          if (/^\d*$/.test(val)) {
-            enteredPin = val;
-            updatePinDots();
-            if (enteredPin.length === 6) {
-              checkPin();
-            }
-          } else {
-            e.target.value = enteredPin;
-          }
-        });
-      }
-
-      // Keyboard Listener
       document.addEventListener('keydown', (e) => {
         const pinScreen = document.getElementById('pinScreen');
         if (pinScreen && pinScreen.style.display !== 'none' && !pinScreen.classList.contains('pointer-events-none')) {
@@ -773,7 +736,7 @@
     function switchTab(tabName) {
       document.querySelectorAll('.tab-view').forEach(view => view.classList.add('hidden'));
       document.querySelectorAll('.nav-btn').forEach(btn => {
-        btn.classList.remove('text-brand-600', 'dark:text-brand-400');
+        btn.classList.remove('text-blue-600', 'dark:text-blue-400');
         btn.classList.add('text-slate-400');
       });
 
@@ -783,19 +746,18 @@
       if (targetView) targetView.classList.remove('hidden');
       if (targetNav) {
         targetNav.classList.remove('text-slate-400');
-        targetNav.classList.add('text-brand-600', 'dark:text-brand-400');
+        targetNav.classList.add('text-blue-600', 'dark:text-blue-400');
       }
     }
 
-    /* PIN Lock System Functions */
+    /* PIN Lock System Logic */
     function appendPin(num) {
       if (enteredPin.length < 6) {
         enteredPin += num;
-        const hiddenInput = document.getElementById('pinHiddenInput');
-        if (hiddenInput) hiddenInput.value = enteredPin;
         updatePinDots();
+
         if (enteredPin.length === 6) {
-          setTimeout(checkPin, 100);
+          setTimeout(checkPin, 80);
         }
       }
     }
@@ -803,16 +765,12 @@
     function deletePinDigit() {
       if (enteredPin.length > 0) {
         enteredPin = enteredPin.slice(0, -1);
-        const hiddenInput = document.getElementById('pinHiddenInput');
-        if (hiddenInput) hiddenInput.value = enteredPin;
         updatePinDots();
       }
     }
 
     function clearPin() {
       enteredPin = "";
-      const hiddenInput = document.getElementById('pinHiddenInput');
-      if (hiddenInput) hiddenInput.value = "";
       updatePinDots();
     }
 
@@ -821,14 +779,47 @@
         const dot = document.getElementById(`dot-${i}`);
         if (dot) {
           if (i < enteredPin.length) {
-            dot.className = "w-5 h-5 rounded-full border-2 border-brand-500 bg-brand-500 shadow-md shadow-brand-500/40 scale-110 transition-all duration-200";
+            dot.className = "w-4 h-4 rounded-full border-2 border-blue-400 bg-blue-400 shadow-lg shadow-blue-500/50 stealth-active";
           } else {
-            dot.className = "w-5 h-5 rounded-full border-2 border-slate-300 dark:border-slate-600 bg-transparent transition-all duration-200";
+            dot.className = "w-4 h-4 rounded-full border-2 border-blue-500/40 bg-transparent";
           }
         }
       }
     }
 
+    function checkPin() {
+      if (enteredPin === userPin) {
+        playSuccessSound();
+        isUnlocked = true;
+        sessionStorage.setItem('fm_is_unlocked', 'true');
+        document.body.classList.remove('lock-scroll');
+        const pinScreen = document.getElementById('pinScreen');
+        if (pinScreen) {
+          pinScreen.classList.add('opacity-0', 'pointer-events-none');
+          setTimeout(() => {
+            pinScreen.style.display = 'none';
+            clearPin();
+          }, 300);
+        }
+      } else {
+        showToast('Keamanan PIN', 'Kode PIN yang dimasukkan salah!');
+        clearPin();
+      }
+    }
+
+    function lockApp() {
+      isUnlocked = false;
+      sessionStorage.removeItem('fm_is_unlocked');
+      clearPin();
+      document.body.classList.add('lock-scroll');
+      const pinScreen = document.getElementById('pinScreen');
+      if (pinScreen) {
+        pinScreen.style.display = 'flex';
+        setTimeout(() => pinScreen.classList.remove('opacity-0', 'pointer-events-none'), 10);
+      }
+    }
+
+    /* Sound Audio Feedback */
     function playSuccessSound() {
       try {
         const AudioContext = window.AudioContext || window.webkitAudioContext;
@@ -851,7 +842,7 @@
         osc.start();
         osc.stop(ctx.currentTime + 0.35);
       } catch (err) {
-        console.log('Web Audio context error:', err);
+        console.log('Web Audio Context:', err);
       }
     }
 
@@ -872,74 +863,349 @@
           osc.frequency.setValueAtTime(freq, now + index * 0.12);
 
           gain.gain.setValueAtTime(0.001, now + index * 0.12);
-          gain.gain.exponentialRampToValueAtTime(0.2, now + index * 0.12 + 0.03);
-          gain.gain.exponentialRampToValueAtTime(0.001, now + index * 0.12 + 0.45);
+          gain.gain.linearRampToValueAtTime(0.25, now + index * 0.12 + 0.02);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + index * 0.12 + 0.3);
 
           osc.connect(gain);
           gain.connect(ctx.destination);
 
           osc.start(now + index * 0.12);
-          osc.stop(now + index * 0.12 + 0.5);
+          osc.stop(now + index * 0.12 + 0.3);
         });
       } catch (err) {
-        console.log('Web Audio sound error:', err);
+        console.log('Web Audio Context:', err);
       }
     }
 
-    function showToast(title, message) {
-      const toast = document.getElementById('toastNotification');
-      const toastTitle = document.getElementById('toastTitle');
-      const toastMsg = document.getElementById('toastMessage');
-
-      if (!toast) return;
-
-      toastTitle.textContent = title;
-      toastMsg.textContent = message;
-
-      toast.classList.remove('translate-y-[-150%]', 'opacity-0');
-      toast.classList.add('translate-y-0', 'opacity-100');
-
-      setTimeout(() => {
-        toast.classList.remove('translate-y-0', 'opacity-100');
-        toast.classList.add('translate-y-[-150%]', 'opacity-0');
-      }, 3500);
+    /* Modal Controls & Handlers */
+    function openModal() {
+      const modal = document.getElementById('transactionModal');
+      const container = document.getElementById('modalContainer');
+      modal.classList.remove('opacity-0', 'pointer-events-none');
+      container.classList.remove('scale-95');
+      container.classList.add('scale-100');
     }
 
-    function checkPin() {
-      if (enteredPin === userPin) {
-        playSuccessSound();
-        // Save unlock state for current session (prevents locking on pull-down refresh)
-        isUnlocked = true;
-        sessionStorage.setItem('fm_is_unlocked', 'true');
+    function closeModal() {
+      const modal = document.getElementById('transactionModal');
+      const container = document.getElementById('modalContainer');
+      container.classList.remove('scale-100');
+      container.classList.add('scale-95');
+      modal.classList.add('opacity-0', 'pointer-events-none');
+    }
 
-        // Enable page scrolling when PIN is correct
-        document.body.classList.remove('lock-scroll');
-        const pinScreen = document.getElementById('pinScreen');
-        if (pinScreen) {
-          pinScreen.classList.add('opacity-0', 'pointer-events-none');
-          setTimeout(() => {
-            pinScreen.style.display = 'none';
-          }, 500);
-        }
+    function updateCategories() {
+      const type = document.querySelector('input[name="type"]:checked').value;
+      const select = document.getElementById('category');
+      select.innerHTML = '';
+
+      const cats = type === 'pemasukan' ? incomeCategories : expenseCategories;
+      cats.forEach(cat => {
+        const option = document.createElement('option');
+        option.value = cat;
+        option.textContent = cat;
+        select.appendChild(option);
+      });
+
+      checkSalaryNotice();
+    }
+
+    function checkSalaryNotice() {
+      const type = document.querySelector('input[name="type"]:checked').value;
+      const category = document.getElementById('category').value;
+      const notice = document.getElementById('salaryNotice');
+      if (type === 'pemasukan' && category === 'Gajian') {
+        notice.classList.remove('hidden');
       } else {
-        const container = document.getElementById('pinDots');
-        if (container) {
-          container.classList.add('animate-bounce');
-          setTimeout(() => container.classList.remove('animate-bounce'), 500);
-        }
-        clearPin();
+        notice.classList.add('hidden');
       }
     }
 
-    function openChangePinModal() {
-      document.body.classList.add('lock-scroll');
-      document.getElementById('oldPinInput').value = '';
-      document.getElementById('newPinInput').value = '';
-      document.getElementById('confirmPinInput').value = '';
-      const errEl = document.getElementById('pinChangeError');
-      errEl.classList.add('hidden');
-      errEl.textContent = '';
+    function handleFormSubmit(e) {
+      e.preventDefault();
+      
+      const type = document.querySelector('input[name="type"]:checked').value;
+      const amountStr = document.getElementById('amount').value;
+      const amount = getRawAmountValue(amountStr);
+      const category = document.getElementById('category').value;
+      const date = document.getElementById('date').value;
+      const description = document.getElementById('description').value || category;
 
+      if (!amount || amount <= 0) {
+        showToast('Peringatan', 'Harap masukkan nominal yang valid!');
+        return;
+      }
+
+      const tx = {
+        id: Date.now(),
+        type,
+        amount,
+        category,
+        date,
+        description
+      };
+
+      transactions.unshift(tx);
+      localStorage.setItem('fm_transactions', JSON.stringify(transactions));
+
+      playTransactionChimeSound();
+      showToast('Berhasil Simpan', 'Catatan transaksi telah tersimpan.');
+
+      closeModal();
+      document.getElementById('transactionForm').reset();
+      document.getElementById('date').valueAsDate = new Date();
+      updateCategories();
+      renderDashboard();
+    }
+
+    function deleteTransaction(id) {
+      transactions = transactions.filter(t => t.id !== id);
+      localStorage.setItem('fm_transactions', JSON.stringify(transactions));
+      showToast('Dihapus', 'Transaksi berhasil dihapus.');
+      renderDashboard();
+    }
+
+    /* Dashboard & Calculations Render logic */
+    function renderDashboard() {
+      let totalIncome = 0;
+      let totalExpense = 0;
+      let totalSalary = 0;
+
+      transactions.forEach(t => {
+        if (t.type === 'pemasukan') {
+          totalIncome += t.amount;
+          if (t.category === 'Gajian') {
+            totalSalary += t.amount;
+          }
+        } else if (t.type === 'pengeluaran') {
+          totalExpense += t.amount;
+        }
+      });
+
+      const totalBalance = totalIncome - totalExpense;
+
+      document.getElementById('totalBalance').textContent = formatCurrency(totalBalance);
+      document.getElementById('totalIncome').textContent = formatCurrency(totalIncome);
+      document.getElementById('totalExpense').textContent = formatCurrency(totalExpense);
+
+      // Budget Allocations (50/30/20)
+      const baseSalary = totalSalary > 0 ? totalSalary : totalIncome;
+      const needsAlloc = baseSalary * 0.50;
+      const wantsAlloc = baseSalary * 0.30;
+      const savingsAlloc = baseSalary * 0.20;
+
+      let needsSpent = 0;
+      let wantsSpent = 0;
+      let savingsSpent = 0;
+
+      transactions.forEach(t => {
+        if (t.type === 'pengeluaran') {
+          if (['Makanan & Minuman', 'Tagihan & Utilitas', 'Belanja Rumah Tangga', 'Transportasi', 'Kesehatan', 'Pendidikan'].includes(t.category)) {
+            needsSpent += t.amount;
+          } else if (['Hiburan & Keinginan', 'Lainnya'].includes(t.category)) {
+            wantsSpent += t.amount;
+          }
+        }
+      });
+
+      const needsRemain = Math.max(0, needsAlloc - needsSpent);
+      const wantsRemain = Math.max(0, wantsAlloc - wantsSpent);
+      const savingsRemain = Math.max(0, savingsAlloc - savingsSpent);
+
+      document.getElementById('needsAmount').textContent = formatCurrency(needsAlloc);
+      document.getElementById('wantsAmount').textContent = formatCurrency(wantsAlloc);
+      document.getElementById('savingsAmount').textContent = formatCurrency(savingsAlloc);
+
+      document.getElementById('needsRemainText').textContent = formatCurrency(needsRemain);
+      document.getElementById('wantsRemainText').textContent = formatCurrency(wantsRemain);
+      document.getElementById('savingsRemainText').textContent = formatCurrency(savingsRemain);
+
+      // Tabungan view elements
+      document.getElementById('needsAmountTab').textContent = formatCurrency(needsAlloc);
+      document.getElementById('wantsAmountTab').textContent = formatCurrency(wantsAlloc);
+      document.getElementById('savingsAmountTab').textContent = formatCurrency(savingsAlloc);
+
+      // Bars
+      const needsPct = needsAlloc > 0 ? Math.min(100, Math.max(0, (needsRemain / needsAlloc) * 100)) : 0;
+      const wantsPct = wantsAlloc > 0 ? Math.min(100, Math.max(0, (wantsRemain / wantsAlloc) * 100)) : 0;
+      const savingsPct = savingsAlloc > 0 ? Math.min(100, Math.max(0, (savingsRemain / savingsAlloc) * 100)) : 0;
+
+      document.getElementById('needsBar').style.width = `${needsPct}%`;
+      document.getElementById('wantsBar').style.width = `${wantsPct}%`;
+      document.getElementById('savingsBar').style.width = `${savingsPct}%`;
+
+      renderTransactions();
+      renderReports(totalIncome, totalExpense);
+    }
+
+    function renderTransactions() {
+      const search = document.getElementById('searchInput').value.toLowerCase();
+      const filter = document.getElementById('filterType').value;
+      const tbody = document.getElementById('transactionList');
+      const emptyState = document.getElementById('emptyState');
+
+      tbody.innerHTML = '';
+
+      const filtered = transactions.filter(t => {
+        const matchesSearch = t.description.toLowerCase().includes(search) || t.category.toLowerCase().includes(search);
+        const matchesFilter = filter === 'all' || t.type === filter;
+        return matchesSearch && matchesFilter;
+      });
+
+      if (filtered.length === 0) {
+        emptyState.classList.remove('hidden');
+      } else {
+        emptyState.classList.add('hidden');
+        filtered.forEach(t => {
+          const tr = document.createElement('tr');
+          tr.className = "hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors";
+
+          const isInc = t.type === 'pemasukan';
+          const typeBadge = isInc 
+            ? `<span class="px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-semibold text-[11px]"><i class="fa-solid fa-arrow-down-left mr-1"></i> Masuk</span>`
+            : `<span class="px-2.5 py-1 rounded-full bg-rose-500/10 text-rose-600 dark:text-rose-400 font-semibold text-[11px]"><i class="fa-solid fa-arrow-up-right mr-1"></i> Keluar</span>`;
+
+          const amountFormatted = (isInc ? '+ ' : '- ') + formatCurrency(t.amount);
+          const amountClass = isInc ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400';
+
+          tr.innerHTML = `
+            <td class="px-6 py-4 whitespace-nowrap text-xs text-slate-400">${t.date}</td>
+            <td class="px-6 py-4">
+              <div class="font-bold text-slate-800 dark:text-slate-100">${t.category}</div>
+              <div class="text-xs text-slate-400 dark:text-slate-500">${t.description}</div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">${typeBadge}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-right font-black ${amountClass}">${amountFormatted}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-center">
+              <button onclick="deleteTransaction(${t.id})" class="p-2 text-slate-400 hover:text-rose-500 transition-colors select-none">
+                <i class="fa-solid fa-trash-can"></i>
+              </button>
+            </td>
+          `;
+
+          tbody.appendChild(tr);
+        });
+      }
+    }
+
+    function renderReports(totalIncome, totalExpense) {
+      const ratio = totalIncome > 0 ? Math.round(((totalIncome - totalExpense) / totalIncome) * 100) : 0;
+      const ratioClamped = Math.max(0, Math.min(100, ratio));
+
+      document.getElementById('savingsRatioText').textContent = `${ratioClamped}%`;
+      document.getElementById('savingsRatioBar').style.width = `${ratioClamped}%`;
+
+      const healthText = document.getElementById('healthAnalysisText');
+      if (totalIncome === 0) {
+        healthText.textContent = "Belum ada data pemasukan untuk dihitung kesehatan finansialnya.";
+      } else if (ratio >= 20) {
+        healthText.textContent = "Sangat Baik! Anda mampu menyisihkan lebih dari 20% penghasilan untuk tabungan.";
+      } else if (ratio > 0) {
+        healthText.textContent = "Cukup Baik. Usahakan untuk mengurangi pengeluaran sekunder agar rasio tabungan mencapai 20%.";
+      } else {
+        healthText.textContent = "Waspada! Pengeluaran Anda melebihi atau menghabiskan seluruh pemasukan.";
+      }
+
+      const breakdownEl = document.getElementById('categoryBreakdown');
+      breakdownEl.innerHTML = '';
+
+      const catMap = {};
+      transactions.forEach(t => {
+        if (t.type === 'pengeluaran') {
+          catMap[t.category] = (catMap[t.category] || 0) + t.amount;
+        }
+      });
+
+      if (Object.keys(catMap).length === 0) {
+        breakdownEl.innerHTML = `<p class="text-slate-400 text-center py-4">Belum ada pengeluaran tercatat.</p>`;
+        return;
+      }
+
+      Object.entries(catMap).forEach(([cat, amount]) => {
+        const pct = totalExpense > 0 ? Math.round((amount / totalExpense) * 100) : 0;
+        const row = document.createElement('div');
+        row.className = "space-y-1";
+        row.innerHTML = `
+          <div class="flex justify-between font-semibold">
+            <span class="text-slate-700 dark:text-slate-300">${cat}</span>
+            <span class="text-slate-900 dark:text-white">${formatCurrency(amount)} (${pct}%)</span>
+          </div>
+          <div class="w-full bg-slate-100 dark:bg-slate-800 h-2 rounded-full overflow-hidden">
+            <div class="bg-blue-500 h-full rounded-full" style="width: ${pct}%"></div>
+          </div>
+        `;
+        breakdownEl.appendChild(row);
+      });
+    }
+
+    /* Monthly PDF Report Export Function */
+    function downloadMonthlyPDF() {
+      const monthVal = document.getElementById('reportMonthPicker').value;
+      if (!monthVal) {
+        showToast('Peringatan', 'Pilih bulan terlebih dahulu!');
+        return;
+      }
+
+      const [year, month] = monthVal.split('-');
+      const monthNames = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+      const monthLabel = `${monthNames[parseInt(month, 10) - 1]} ${year}`;
+
+      const filteredTx = transactions.filter(t => t.date.startsWith(monthVal));
+
+      if (filteredTx.length === 0) {
+        showToast('Info', `Tidak ada transaksi tercatat pada bulan ${monthLabel}.`);
+        return;
+      }
+
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+
+      doc.setFontSize(18);
+      doc.setFont("helvetica", "bold");
+      doc.text("LAPORAN KEUANGAN BULANAN", 14, 20);
+
+      doc.setFontSize(10);
+      doc.setFont("helvetica", "normal");
+      doc.text(`Periode: ${monthLabel}`, 14, 27);
+      doc.text(`Dicetak pada: ${new Date().toLocaleDateString('id-ID')}`, 14, 32);
+
+      let incSum = 0;
+      let expSum = 0;
+
+      const tableData = filteredTx.map((t, idx) => {
+        if (t.type === 'pemasukan') incSum += t.amount;
+        if (t.type === 'pengeluaran') expSum += t.amount;
+
+        return [
+          idx + 1,
+          t.date,
+          t.category,
+          t.description,
+          t.type === 'pemasukan' ? 'Pemasukan' : 'Pengeluaran',
+          formatCurrency(t.amount)
+        ];
+      });
+
+      doc.autoTable({
+        startY: 38,
+        head: [['No', 'Tanggal', 'Kategori', 'Keterangan', 'Jenis', 'Nominal']],
+        body: tableData,
+        theme: 'striped',
+        headStyles: { fillColor: [37, 99, 235] }
+      });
+
+      const finalY = doc.lastAutoTable.finalY + 10;
+      doc.setFont("helvetica", "bold");
+      doc.text(`Total Pemasukan: ${formatCurrency(incSum)}`, 14, finalY);
+      doc.text(`Total Pengeluaran: ${formatCurrency(expSum)}`, 14, finalY + 6);
+      doc.text(`Sisa Saldo Bulanan: ${formatCurrency(incSum - expSum)}`, 14, finalY + 12);
+
+      doc.save(`Laporan_Keuangan_${monthVal}.pdf`);
+      showToast('PDF Berhasil', 'Laporan keuangan PDF telah diunduh.');
+    }
+
+    /* Change PIN Handler */
+    function openChangePinModal() {
       const modal = document.getElementById('changePinModal');
       const container = document.getElementById('changePinModalContainer');
       modal.classList.remove('opacity-0', 'pointer-events-none');
@@ -948,16 +1214,12 @@
     }
 
     function closeChangePinModal() {
-      // Restore scrolling only if PIN screen is not active
-      const pinScreen = document.getElementById('pinScreen');
-      if (!pinScreen || pinScreen.style.display === 'none' || pinScreen.classList.contains('pointer-events-none')) {
-        document.body.classList.remove('lock-scroll');
-      }
       const modal = document.getElementById('changePinModal');
       const container = document.getElementById('changePinModalContainer');
       container.classList.remove('scale-100');
       container.classList.add('scale-95');
       modal.classList.add('opacity-0', 'pointer-events-none');
+      document.getElementById('pinChangeError').classList.add('hidden');
     }
 
     function handleChangePinSubmit(e) {
@@ -968,378 +1230,65 @@
       const errEl = document.getElementById('pinChangeError');
 
       if (oldPin !== userPin) {
-        errEl.textContent = 'PIN Lama salah!';
+        errEl.textContent = "PIN lama tidak cocok!";
         errEl.classList.remove('hidden');
         return;
       }
 
       if (newPin !== confirmPin) {
-        errEl.textContent = 'Konfirmasi PIN baru tidak cocok!';
-        errEl.classList.remove('hidden');
-        return;
-      }
-
-      if (newPin.length !== 6) {
-        errEl.textContent = 'PIN harus terdiri dari 6 angka!';
+        errEl.textContent = "Konfirmasi PIN baru tidak sama!";
         errEl.classList.remove('hidden');
         return;
       }
 
       userPin = newPin;
-      localStorage.setItem('fm_user_pin', userPin);
+      localStorage.setItem('fm_user_pin', newPin);
       closeChangePinModal();
-      alert('PIN berhasil diperbarui!');
+      showToast('PIN Diperbarui', 'PIN keamanan berhasil diubah.');
     }
 
-    function lockApp() {
-      clearPin();
-      isUnlocked = false;
-      sessionStorage.removeItem('fm_is_unlocked');
+    /* Reset Data */
+    function resetAllData() {
+      if (confirm('Apakah Anda yakin ingin menghapus seluruh data transaksi? Tindakan ini tidak dapat dibatalkan.')) {
+        transactions = [];
+        localStorage.removeItem('fm_transactions');
+        renderDashboard();
+        showToast('Reset Selesai', 'Seluruh data transaksi telah dibersihkan.');
+      }
+    }
 
-      // Lock page scrolling when locking app
-      document.body.classList.add('lock-scroll');
-      const pinScreen = document.getElementById('pinScreen');
-      pinScreen.style.display = 'flex';
+    /* Toast Notification Display */
+    function showToast(title, message) {
+      const toast = document.getElementById('toastNotification');
+      document.getElementById('toastTitle').textContent = title;
+      document.getElementById('toastMessage').textContent = message;
+
+      toast.classList.remove('translate-y-[-150%]', 'opacity-0');
+      toast.classList.add('translate-y-0', 'opacity-100');
+
       setTimeout(() => {
-        pinScreen.classList.remove('opacity-0', 'pointer-events-none');
-      }, 10);
+        toast.classList.remove('translate-y-0', 'opacity-100');
+        toast.classList.add('translate-y-[-150%]', 'opacity-0');
+      }, 3000);
     }
 
-    /* Theme Controls */
+    /* Theme System */
     function initTheme() {
-      const savedTheme = localStorage.getItem('fm_theme');
-      if (savedTheme === 'light') {
-        document.documentElement.classList.remove('dark');
-      } else {
+      if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
         document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
       }
     }
 
     function toggleTheme() {
-      const isDark = document.documentElement.classList.toggle('dark');
-      localStorage.setItem('fm_theme', isDark ? 'dark' : 'light');
-    }
-
-    /* Category & Transaction Modals */
-    function updateCategories() {
-      const typeInput = document.querySelector('input[name="type"]:checked');
-      if (!typeInput) return;
-      const type = typeInput.value;
-      const categorySelect = document.getElementById('category');
-      const salaryNotice = document.getElementById('salaryNotice');
-      
-      categorySelect.innerHTML = '';
-      
-      const list = type === 'pemasukan' ? incomeCategories : expenseCategories;
-      list.forEach(cat => {
-        const opt = document.createElement('option');
-        opt.value = cat;
-        opt.textContent = cat;
-        categorySelect.appendChild(opt);
-      });
-
-      categorySelect.onchange = () => {
-        if (categorySelect.value === 'Gajian') {
-          salaryNotice.classList.remove('hidden');
-        } else {
-          salaryNotice.classList.add('hidden');
-        }
-      };
-      
-      if (type === 'pemasukan' && categorySelect.value === 'Gajian') {
-        salaryNotice.classList.remove('hidden');
+      if (document.documentElement.classList.contains('dark')) {
+        document.documentElement.classList.remove('dark');
+        localStorage.theme = 'light';
       } else {
-        salaryNotice.classList.add('hidden');
+        document.documentElement.classList.add('dark');
+        localStorage.theme = 'dark';
       }
-    }
-
-    function openModal() {
-      document.body.classList.add('lock-scroll');
-      
-      // Automatically set the transaction date to today's date whenever modal opens
-      const dateEl = document.getElementById('date');
-      if (dateEl) {
-        const today = new Date().toISOString().split('T')[0];
-        dateEl.value = today;
-      }
-
-      const modal = document.getElementById('transactionModal');
-      const container = document.getElementById('modalContainer');
-      modal.classList.remove('opacity-0', 'pointer-events-none');
-      container.classList.remove('scale-95');
-      container.classList.add('scale-100');
-    }
-
-    function closeModal() {
-      // Restore scrolling only if PIN screen is not active
-      const pinScreen = document.getElementById('pinScreen');
-      if (!pinScreen || pinScreen.style.display === 'none' || pinScreen.classList.contains('pointer-events-none')) {
-        document.body.classList.remove('lock-scroll');
-      }
-      const modal = document.getElementById('transactionModal');
-      const container = document.getElementById('modalContainer');
-      container.classList.remove('scale-100');
-      container.classList.add('scale-95');
-      modal.classList.add('opacity-0', 'pointer-events-none');
-      document.getElementById('transactionForm').reset();
-      updateCategories();
-    }
-
-    function handleFormSubmit(e) {
-      e.preventDefault();
-
-      const type = document.querySelector('input[name="type"]:checked').value;
-      const amountStr = document.getElementById('amount').value;
-      const amount = getRawAmountValue(amountStr);
-
-      if (amount <= 0) {
-        alert('Masukkan nominal transaksi yang valid!');
-        return;
-      }
-
-      const category = document.getElementById('category').value;
-      const date = document.getElementById('date').value;
-      const description = document.getElementById('description').value || category;
-
-      // Loading State (2 Detik)
-      const btnSave = document.getElementById('btnSaveTx');
-      const btnCancel = document.getElementById('btnCancelTx');
-      const btnSaveText = document.getElementById('btnSaveText');
-      const btnSaveSpinner = document.getElementById('btnSaveSpinner');
-
-      btnSave.disabled = true;
-      btnCancel.disabled = true;
-      btnSaveText.textContent = 'Menyimpan...';
-      btnSaveSpinner.classList.remove('hidden');
-
-      setTimeout(() => {
-        const newTx = {
-          id: Date.now(),
-          type,
-          amount,
-          category,
-          date,
-          description
-        };
-
-        transactions.unshift(newTx);
-        saveTransactions();
-        renderDashboard();
-
-        // Reset UI state
-        btnSave.disabled = false;
-        btnCancel.disabled = false;
-        btnSaveText.textContent = 'Simpan Transaksi';
-        btnSaveSpinner.classList.add('hidden');
-
-        closeModal();
-
-        // Sound effect & Notification Toast
-        playTransactionChimeSound();
-        showToast('Transaksi Berhasil!', `${type === 'pemasukan' ? 'Pemasukan' : 'Pengeluaran'} sebesar ${formatCurrency(amount)} telah dicatat.`);
-      }, 2000);
-    }
-
-    function deleteTransaction(id) {
-      if (confirm('Apakah Anda yakin ingin menghapus transaksi ini?')) {
-        transactions = transactions.filter(t => t.id !== id);
-        saveTransactions();
-        renderDashboard();
-      }
-    }
-
-    function saveTransactions() {
-      localStorage.setItem('fm_transactions', JSON.stringify(transactions));
-    }
-
-    function resetAllData() {
-      if (confirm('APAKAH ANDA YAKIN? Seluruh data transaksi akan dihapus secara permanen.')) {
-        transactions = [];
-        saveTransactions();
-        renderDashboard();
-        alert('Seluruh data berhasil dihapus.');
-      }
-    }
-
-    /* Render Logic & Calculations */
-    function renderDashboard() {
-      renderTransactions();
-      calculateTotals();
-    }
-
-    function calculateTotals() {
-      let income = 0;
-      let expense = 0;
-      let totalSalaryIncome = 0;
-      let totalNeedsExpense = 0;
-      let totalWantsExpense = 0;
-      let totalSavingsExpense = 0;
-
-      const needsCats = ['Makanan & Minuman', 'Tagihan & Utilitas', 'Belanja Rumah Tangga', 'Transportasi', 'Pendidikan', 'Kesehatan'];
-      const wantsCats = ['Hiburan & Keinginan', 'Lainnya'];
-
-      transactions.forEach(t => {
-        if (t.type === 'pemasukan') {
-          income += t.amount;
-          if (t.category === 'Gajian') {
-            totalSalaryIncome += t.amount;
-          }
-        } else {
-          expense += t.amount;
-          if (needsCats.includes(t.category)) {
-            totalNeedsExpense += t.amount;
-          } else if (wantsCats.includes(t.category)) {
-            totalWantsExpense += t.amount;
-          } else {
-            totalSavingsExpense += t.amount;
-          }
-        }
-      });
-
-      const balance = income - expense;
-
-      document.getElementById('totalBalance').textContent = formatCurrency(balance);
-      document.getElementById('totalIncome').textContent = formatCurrency(income);
-      document.getElementById('totalExpense').textContent = formatCurrency(expense);
-
-      // Allocations 50/30/20
-      const needsCap = totalSalaryIncome * 0.50;
-      const wantsCap = totalSalaryIncome * 0.30;
-      const savingsCap = totalSalaryIncome * 0.20;
-
-      const needsRem = Math.max(0, needsCap - totalNeedsExpense);
-      const wantsRem = Math.max(0, wantsCap - totalWantsExpense);
-      const savingsRem = Math.max(0, savingsCap - totalSavingsExpense);
-
-      document.getElementById('needsAmount').textContent = formatCurrency(needsCap);
-      document.getElementById('wantsAmount').textContent = formatCurrency(wantsCap);
-      document.getElementById('savingsAmount').textContent = formatCurrency(savingsCap);
-
-      document.getElementById('needsAmountTab').textContent = formatCurrency(needsCap);
-      document.getElementById('wantsAmountTab').textContent = formatCurrency(wantsCap);
-      document.getElementById('savingsAmountTab').textContent = formatCurrency(savingsCap);
-
-      document.getElementById('needsRemainText').textContent = formatCurrency(needsRem);
-      document.getElementById('wantsRemainText').textContent = formatCurrency(wantsRem);
-      document.getElementById('savingsRemainText').textContent = formatCurrency(savingsRem);
-
-      // Bars Progress Calculation
-      const needsPct = needsCap > 0 ? Math.min(100, Math.max(0, (needsRem / needsCap) * 100)) : 0;
-      const wantsPct = wantsCap > 0 ? Math.min(100, Math.max(0, (wantsRem / wantsCap) * 100)) : 0;
-      const savingsPct = savingsCap > 0 ? Math.min(100, Math.max(0, (savingsRem / savingsCap) * 100)) : 0;
-
-      document.getElementById('needsBar').style.width = `${needsPct}%`;
-      document.getElementById('wantsBar').style.width = `${wantsPct}%`;
-      document.getElementById('savingsBar').style.width = `${savingsPct}%`;
-
-      renderReports(income, expense);
-    }
-
-    function renderTransactions() {
-      const listEl = document.getElementById('transactionList');
-      const emptyEl = document.getElementById('emptyState');
-      const searchVal = (document.getElementById('searchInput').value || '').toLowerCase();
-      const filterType = document.getElementById('filterType').value;
-
-      listEl.innerHTML = '';
-
-      const filtered = transactions.filter(t => {
-        const matchSearch = t.description.toLowerCase().includes(searchVal) || t.category.toLowerCase().includes(searchVal);
-        const matchType = filterType === 'all' || t.type === filterType;
-        return matchSearch && matchType;
-      });
-
-      if (filtered.length === 0) {
-        emptyEl.classList.remove('hidden');
-        return;
-      }
-
-      emptyEl.classList.add('hidden');
-
-      filtered.forEach(t => {
-        const tr = document.createElement('tr');
-        tr.className = "hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors";
-
-        const isInc = t.type === 'pemasukan';
-        const typeBadge = isInc
-          ? `<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20"><i class="fa-solid fa-arrow-down-left"></i> Pemasukan</span>`
-          : `<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20"><i class="fa-solid fa-arrow-up-right"></i> Pengeluaran</span>`;
-
-        const amountText = isInc ? `+${formatCurrency(t.amount)}` : `-${formatCurrency(t.amount)}`;
-        const amountClass = isInc ? "text-emerald-600 dark:text-emerald-400 font-bold" : "text-slate-900 dark:text-white font-bold";
-
-        tr.innerHTML = `
-          <td class="px-6 py-4 whitespace-nowrap text-xs text-slate-400">${t.date}</td>
-          <td class="px-6 py-4">
-            <p class="font-bold text-slate-800 dark:text-slate-100">${t.description}</p>
-            <span class="text-[11px] text-slate-400">${t.category}</span>
-          </td>
-          <td class="px-6 py-4 whitespace-nowrap">${typeBadge}</td>
-          <td class="px-6 py-4 whitespace-nowrap text-right ${amountClass}">${amountText}</td>
-          <td class="px-6 py-4 whitespace-nowrap text-center">
-            <button onclick="deleteTransaction(${t.id})" class="w-8 h-8 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-500 transition-all inline-flex items-center justify-center select-none" title="Hapus Transaksi">
-              <i class="fa-solid fa-trash-can text-xs"></i>
-            </button>
-          </td>
-        `;
-
-        listEl.appendChild(tr);
-      });
-    }
-
-    function renderReports(income, expense) {
-      const savingsRatioText = document.getElementById('savingsRatioText');
-      const savingsRatioBar = document.getElementById('savingsRatioBar');
-      const healthAnalysisText = document.getElementById('healthAnalysisText');
-      const categoryBreakdown = document.getElementById('categoryBreakdown');
-
-      categoryBreakdown.innerHTML = '';
-
-      if (income === 0) {
-        savingsRatioText.textContent = '0%';
-        savingsRatioBar.style.width = '0%';
-        healthAnalysisText.textContent = 'Belum ada data pemasukan untuk dianalisis.';
-        return;
-      }
-
-      const netSavings = income - expense;
-      const ratio = Math.max(0, Math.round((netSavings / income) * 100));
-
-      savingsRatioText.textContent = `${ratio}%`;
-      savingsRatioBar.style.width = `${Math.min(100, ratio)}%`;
-
-      if (ratio >= 20) {
-        healthAnalysisText.textContent = 'Luar biasa! Rasio tabungan Anda memenuhi standar keuangan ideal (>20%).';
-      } else if (ratio > 0) {
-        healthAnalysisText.textContent = 'Cukup baik, tetapi cobalah menekan pengeluaran non-primer untuk meningkatkan rasio tabungan.';
-      } else {
-        healthAnalysisText.textContent = 'Peringatan: Pengeluaran Anda melebihi atau menyamai total pemasukan!';
-      }
-
-      // Breakdown expense categories
-      const catTotals = {};
-      transactions.filter(t => t.type === 'pengeluaran').forEach(t => {
-        catTotals[t.category] = (catTotals[t.category] || 0) + t.amount;
-      });
-
-      const totalExp = expense || 1;
-      Object.keys(catTotals).forEach(cat => {
-        const amt = catTotals[cat];
-        const pct = Math.round((amt / totalExp) * 100);
-
-        const item = document.createElement('div');
-        item.className = 'space-y-1';
-        item.innerHTML = `
-          <div class="flex justify-between font-medium">
-            <span class="text-slate-700 dark:text-slate-300">${cat}</span>
-            <span class="text-slate-500">${formatCurrency(amt)} (${pct}%)</span>
-          </div>
-          <div class="w-full bg-slate-100 dark:bg-slate-800 h-2 rounded-full overflow-hidden">
-            <div class="bg-brand-500 h-full rounded-full transition-all duration-500" style="width: ${pct}%"></div>
-          </div>
-        `;
-        categoryBreakdown.appendChild(item);
-      });
     }
   </script>
 </body>
