@@ -29,8 +29,6 @@
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
     <!-- Babel standalone untuk merender JSX -->
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <!-- Lucide Icons -->
-    <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
         body { font-family: 'Inter', sans-serif; }
@@ -47,20 +45,20 @@
         // Definisi Kategori berdasarkan Alokasi
         const ALLOCATION_CATEGORIES = {
             needs: [
-                { id: "belanja", name: "Belanja Dapur", icon: "shopping-bag" },
-                { id: "tagihan", name: "Tagihan & Utilitas", icon: "file-text" },
-                { id: "transport", name: "Transportasi", icon: "car" },
-                { id: "kesehatan", name: "Kesehatan", icon: "activity" }
+                { id: "belanja", name: "Belanja Dapur", symbol: "🛒" },
+                { id: "tagihan", name: "Tagihan & Utilitas", symbol: "📄" },
+                { id: "transport", name: "Transportasi", symbol: "🚗" },
+                { id: "kesehatan", name: "Kesehatan", symbol: "💊" }
             ],
             wants: [
-                { id: "jajan", name: "Jajan & Kuliner", icon: "coffee" },
-                { id: "kopi", name: "Kopi & Nongkrong", icon: "smile" },
-                { id: "baju", name: "Beli Baju / Gadget", icon: "shopping-cart" },
-                { id: "hiburan", name: "Hiburan & Hobi", icon: "tv" }
+                { id: "jajan", name: "Jajan & Kuliner", symbol: "🍜" },
+                { id: "kopi", name: "Kopi & Nongkrong", symbol: "☕" },
+                { id: "baju", name: "Beli Baju / Gadget", symbol: "🛍️" },
+                { id: "hiburan", name: "Hiburan & Hobi", symbol: "🎬" }
             ],
             savings: [
-                { id: "darurat", name: "Setor Dana Darurat", icon: "shield" },
-                { id: "investasi", name: "Investasi / Impian", icon: "trending-up" }
+                { id: "darurat", name: "Setor Dana Darurat", symbol: "🛡️" },
+                { id: "investasi", name: "Investasi / Impian", symbol: "📈" }
             ]
         };
 
@@ -101,28 +99,21 @@
                 }
             }, [darkMode]);
 
-            // Render ikon lucide secara aman
-            useEffect(() => {
-                if (window.lucide) {
-                    window.lucide.createIcons();
-                }
-            });
-
-            // Audio Chime Sukses Lebih Keren & Nyaring
+            // Audio Chime Sukses Super Keren, Nyaring, & Mantap
             const playChime = () => {
                 try {
                     const AudioContext = window.AudioContext || window.webkitAudioContext;
                     const ctx = new AudioContext();
                     
-                    const playNote = (freq, startTime, duration) => {
+                    const playNote = (freq, startTime, duration, type = "sine") => {
                         const osc = ctx.createOscillator();
                         const gain = ctx.createGain();
                         
-                        osc.type = "sine";
+                        osc.type = type;
                         osc.frequency.setValueAtTime(freq, ctx.currentTime + startTime);
                         
-                        // Volume diset lebih besar agar terdengar jelas
-                        gain.gain.setValueAtTime(0.4, ctx.currentTime + startTime);
+                        // Volume ditingkatkan agar terdengar kencang dan jelas
+                        gain.gain.setValueAtTime(0.5, ctx.currentTime + startTime);
                         gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + startTime + duration);
                         
                         osc.connect(gain);
@@ -132,11 +123,11 @@
                         osc.stop(ctx.currentTime + startTime + duration);
                     };
 
-                    // Nada akor modern sukses (C5 -> E5 -> G5 -> C6)
-                    playNote(523.25, 0.0, 0.12);  // C5
-                    playNote(659.25, 0.08, 0.12); // E5
-                    playNote(783.99, 0.16, 0.15); // G5
-                    playNote(1046.50, 0.24, 0.35); // C6
+                    // Melodi Kemenangan / Unlocked (Arpeggio C Major + High chime)
+                    playNote(523.25, 0.0, 0.15, "triangle"); // C5
+                    playNote(659.25, 0.10, 0.15, "triangle"); // E5
+                    playNote(783.99, 0.20, 0.15, "triangle"); // G5
+                    playNote(1046.50, 0.30, 0.40, "sine");     // C6 (High)
                 } catch (e) {
                     console.log("Audio non-active", e);
                 }
@@ -289,12 +280,12 @@
                             class="absolute top-4 right-4 p-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all shadow-sm"
                             title="Ganti Mode"
                         >
-                            {darkMode ? <i data-lucide="sun" class="w-5 h-5 text-yellow-400"></i> : <i data-lucide="moon" class="w-5 h-5"></i>}
+                            {darkMode ? '☀️' : '🌙'}
                         </button>
 
                         <div class="bg-white dark:bg-gray-900 p-6 sm:p-8 rounded-2xl shadow-xl max-w-sm w-full text-center border border-gray-100 dark:border-gray-800">
-                            <div class="w-12 h-12 bg-brand-100 dark:bg-brand-700/30 text-brand-600 dark:text-brand-500 rounded-full flex items-center justify-center mx-auto mb-2">
-                                <i data-lucide="lock" class="w-6 h-6"></i>
+                            <div class="w-12 h-12 bg-brand-100 dark:bg-brand-700/30 text-brand-600 dark:text-brand-500 rounded-full flex items-center justify-center mx-auto mb-2 text-xl">
+                                🔒
                             </div>
                             <h2 class="text-xl font-bold text-gray-800 dark:text-white mb-1">Finance Management</h2>
                             <p class="text-xs text-gray-500 dark:text-gray-400 mb-5">Masukkan PIN keamanan untuk mengakses aplikasi</p>
@@ -347,9 +338,9 @@
                                 <button
                                     type="button"
                                     onClick={handlePinDelete}
-                                    class="h-14 rounded-2xl bg-gray-100 dark:bg-gray-800 hover:bg-rose-50 dark:hover:bg-rose-900/30 text-gray-600 dark:text-gray-300 hover:text-rose-600 flex items-center justify-center transition-all active:scale-95"
+                                    class="h-14 rounded-2xl bg-gray-100 dark:bg-gray-800 hover:bg-rose-50 dark:hover:bg-rose-900/30 text-gray-600 dark:text-gray-300 hover:text-rose-600 flex items-center justify-center transition-all active:scale-95 text-lg"
                                 >
-                                    <i data-lucide="delete" class="w-5 h-5"></i>
+                                    ⌫
                                 </button>
                             </div>
                         </div>
@@ -363,8 +354,7 @@
                     <header class="flex justify-between items-center mb-6">
                         <div>
                             <h1 class="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                                <i data-lucide="wallet" class="w-6 h-6 text-brand-600"></i>
-                                Finance Management
+                                <span>💰</span> Finance Management
                             </h1>
                             <p class="text-xs text-gray-500 dark:text-gray-400">Atur Anggaran 50/30/20 Secara Otomatis</p>
                         </div>
@@ -374,14 +364,14 @@
                                 class="p-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all"
                                 title="Kunci Aplikasi"
                             >
-                                <i data-lucide="lock" class="w-5 h-5"></i>
+                                🔒
                             </button>
                             <button 
                                 onClick={() => setDarkMode(!darkMode)} 
                                 class="p-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all"
                                 title="Ganti Mode"
                             >
-                                {darkMode ? <i data-lucide="sun" class="w-5 h-5 text-yellow-400"></i> : <i data-lucide="moon" class="w-5 h-5"></i>}
+                                {darkMode ? '☀️' : '🌙'}
                             </button>
                         </div>
                     </header>
@@ -409,7 +399,7 @@
                         <div class="bg-white dark:bg-gray-800 p-5 rounded-2xl border border-gray-100 dark:border-gray-700/60 shadow-sm">
                             <div class="flex justify-between items-center mb-2">
                                 <span class="text-xs font-bold px-2.5 py-1 bg-blue-50 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 rounded-lg">50% Kebutuhan</span>
-                                <i data-lucide="shopping-bag" class="w-4 h-4 text-blue-500"></i>
+                                <span>🛍️</span>
                             </div>
                             <div class="text-lg font-bold text-gray-900 dark:text-white mb-1">Rp {formatNumber(totals.needs.rem)}</div>
                             <div class="text-xs text-gray-400 flex justify-between border-t border-gray-100 dark:border-gray-700 pt-2 mt-2">
@@ -422,7 +412,7 @@
                         <div class="bg-white dark:bg-gray-800 p-5 rounded-2xl border border-gray-100 dark:border-gray-700/60 shadow-sm">
                             <div class="flex justify-between items-center mb-2">
                                 <span class="text-xs font-bold px-2.5 py-1 bg-purple-50 dark:bg-purple-900/40 text-purple-600 dark:text-purple-400 rounded-lg">30% Keinginan</span>
-                                <i data-lucide="coffee" class="w-4 h-4 text-purple-500"></i>
+                                <span>☕</span>
                             </div>
                             <div class="text-lg font-bold text-gray-900 dark:text-white mb-1">Rp {formatNumber(totals.wants.rem)}</div>
                             <div class="text-xs text-gray-400 flex justify-between border-t border-gray-100 dark:border-gray-700 pt-2 mt-2">
@@ -435,7 +425,7 @@
                         <div class="bg-white dark:bg-gray-800 p-5 rounded-2xl border border-gray-100 dark:border-gray-700/60 shadow-sm">
                             <div class="flex justify-between items-center mb-2">
                                 <span class="text-xs font-bold px-2.5 py-1 bg-emerald-50 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-400 rounded-lg">20% Tabungan</span>
-                                <i data-lucide="shield" class="w-4 h-4 text-emerald-500"></i>
+                                <span>🛡️</span>
                             </div>
                             <div class="text-lg font-bold text-gray-900 dark:text-white mb-1">Rp {formatNumber(totals.savings.rem)}</div>
                             <div class="text-xs text-gray-400 flex justify-between border-t border-gray-100 dark:border-gray-700 pt-2 mt-2">
@@ -451,13 +441,13 @@
                             onClick={() => { setTransType("expense"); setIsModalOpen(true); }}
                             class="flex-1 bg-rose-600 hover:bg-rose-700 text-white py-3 px-4 rounded-xl font-medium flex items-center justify-center gap-2 shadow-sm transition-all"
                         >
-                            <i data-lucide="minus-circle" class="w-5 h-5"></i> Catat Pengeluaran
+                            <span>➖</span> Catat Pengeluaran
                         </button>
                         <button 
                             onClick={() => { setTransType("income"); setIsModalOpen(true); }}
                             class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white py-3 px-4 rounded-xl font-medium flex items-center justify-center gap-2 shadow-sm transition-all"
                         >
-                            <i data-lucide="plus-circle" class="w-5 h-5"></i> Tambah Gajian
+                            <span>➕</span> Tambah Gajian
                         </button>
                     </div>
 
@@ -471,8 +461,8 @@
                                 {transactions.map((t) => (
                                     <div key={t.id} class="flex items-center justify-between p-3 rounded-xl border border-gray-100 dark:border-gray-700/50 hover:bg-gray-50 dark:hover:bg-gray-700/30 transition-all">
                                         <div class="flex items-center gap-3">
-                                            <div class={`p-2.5 rounded-xl ${t.type === 'income' ? 'bg-emerald-100 text-emerald-600 dark:bg-emerald-900/30' : 'bg-rose-100 text-rose-600 dark:bg-rose-900/30'}`}>
-                                                <i data-lucide={t.type === 'income' ? 'arrow-down-left' : 'arrow-up-right'} class="w-5 h-5"></i>
+                                            <div class={`p-2.5 rounded-xl text-lg ${t.type === 'income' ? 'bg-emerald-100 text-emerald-600 dark:bg-emerald-900/30' : 'bg-rose-100 text-rose-600 dark:bg-rose-900/30'}`}>
+                                                {t.type === 'income' ? '📥' : '📤'}
                                             </div>
                                             <div>
                                                 <div class="font-semibold text-sm text-gray-900 dark:text-white">{t.note}</div>
@@ -500,7 +490,7 @@
                                         {transType === 'income' ? 'Tambah Gajian / Pemasukan' : 'Catat Pengeluaran Baru'}
                                     </h3>
                                     <button onClick={() => setIsModalOpen(false)} class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200">
-                                        <i data-lucide="x" class="w-5 h-5"></i>
+                                        ✕
                                     </button>
                                 </div>
 
@@ -559,7 +549,7 @@
                                                             onClick={() => setFormCategory(cat.id)}
                                                             class={`p-2.5 text-xs rounded-xl border text-left flex items-center gap-2 transition-all ${formCategory === cat.id ? 'border-brand-500 bg-brand-50 dark:bg-brand-900/30 text-brand-600 dark:text-brand-400 font-semibold' : 'border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300'}`}
                                                         >
-                                                            <i data-lucide={cat.icon} class="w-4 h-4"></i>
+                                                            <span>{cat.symbol}</span>
                                                             {cat.name}
                                                         </button>
                                                     ))}
@@ -596,7 +586,7 @@
                     {/* Center Success Toast */}
                     {toastMessage && (
                         <div class="fixed top-6 left-1/2 transform -translate-x-1/2 z-50 bg-gray-900 dark:bg-white text-white dark:text-gray-900 px-5 py-3 rounded-2xl shadow-xl flex items-center gap-3 text-sm font-medium">
-                            <i data-lucide="check-circle" class="w-5 h-5 text-emerald-400 dark:text-emerald-600"></i>
+                            <span>✅</span>
                             {toastMessage}
                         </div>
                     )}
