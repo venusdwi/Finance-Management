@@ -1,9 +1,8 @@
-const CACHE_NAME = 'finance-app-v2';
+const CACHE_NAME = 'finance-app-v3';
 const assetsToCache = [
   './index.html',
   './manifest.json',
-  './icon-192.png',
-  './icon-512.png'
+  './icon.png'
 ];
 
 self.addEventListener('install', (e) => {
