@@ -106,7 +106,7 @@
       </div>
 
       <div class="flex items-center gap-2">
-        <!-- Toggle Theme (Matching Dark Gray Style in both modes) -->
+        <!-- Toggle Theme -->
         <button onclick="toggleTheme()" class="w-10 h-10 rounded-xl bg-slate-800 text-slate-300 hover:bg-slate-700 flex items-center justify-center select-none border border-slate-700/50" title="Ubah Tema">
           <i class="fa-solid fa-moon dark:hidden text-sm"></i>
           <i class="fa-solid fa-sun hidden dark:block text-slate-300 hover:text-slate-100 text-sm"></i>
@@ -421,7 +421,7 @@
             <h4 class="font-bold text-rose-600 dark:text-rose-400 text-sm">Hapus Semua Data</h4>
             <p class="text-xs text-slate-500 dark:text-slate-400">Bersihkan seluruh catatan transaksi dari penyimpanan lokal.</p>
           </div>
-          <button onclick="resetAllData()" class="px-4 py-2 bg-rose-500/10 hover:bg-rose-500/20 text-rose-600 dark:text-rose-400 border border-rose-500/20 rounded-xl text-xs font-semibold select-none">
+          <button onclick="openResetConfirmModal()" class="px-4 py-2 bg-rose-500/10 hover:bg-rose-500/20 text-rose-600 dark:text-rose-400 border border-rose-500/20 rounded-xl text-xs font-semibold select-none">
             Reset Data
           </button>
         </div>
@@ -462,15 +462,15 @@
     </div>
   </nav>
 
-  <!-- ==================== LOCK / PIN ACCESS SCREEN ==================== -->
-  <div id="pinScreen" class="fixed inset-0 z-[100] flex flex-col items-center justify-center p-4 overflow-hidden select-none bg-slate-950">
+  <!-- ==================== LOCK / PIN ACCESS SCREEN (MENYESUAIKAN TEMA) ==================== -->
+  <div id="pinScreen" class="fixed inset-0 z-[100] flex flex-col items-center justify-center p-4 overflow-hidden select-none bg-slate-100 dark:bg-slate-950">
     
-    <!-- Latar Belakang Biru Elegan Mewah -->
-    <div class="absolute inset-0 bg-gradient-to-br from-slate-950 via-blue-950 to-slate-950 opacity-95"></div>
+    <!-- Latar Belakang Gradien Dinamis Mode Terang / Gelap -->
+    <div class="absolute inset-0 bg-gradient-to-br from-slate-100 via-blue-50 to-slate-200 dark:from-slate-950 dark:via-blue-950 dark:to-slate-950 opacity-95"></div>
     
     <!-- Ambient Radial Light Effects -->
-    <div class="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-blue-600/20 rounded-full blur-[100px] pointer-events-none"></div>
-    <div class="absolute bottom-1/4 left-1/2 -translate-x-1/2 translate-y-1/2 w-80 h-80 bg-indigo-600/15 rounded-full blur-[90px] pointer-events-none"></div>
+    <div class="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-blue-600/10 dark:bg-blue-600/20 rounded-full blur-[100px] pointer-events-none"></div>
+    <div class="absolute bottom-1/4 left-1/2 -translate-x-1/2 translate-y-1/2 w-80 h-80 bg-indigo-600/10 dark:bg-indigo-600/15 rounded-full blur-[90px] pointer-events-none"></div>
 
     <!-- Container Utama Akses PIN -->
     <div class="relative z-10 w-full max-w-sm flex flex-col items-center">
@@ -480,14 +480,15 @@
         <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500 via-blue-600 to-indigo-800 flex items-center justify-center text-white text-2xl shadow-xl shadow-blue-600/30 border border-blue-400/30 mb-4">
           <i class="fa-solid fa-chart-line text-blue-100"></i>
         </div>
-        <h1 class="brand-title text-3xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-blue-200 via-blue-400 to-indigo-300 drop-shadow-sm">
+        <!-- Judul Warna Putih khusus Mode Gelap, dan Abu Gelap/Hitam saat Mode Terang -->
+        <h1 class="brand-title text-3xl font-black tracking-tight text-slate-900 dark:text-white drop-shadow-sm">
           Finance Management
         </h1>
-        <p class="text-xs text-blue-300/70 font-medium tracking-widest uppercase mt-1">Masukkan PIN Akses Anda</p>
+        <p class="text-xs text-slate-500 dark:text-blue-300/70 font-medium tracking-widest uppercase mt-1">Masukkan PIN Akses Anda</p>
       </div>
 
       <!-- Card PIN Input -->
-      <div class="w-full bg-slate-900/80 backdrop-blur-2xl border border-blue-500/20 rounded-3xl p-6 sm:p-8 shadow-2xl shadow-blue-950/50 flex flex-col items-center">
+      <div class="w-full bg-white/80 dark:bg-slate-900/80 backdrop-blur-2xl border border-slate-200 dark:border-blue-500/20 rounded-3xl p-6 sm:p-8 shadow-2xl shadow-slate-300/50 dark:shadow-blue-950/50 flex flex-col items-center">
         
         <!-- Indicator Dots -->
         <div class="flex items-center justify-center gap-3 mb-8" id="pinDots">
@@ -501,28 +502,28 @@
 
         <!-- Keypad Grid -->
         <div class="grid grid-cols-3 gap-3 sm:gap-4 w-full">
-          <button type="button" onclick="appendPin('1')" class="keypad-btn h-12 sm:h-14 bg-blue-950/40 hover:bg-blue-900/50 active:bg-blue-800/60 border border-blue-500/20 rounded-2xl text-xl font-bold text-blue-100 flex items-center justify-center">1</button>
-          <button type="button" onclick="appendPin('2')" class="keypad-btn h-12 sm:h-14 bg-blue-950/40 hover:bg-blue-900/50 active:bg-blue-800/60 border border-blue-500/20 rounded-2xl text-xl font-bold text-blue-100 flex items-center justify-center">2</button>
-          <button type="button" onclick="appendPin('3')" class="keypad-btn h-12 sm:h-14 bg-blue-950/40 hover:bg-blue-900/50 active:bg-blue-800/60 border border-blue-500/20 rounded-2xl text-xl font-bold text-blue-100 flex items-center justify-center">3</button>
-          <button type="button" onclick="appendPin('4')" class="keypad-btn h-12 sm:h-14 bg-blue-950/40 hover:bg-blue-900/50 active:bg-blue-800/60 border border-blue-500/20 rounded-2xl text-xl font-bold text-blue-100 flex items-center justify-center">4</button>
-          <button type="button" onclick="appendPin('5')" class="keypad-btn h-12 sm:h-14 bg-blue-950/40 hover:bg-blue-900/50 active:bg-blue-800/60 border border-blue-500/20 rounded-2xl text-xl font-bold text-blue-100 flex items-center justify-center">5</button>
-          <button type="button" onclick="appendPin('6')" class="keypad-btn h-12 sm:h-14 bg-blue-950/40 hover:bg-blue-900/50 active:bg-blue-800/60 border border-blue-500/20 rounded-2xl text-xl font-bold text-blue-100 flex items-center justify-center">6</button>
-          <button type="button" onclick="appendPin('7')" class="keypad-btn h-12 sm:h-14 bg-blue-950/40 hover:bg-blue-900/50 active:bg-blue-800/60 border border-blue-500/20 rounded-2xl text-xl font-bold text-blue-100 flex items-center justify-center">7</button>
-          <button type="button" onclick="appendPin('8')" class="keypad-btn h-12 sm:h-14 bg-blue-950/40 hover:bg-blue-900/50 active:bg-blue-800/60 border border-blue-500/20 rounded-2xl text-xl font-bold text-blue-100 flex items-center justify-center">8</button>
-          <button type="button" onclick="appendPin('9')" class="keypad-btn h-12 sm:h-14 bg-blue-950/40 hover:bg-blue-900/50 active:bg-blue-800/60 border border-blue-500/20 rounded-2xl text-xl font-bold text-blue-100 flex items-center justify-center">9</button>
-          <button type="button" onclick="clearPin()" class="keypad-btn h-12 sm:h-14 bg-rose-950/40 hover:bg-rose-900/60 active:bg-rose-800/70 border border-rose-500/30 rounded-2xl text-xs sm:text-sm font-bold text-rose-300 flex items-center justify-center gap-1 shadow-inner select-none">
+          <button type="button" onclick="appendPin('1')" class="keypad-btn h-12 sm:h-14 bg-slate-50 dark:bg-blue-950/40 hover:bg-slate-100 dark:hover:bg-blue-900/50 active:bg-slate-200 dark:active:bg-blue-800/60 border border-slate-200 dark:border-blue-500/20 rounded-2xl text-xl font-bold text-slate-800 dark:text-blue-100 flex items-center justify-center shadow-sm dark:shadow-none">1</button>
+          <button type="button" onclick="appendPin('2')" class="keypad-btn h-12 sm:h-14 bg-slate-50 dark:bg-blue-950/40 hover:bg-slate-100 dark:hover:bg-blue-900/50 active:bg-slate-200 dark:active:bg-blue-800/60 border border-slate-200 dark:border-blue-500/20 rounded-2xl text-xl font-bold text-slate-800 dark:text-blue-100 flex items-center justify-center shadow-sm dark:shadow-none">2</button>
+          <button type="button" onclick="appendPin('3')" class="keypad-btn h-12 sm:h-14 bg-slate-50 dark:bg-blue-950/40 hover:bg-slate-100 dark:hover:bg-blue-900/50 active:bg-slate-200 dark:active:bg-blue-800/60 border border-slate-200 dark:border-blue-500/20 rounded-2xl text-xl font-bold text-slate-800 dark:text-blue-100 flex items-center justify-center shadow-sm dark:shadow-none">3</button>
+          <button type="button" onclick="appendPin('4')" class="keypad-btn h-12 sm:h-14 bg-slate-50 dark:bg-blue-950/40 hover:bg-slate-100 dark:hover:bg-blue-900/50 active:bg-slate-200 dark:active:bg-blue-800/60 border border-slate-200 dark:border-blue-500/20 rounded-2xl text-xl font-bold text-slate-800 dark:text-blue-100 flex items-center justify-center shadow-sm dark:shadow-none">4</button>
+          <button type="button" onclick="appendPin('5')" class="keypad-btn h-12 sm:h-14 bg-slate-50 dark:bg-blue-950/40 hover:bg-slate-100 dark:hover:bg-blue-900/50 active:bg-slate-200 dark:active:bg-blue-800/60 border border-slate-200 dark:border-blue-500/20 rounded-2xl text-xl font-bold text-slate-800 dark:text-blue-100 flex items-center justify-center shadow-sm dark:shadow-none">5</button>
+          <button type="button" onclick="appendPin('6')" class="keypad-btn h-12 sm:h-14 bg-slate-50 dark:bg-blue-950/40 hover:bg-slate-100 dark:hover:bg-blue-900/50 active:bg-slate-200 dark:active:bg-blue-800/60 border border-slate-200 dark:border-blue-500/20 rounded-2xl text-xl font-bold text-slate-800 dark:text-blue-100 flex items-center justify-center shadow-sm dark:shadow-none">6</button>
+          <button type="button" onclick="appendPin('7')" class="keypad-btn h-12 sm:h-14 bg-slate-50 dark:bg-blue-950/40 hover:bg-slate-100 dark:hover:bg-blue-900/50 active:bg-slate-200 dark:active:bg-blue-800/60 border border-slate-200 dark:border-blue-500/20 rounded-2xl text-xl font-bold text-slate-800 dark:text-blue-100 flex items-center justify-center shadow-sm dark:shadow-none">7</button>
+          <button type="button" onclick="appendPin('8')" class="keypad-btn h-12 sm:h-14 bg-slate-50 dark:bg-blue-950/40 hover:bg-slate-100 dark:hover:bg-blue-900/50 active:bg-slate-200 dark:active:bg-blue-800/60 border border-slate-200 dark:border-blue-500/20 rounded-2xl text-xl font-bold text-slate-800 dark:text-blue-100 flex items-center justify-center shadow-sm dark:shadow-none">8</button>
+          <button type="button" onclick="appendPin('9')" class="keypad-btn h-12 sm:h-14 bg-slate-50 dark:bg-blue-950/40 hover:bg-slate-100 dark:hover:bg-blue-900/50 active:bg-slate-200 dark:active:bg-blue-800/60 border border-slate-200 dark:border-blue-500/20 rounded-2xl text-xl font-bold text-slate-800 dark:text-blue-100 flex items-center justify-center shadow-sm dark:shadow-none">9</button>
+          <button type="button" onclick="clearPin()" class="keypad-btn h-12 sm:h-14 bg-rose-50 dark:bg-rose-950/40 hover:bg-rose-100 dark:hover:bg-rose-900/60 active:bg-rose-200 dark:active:bg-rose-800/70 border border-rose-200 dark:border-rose-500/30 rounded-2xl text-xs sm:text-sm font-bold text-rose-600 dark:text-rose-300 flex items-center justify-center gap-1 shadow-inner select-none">
             <i class="fa-solid fa-rotate-left text-xs"></i> Hapus
           </button>
-          <button type="button" onclick="appendPin('0')" class="keypad-btn h-12 sm:h-14 bg-blue-950/40 hover:bg-blue-900/50 active:bg-blue-800/60 border border-blue-500/20 rounded-2xl text-xl font-bold text-blue-100 flex items-center justify-center">0</button>
-          <button type="button" onclick="deletePinDigit()" class="keypad-btn h-12 sm:h-14 bg-blue-950/40 hover:bg-blue-900/50 active:bg-blue-800/60 border border-blue-500/20 rounded-2xl text-lg text-blue-300 flex items-center justify-center" title="Hapus Digit Terakhir">
+          <button type="button" onclick="appendPin('0')" class="keypad-btn h-12 sm:h-14 bg-slate-50 dark:bg-blue-950/40 hover:bg-slate-100 dark:hover:bg-blue-900/50 active:bg-slate-200 dark:active:bg-blue-800/60 border border-slate-200 dark:border-blue-500/20 rounded-2xl text-xl font-bold text-slate-800 dark:text-blue-100 flex items-center justify-center shadow-sm dark:shadow-none">0</button>
+          <button type="button" onclick="deletePinDigit()" class="keypad-btn h-12 sm:h-14 bg-slate-50 dark:bg-blue-950/40 hover:bg-slate-100 dark:hover:bg-blue-900/50 active:bg-slate-200 dark:active:bg-blue-800/60 border border-slate-200 dark:border-blue-500/20 rounded-2xl text-lg text-slate-700 dark:text-blue-300 flex items-center justify-center shadow-sm dark:shadow-none" title="Hapus Digit Terakhir">
             <i class="fa-solid fa-backspace"></i>
           </button>
         </div>
 
       </div>
 
-      <p class="mt-6 text-[11px] text-blue-300/50 flex items-center gap-1.5 font-medium">
-        <i class="fa-solid fa-shield-halved text-blue-400"></i>
+      <p class="mt-6 text-[11px] text-slate-400 dark:text-blue-300/50 flex items-center gap-1.5 font-medium">
+        <i class="fa-solid fa-shield-halved text-blue-500 dark:text-blue-400"></i>
         <span>Sistem Akses Keamanan Terenkripsi</span>
       </p>
 
@@ -600,7 +601,7 @@
     </div>
   </div>
 
-  <!-- ==================== NOTIFIKASI POP-UP KONFIRMASI (SESUAI TEMA BIRU APLIKASI) ==================== -->
+  <!-- ==================== NOTIFIKASI POP-UP KONFIRMASI (SESUAI TEMA) ==================== -->
   <div id="customAlertModal" class="fixed inset-0 z-[110] flex items-center justify-center bg-slate-900/60 backdrop-blur-sm opacity-0 pointer-events-none p-4 transition-opacity duration-300">
     <div class="bg-white dark:bg-darkcard border border-blue-500/30 rounded-3xl max-w-sm w-full p-6 shadow-2xl transform scale-95 transition-transform duration-300 text-center space-y-4" id="customAlertContainer">
       <div id="alertIconBg" class="w-16 h-16 rounded-2xl bg-blue-500/10 text-blue-600 dark:text-blue-400 flex items-center justify-center text-3xl mx-auto shadow-inner border border-blue-500/20">
@@ -610,10 +611,57 @@
         <h3 id="alertTitle" class="text-lg font-bold text-slate-900 dark:text-white">Berhasil!</h3>
         <p id="alertMessage" class="text-xs text-slate-500 dark:text-slate-400">Catatan transaksi telah tersimpan.</p>
       </div>
-      <!-- Tombol Selesai Disesuaikan dengan Tema Biru Aplikasi -->
       <button type="button" id="alertBtn" onclick="closeCustomAlert()" class="w-full py-3 bg-gradient-to-r from-blue-600 via-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold rounded-xl shadow-lg shadow-blue-500/25 text-sm select-none transition-all">
         Selesai
       </button>
+    </div>
+  </div>
+
+  <!-- ==================== MODAL KONFIRMASI RESET DATA (BARU) ==================== -->
+  <div id="resetConfirmModal" class="fixed inset-0 z-[105] flex items-center justify-center bg-slate-900/60 backdrop-blur-sm opacity-0 pointer-events-none p-4 transition-opacity duration-300">
+    <div class="bg-white dark:bg-darkcard border border-rose-500/30 rounded-3xl max-w-sm w-full p-6 shadow-2xl transform scale-95 transition-transform duration-300 text-center space-y-4" id="resetConfirmContainer">
+      <div class="w-16 h-16 rounded-2xl bg-rose-500/10 text-rose-500 flex items-center justify-center text-3xl mx-auto shadow-inner border border-rose-500/20">
+        <i class="fa-solid fa-triangle-exclamation"></i>
+      </div>
+      <div class="space-y-1.5">
+        <h3 class="text-lg font-bold text-slate-900 dark:text-white">Reset Seluruh Data?</h3>
+        <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+          Apakah Anda yakin ingin menghapus seluruh catatan transaksi? Tindakan ini <span class="text-rose-500 font-bold">tidak dapat dibatalkan</span>.
+        </p>
+      </div>
+      <div class="flex items-center gap-3 pt-2">
+        <button type="button" onclick="closeResetConfirmModal()" class="w-1/2 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-medium rounded-xl text-sm select-none">Batal</button>
+        <button type="button" onclick="proceedToResetPin()" class="w-1/2 py-2.5 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl shadow-lg shadow-rose-500/25 text-sm select-none transition-all">Ya, Hapus</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== MODAL PIN VERIFIKASI RESET DATA (BARU) ==================== -->
+  <div id="resetPinModal" class="fixed inset-0 z-[106] flex items-center justify-center bg-slate-900/60 backdrop-blur-sm opacity-0 pointer-events-none p-4 transition-opacity duration-300">
+    <div class="bg-white dark:bg-darkcard border border-rose-500/30 rounded-3xl max-w-sm w-full p-6 shadow-2xl transform scale-95 transition-transform duration-300 space-y-4" id="resetPinContainer">
+      <div class="flex justify-between items-center pb-2 border-b border-slate-100 dark:border-slate-800">
+        <h3 class="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+          <i class="fa-solid fa-shield-halved text-rose-500"></i>
+          Konfirmasi PIN Keamanan
+        </h3>
+        <button onclick="closeResetPinModal()" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center justify-center select-none">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <p class="text-xs text-slate-500 dark:text-slate-400 text-center">
+        Masukkan 6 angka PIN akses Anda untuk melanjutkan pembersihan data.
+      </p>
+
+      <form onsubmit="handleResetPinSubmit(event)" class="space-y-4 pt-1">
+        <div>
+          <input type="password" id="resetPinInput" maxlength="6" required pattern="\d{6}" inputmode="numeric" placeholder="******" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800/80 border-2 border-slate-200 dark:border-slate-700 rounded-xl text-center text-xl font-bold tracking-widest text-slate-800 dark:text-slate-100 focus:outline-none focus:border-rose-500 dark:focus:border-rose-500">
+        </div>
+        <div id="resetPinError" class="text-xs text-rose-500 font-semibold hidden text-center">PIN yang Anda masukkan salah!</div>
+        <div class="flex items-center gap-3 pt-2">
+          <button type="button" onclick="closeResetPinModal()" class="w-1/2 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-medium rounded-xl text-sm select-none">Batal</button>
+          <button type="submit" class="w-1/2 py-2.5 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl shadow-md shadow-rose-500/25 text-sm select-none">Konfirmasi Reset</button>
+        </div>
+      </form>
     </div>
   </div>
 
@@ -785,7 +833,7 @@
         const dot = document.getElementById(`dot-${i}`);
         if (dot) {
           if (i < enteredPin.length) {
-            dot.className = "w-4 h-4 rounded-full border-2 border-blue-400 bg-blue-400 shadow-lg shadow-blue-500/50 stealth-active";
+            dot.className = "w-4 h-4 rounded-full border-2 border-blue-500 bg-blue-500 shadow-lg shadow-blue-500/50 stealth-active";
           } else {
             dot.className = "w-4 h-4 rounded-full border-2 border-blue-500/40 bg-transparent";
           }
@@ -987,7 +1035,7 @@
       renderDashboard();
     }
 
-    /* Custom Alert Pop-Up Selesai / Konfirmasi OK (Disesuaikan Tema) */
+    /* Custom Alert Pop-Up Selesai / Konfirmasi OK */
     function showCustomAlert(title, message, type = 'success') {
       const alertModal = document.getElementById('customAlertModal');
       const alertContainer = document.getElementById('customAlertContainer');
@@ -1021,6 +1069,66 @@
       alertContainer.classList.remove('scale-100');
       alertContainer.classList.add('scale-95');
       alertModal.classList.add('opacity-0', 'pointer-events-none');
+    }
+
+    /* Reset Data Modal & Verifikasi PIN Handlers */
+    function openResetConfirmModal() {
+      const modal = document.getElementById('resetConfirmModal');
+      const container = document.getElementById('resetConfirmContainer');
+      modal.classList.remove('opacity-0', 'pointer-events-none');
+      container.classList.remove('scale-95');
+      container.classList.add('scale-100');
+    }
+
+    function closeResetConfirmModal() {
+      const modal = document.getElementById('resetConfirmModal');
+      const container = document.getElementById('resetConfirmContainer');
+      container.classList.remove('scale-100');
+      container.classList.add('scale-95');
+      modal.classList.add('opacity-0', 'pointer-events-none');
+    }
+
+    function proceedToResetPin() {
+      closeResetConfirmModal();
+      setTimeout(() => {
+        openResetPinModal();
+      }, 200);
+    }
+
+    function openResetPinModal() {
+      const modal = document.getElementById('resetPinModal');
+      const container = document.getElementById('resetPinContainer');
+      document.getElementById('resetPinInput').value = '';
+      document.getElementById('resetPinError').classList.add('hidden');
+      modal.classList.remove('opacity-0', 'pointer-events-none');
+      container.classList.remove('scale-95');
+      container.classList.add('scale-100');
+    }
+
+    function closeResetPinModal() {
+      const modal = document.getElementById('resetPinModal');
+      const container = document.getElementById('resetPinContainer');
+      container.classList.remove('scale-100');
+      container.classList.add('scale-95');
+      modal.classList.add('opacity-0', 'pointer-events-none');
+    }
+
+    function handleResetPinSubmit(e) {
+      e.preventDefault();
+      const inputPin = document.getElementById('resetPinInput').value;
+      const errEl = document.getElementById('resetPinError');
+
+      if (inputPin !== userPin) {
+        errEl.classList.remove('hidden');
+        return;
+      }
+
+      // PIN Benar: Eksekusi Reset Seluruh Data
+      transactions = [];
+      localStorage.removeItem('fm_transactions');
+      closeResetPinModal();
+      renderDashboard();
+      showCustomAlert('Reset Selesai', 'Seluruh data transaksi telah dibersihkan.', 'info');
     }
 
     /* Dashboard & Calculations Render logic */
@@ -1303,16 +1411,6 @@
       localStorage.setItem('fm_user_pin', newPin);
       closeChangePinModal();
       showCustomAlert('PIN Diperbarui', 'PIN keamanan berhasil diubah.', 'success');
-    }
-
-    /* Reset Data */
-    function resetAllData() {
-      if (confirm('Apakah Anda yakin ingin menghapus seluruh data transaksi? Tindakan ini tidak dapat dibatalkan.')) {
-        transactions = [];
-        localStorage.removeItem('fm_transactions');
-        renderDashboard();
-        showCustomAlert('Reset Selesai', 'Seluruh data transaksi telah dibersihkan.', 'info');
-      }
     }
 
     /* Theme System */
