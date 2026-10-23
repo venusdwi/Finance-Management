@@ -79,6 +79,19 @@
       box-shadow: none !important;
     }
 
+    /* Custom input month full clickable container styling */
+    .month-picker-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+    }
+
+    .month-picker-wrapper input[type="month"] {
+      cursor: pointer;
+      width: 100%;
+    }
+
     /* Stealth Privacy Flash Animation */
     @keyframes privacyFlash {
       0% { transform: scale(1.25); filter: brightness(1.6); }
@@ -106,13 +119,18 @@
       </div>
 
       <div class="flex items-center gap-2">
-        <!-- Toggle Theme (Warna Abu-Abu Bersih, Bukan Hitam) -->
+        <!-- Toggle Stealth Privacy Mode -->
+        <button onclick="togglePrivacyMode()" id="privacyToggleBtn" class="w-10 h-10 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 flex items-center justify-center select-none border border-slate-200 dark:border-slate-700/80 shadow-sm transition-transform active:scale-95" title="Mode Privasi (Sembunyikan Saldo)">
+          <i id="privacyIcon" class="fa-solid fa-eye text-sm"></i>
+        </button>
+
+        <!-- Toggle Theme -->
         <button onclick="toggleTheme()" class="w-10 h-10 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 flex items-center justify-center select-none border border-slate-200 dark:border-slate-700/80 shadow-sm" title="Ubah Tema">
           <i class="fa-solid fa-moon dark:hidden text-sm"></i>
           <i class="fa-solid fa-sun hidden dark:block text-slate-300 hover:text-slate-100 text-sm"></i>
         </button>
 
-        <!-- Lock App Manual (Warna Abu-Abu Bersih, Bukan Hitam) -->
+        <!-- Lock App Manual -->
         <button onclick="lockApp()" class="w-10 h-10 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 flex items-center justify-center select-none border border-slate-200 dark:border-slate-700/80 shadow-sm" title="Kunci Aplikasi">
           <i class="fa-solid fa-lock text-sm"></i>
         </button>
@@ -187,26 +205,31 @@
         </div>
       </div>
 
-      <!-- 50/30/20 BUDGET ALLOCATION SECTION -->
+      <!-- DYNAMIC BUDGET ALLOCATION SECTION -->
       <div class="bg-white dark:bg-darkcard rounded-2xl p-6 shadow-sm border border-slate-200 dark:border-darkborder space-y-6">
-        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
-          <div>
-            <h3 class="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
-              <i class="fa-solid fa-chart-pie text-blue-500"></i>
-              Alokasi Anggaran 50 / 30 / 20 (Gajian)
-            </h3>
-            <p class="text-xs text-slate-500 dark:text-slate-400">Garis warna berkurang otomatis saat terjadi pengeluaran pada kategori terkait</p>
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+          <div class="flex items-start gap-3">
+            <div class="w-10 h-10 rounded-xl bg-blue-500/10 text-blue-500 flex items-center justify-center text-lg shrink-0 mt-0.5">
+              <i class="fa-solid fa-chart-pie"></i>
+            </div>
+            <div>
+              <h3 class="text-base sm:text-lg font-bold text-slate-900 dark:text-white leading-snug">
+                Alokasi Anggaran Gajian
+              </h3>
+              <p class="text-xs font-bold text-blue-600 dark:text-blue-400 mt-0.5 tracking-wide" id="ratioTitleDisplay">50 / 30 / 20</p>
+              <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Garis warna berkurang otomatis saat terjadi pengeluaran pada kategori terkait</p>
+            </div>
           </div>
-          <span class="text-xs px-3 py-1 bg-blue-500/10 text-blue-600 dark:text-blue-400 font-medium rounded-full border border-blue-500/20">
+          <span id="ratioBadgeDisplay" class="text-xs px-3 py-1 bg-blue-500/10 text-blue-600 dark:text-blue-400 font-medium rounded-full border border-blue-500/20 shrink-0 self-start sm:self-center">
             Metode Finansial Ideal
           </span>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <!-- 50% Kebutuhan -->
+          <!-- Kebutuhan -->
           <div class="p-5 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800">
             <div class="flex justify-between items-center mb-1">
-              <span class="font-semibold text-sm text-slate-800 dark:text-slate-200">Kebutuhan (50%)</span>
+              <span class="font-semibold text-sm text-slate-800 dark:text-slate-200" id="labelNeedsName">Kebutuhan (50%)</span>
               <span class="text-xs font-bold text-blue-600 dark:text-blue-400" id="needsAmount">Rp 0</span>
             </div>
             <div class="flex justify-between items-center text-[11px] text-slate-400 mb-3">
@@ -218,10 +241,10 @@
             </div>
           </div>
 
-          <!-- 30% Keinginan -->
+          <!-- Keinginan -->
           <div class="p-5 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800">
             <div class="flex justify-between items-center mb-1">
-              <span class="font-semibold text-sm text-slate-800 dark:text-slate-200">Keinginan (30%)</span>
+              <span class="font-semibold text-sm text-slate-800 dark:text-slate-200" id="labelWantsName">Keinginan (30%)</span>
               <span class="text-xs font-bold text-amber-600 dark:text-amber-400" id="wantsAmount">Rp 0</span>
             </div>
             <div class="flex justify-between items-center text-[11px] text-slate-400 mb-3">
@@ -233,10 +256,10 @@
             </div>
           </div>
 
-          <!-- 20% Tabungan / Investasi -->
+          <!-- Tabungan -->
           <div class="p-5 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800">
             <div class="flex justify-between items-center mb-1">
-              <span class="font-semibold text-sm text-slate-800 dark:text-slate-200">Tabungan & Investasi (20%)</span>
+              <span class="font-semibold text-sm text-slate-800 dark:text-slate-200" id="labelSavingsName">Tabungan & Investasi (20%)</span>
               <span class="text-xs font-bold text-emerald-600 dark:text-emerald-400" id="savingsAmount">Rp 0</span>
             </div>
             <div class="flex justify-between items-center text-[11px] text-slate-400 mb-3">
@@ -302,19 +325,24 @@
     <div id="viewTabungan" class="tab-view hidden space-y-8">
       <div>
         <h2 class="text-2xl font-bold text-slate-900 dark:text-white">Alokasi & Tabungan</h2>
-        <p class="text-sm text-slate-500 dark:text-slate-400">Pembagian anggaran berdasarkan formula ideal 50/30/20.</p>
+        <p class="text-sm text-slate-500 dark:text-slate-400">Pembagian anggaran berdasarkan formula persentase pilihan Anda.</p>
       </div>
 
       <div class="bg-white dark:bg-darkcard rounded-2xl p-6 shadow-sm border border-slate-200 dark:border-darkborder">
-        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-2">
-          <div>
-            <h3 class="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
-              <i class="fa-solid fa-chart-pie text-blue-500"></i>
-              Alokasi Anggaran Gajian (50 / 30 / 20)
-            </h3>
-            <p class="text-xs text-slate-500 dark:text-slate-400">Otomatis dihitung saat Anda memasukkan transaksi Pemasukan kategori "Gajian"</p>
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-3">
+          <div class="flex items-start gap-3">
+            <div class="w-10 h-10 rounded-xl bg-blue-500/10 text-blue-500 flex items-center justify-center text-lg shrink-0 mt-0.5">
+              <i class="fa-solid fa-chart-pie"></i>
+            </div>
+            <div>
+              <h3 class="text-base sm:text-lg font-bold text-slate-900 dark:text-white leading-snug">
+                Alokasi Anggaran Gajian
+              </h3>
+              <p class="text-xs font-bold text-blue-600 dark:text-blue-400 mt-0.5 tracking-wide" id="ratioTitleDisplayTab">50 / 30 / 20</p>
+              <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Otomatis dihitung saat Anda memasukkan transaksi Pemasukan kategori "Gajian"</p>
+            </div>
           </div>
-          <span class="text-xs px-3 py-1 bg-blue-500/10 text-blue-600 dark:text-blue-400 font-medium rounded-full border border-blue-500/20">
+          <span class="text-xs px-3 py-1 bg-blue-500/10 text-blue-600 dark:text-blue-400 font-medium rounded-full border border-blue-500/20 shrink-0 self-start md:self-center">
             Metode Finansial Ideal
           </span>
         </div>
@@ -322,7 +350,7 @@
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div class="p-5 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800">
             <div class="flex justify-between items-center mb-2">
-              <span class="font-semibold text-sm text-slate-800 dark:text-slate-200">Kebutuhan Wajib (50%)</span>
+              <span class="font-semibold text-sm text-slate-800 dark:text-slate-200" id="labelNeedsTab">Kebutuhan Wajib</span>
               <span class="text-xs font-bold text-blue-600 dark:text-blue-400" id="needsAmountTab">Rp 0</span>
             </div>
             <p class="text-xs text-slate-500 dark:text-slate-400 mb-4">Pengeluaran pokok harian, tagihan, cicilan, dan kontrakan.</p>
@@ -330,7 +358,7 @@
 
           <div class="p-5 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800">
             <div class="flex justify-between items-center mb-2">
-              <span class="font-semibold text-sm text-slate-800 dark:text-slate-200">Keinginan & Gaya Hidup (30%)</span>
+              <span class="font-semibold text-sm text-slate-800 dark:text-slate-200" id="labelWantsTab">Keinginan & Gaya Hidup</span>
               <span class="text-xs font-bold text-amber-600 dark:text-amber-400" id="wantsAmountTab">Rp 0</span>
             </div>
             <p class="text-xs text-slate-500 dark:text-slate-400 mb-4">Rekreasi, hiburan, hobi, dan belanja barang impian.</p>
@@ -338,7 +366,7 @@
 
           <div class="p-5 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800">
             <div class="flex justify-between items-center mb-2">
-              <span class="font-semibold text-sm text-slate-800 dark:text-slate-200">Tabungan & Investasi (20%)</span>
+              <span class="font-semibold text-sm text-slate-800 dark:text-slate-200" id="labelSavingsTab">Tabungan & Investasi</span>
               <span class="text-xs font-bold text-emerald-600 dark:text-emerald-400" id="savingsAmountTab">Rp 0</span>
             </div>
             <p class="text-xs text-slate-500 dark:text-slate-400 mb-4">Dana darurat, tabungan jangka panjang, dan portofolio investasi.</p>
@@ -355,9 +383,14 @@
           <p class="text-sm text-slate-500 dark:text-slate-400">Analisis pengeluaran dan cetak laporan bulanan secara rinci.</p>
         </div>
 
-        <div class="flex items-center gap-2 bg-white dark:bg-darkcard p-2 rounded-2xl border border-slate-200 dark:border-darkborder shadow-sm w-full sm:w-auto">
-          <input type="month" id="reportMonthPicker" class="px-3 py-1.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-semibold text-slate-800 dark:text-slate-100 focus:outline-none">
-          <button onclick="downloadMonthlyPDF()" class="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-2 shadow-md shadow-rose-600/20 whitespace-nowrap select-none">
+        <!-- Pemilih Bulan Interaktif Luas & Full Teks Bulan Tahun -->
+        <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto">
+          <label for="reportMonthPicker" class="month-picker-wrapper flex-1 sm:flex-none px-4 py-2.5 bg-white dark:bg-darkcard border border-slate-200 dark:border-darkborder rounded-2xl shadow-sm hover:border-blue-500/50 transition-all select-none">
+            <i class="fa-solid fa-calendar-days text-blue-500 text-sm mr-2.5 shrink-0"></i>
+            <input type="month" id="reportMonthPicker" class="bg-transparent border-none text-xs font-bold text-slate-800 dark:text-slate-100 focus:outline-none cursor-pointer w-full" style="min-width: 150px;">
+          </label>
+
+          <button onclick="downloadMonthlyPDF()" class="px-5 py-2.5 bg-rose-600 hover:bg-rose-700 text-white rounded-2xl text-xs font-bold flex items-center justify-center gap-2 shadow-md shadow-rose-600/20 whitespace-nowrap select-none active:scale-95 transition-transform">
             <i class="fa-solid fa-file-pdf text-sm"></i>
             <span>Unduh PDF Bulanan</span>
           </button>
@@ -400,11 +433,12 @@
     <div id="viewPengaturan" class="tab-view hidden space-y-6">
       <div>
         <h2 class="text-2xl font-bold text-slate-900 dark:text-white">Pengaturan Aplikasi</h2>
-        <p class="text-sm text-slate-500 dark:text-slate-400">Atur keamanan, tema, dan preferensi data aplikasi Anda.</p>
+        <p class="text-sm text-slate-500 dark:text-slate-400">Atur keamanan, cadangan data, rasio anggaran, dan preferensi aplikasi Anda.</p>
       </div>
 
       <div class="bg-white dark:bg-darkcard rounded-2xl p-6 shadow-sm border border-slate-200 dark:border-darkborder space-y-6">
-        <!-- Keamanan PIN & Ubah PIN -->
+        
+        <!-- 1. Keamanan PIN & Ubah PIN -->
         <div class="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-800">
           <div>
             <h4 class="font-bold text-slate-900 dark:text-white text-sm">Keamanan PIN</h4>
@@ -412,6 +446,59 @@
           </div>
           <button onclick="openChangePinModal()" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-medium shadow-md shadow-blue-500/20 select-none">
             Ubah PIN
+          </button>
+        </div>
+
+        <!-- 2 & 5. Ekspor & Impor Data (Backup & Restore) -->
+        <div class="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-800">
+          <div>
+            <h4 class="font-bold text-slate-900 dark:text-white text-sm">Cadangan & Pemulihan Data</h4>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Unduh file cadangan transaksi atau pulihkan dari file.</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <button onclick="exportDataJSON()" class="px-3 py-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-semibold select-none" title="Unduh Backup JSON">
+              <i class="fa-solid fa-download mr-1"></i> Ekspor
+            </button>
+            <label class="px-3 py-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-semibold select-none cursor-pointer" title="Pulihkan dari file JSON">
+              <i class="fa-solid fa-upload mr-1"></i> Impor
+              <input type="file" id="importFile" accept=".json" onchange="importDataJSON(event)" class="hidden">
+            </label>
+          </div>
+        </div>
+
+        <!-- 8. Kustomisasi Persentase Alokasi Anggaran (Custom Rasio) -->
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-800 gap-3">
+          <div>
+            <h4 class="font-bold text-slate-900 dark:text-white text-sm">Alokasi Rasio Anggaran</h4>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Pilih formula pembagian persentase gaji.</p>
+          </div>
+          <select id="budgetRatioSelect" onchange="changeBudgetRatio(this.value)" class="px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-semibold text-slate-800 dark:text-slate-100 focus:outline-none">
+            <option value="50-30-20">50% / 30% / 20% (Standar)</option>
+            <option value="60-20-20">60% / 20% / 20% (Hemat)</option>
+            <option value="70-20-10">70% / 20% / 10% (Fokus Kebutuhan)</option>
+          </select>
+        </div>
+
+        <!-- 6. Pengaturan Peringatan Batas Kategori (Budget Alert Limit) -->
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-800 gap-3">
+          <div>
+            <h4 class="font-bold text-slate-900 dark:text-white text-sm">Batas Peringatan Pengeluaran</h4>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Notifikasi jika total pengeluaran bulanan melewati batas.</p>
+          </div>
+          <div class="flex items-center gap-2 w-full sm:w-auto">
+            <span class="text-xs text-slate-400">Rp</span>
+            <input type="text" id="budgetLimitInput" inputmode="numeric" oninput="formatNumberInput(this); saveBudgetLimit()" placeholder="Contoh: 5.000.000" class="w-full sm:w-36 px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold text-slate-800 dark:text-slate-100 focus:outline-none">
+          </div>
+        </div>
+
+        <!-- 9. Pusat Bantuan & Informasi Aplikasi -->
+        <div class="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-800">
+          <div>
+            <h4 class="font-bold text-slate-900 dark:text-white text-sm">Pusat Bantuan & Panduan</h4>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Cara penggunaan aplikasi & informasi versi v1.3.0.</p>
+          </div>
+          <button onclick="openHelpModal()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-semibold select-none">
+            Panduan
           </button>
         </div>
 
@@ -462,35 +549,24 @@
     </div>
   </nav>
 
-  <!-- ==================== LOCK / PIN ACCESS SCREEN (MENYESUAIKAN TEMA) ==================== -->
+  <!-- ==================== LOCK / PIN ACCESS SCREEN ==================== -->
   <div id="pinScreen" class="fixed inset-0 z-[100] flex flex-col items-center justify-center p-4 overflow-hidden select-none bg-slate-100 dark:bg-slate-950">
-    
-    <!-- Latar Belakang Gradien Dinamis Mode Terang / Gelap -->
     <div class="absolute inset-0 bg-gradient-to-br from-slate-100 via-blue-50 to-slate-200 dark:from-slate-950 dark:via-blue-950 dark:to-slate-950 opacity-95"></div>
-    
-    <!-- Ambient Radial Light Effects -->
     <div class="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-blue-600/10 dark:bg-blue-600/20 rounded-full blur-[100px] pointer-events-none"></div>
     <div class="absolute bottom-1/4 left-1/2 -translate-x-1/2 translate-y-1/2 w-80 h-80 bg-indigo-600/10 dark:bg-indigo-600/15 rounded-full blur-[90px] pointer-events-none"></div>
 
-    <!-- Container Utama Akses PIN -->
     <div class="relative z-10 w-full max-w-sm flex flex-col items-center">
-      
-      <!-- Brand & Icon Header -->
       <div class="mb-8 text-center flex flex-col items-center">
         <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500 via-blue-600 to-indigo-800 flex items-center justify-center text-white text-2xl shadow-xl shadow-blue-600/30 border border-blue-400/30 mb-4">
           <i class="fa-solid fa-chart-line text-blue-100"></i>
         </div>
-        <!-- Judul Warna Putih khusus Mode Gelap, dan Abu Gelap/Hitam saat Mode Terang -->
         <h1 class="brand-title text-3xl font-black tracking-tight text-slate-900 dark:text-white drop-shadow-sm">
           Finance Management
         </h1>
         <p class="text-xs text-slate-500 dark:text-blue-300/70 font-medium tracking-widest uppercase mt-1">Masukkan PIN Akses Anda</p>
       </div>
 
-      <!-- Card PIN Input -->
       <div class="w-full bg-white/80 dark:bg-slate-900/80 backdrop-blur-2xl border border-slate-200 dark:border-blue-500/20 rounded-3xl p-6 sm:p-8 shadow-2xl shadow-slate-300/50 dark:shadow-blue-950/50 flex flex-col items-center">
-        
-        <!-- Indicator Dots -->
         <div class="flex items-center justify-center gap-3 mb-8" id="pinDots">
           <div id="dot-0" class="w-4 h-4 rounded-full border-2 border-blue-500/40 bg-transparent transition-all duration-150"></div>
           <div id="dot-1" class="w-4 h-4 rounded-full border-2 border-blue-500/40 bg-transparent transition-all duration-150"></div>
@@ -500,7 +576,6 @@
           <div id="dot-5" class="w-4 h-4 rounded-full border-2 border-blue-500/40 bg-transparent transition-all duration-150"></div>
         </div>
 
-        <!-- Keypad Grid -->
         <div class="grid grid-cols-3 gap-3 sm:gap-4 w-full">
           <button type="button" onclick="appendPin('1')" class="keypad-btn h-12 sm:h-14 bg-slate-50 dark:bg-blue-950/40 hover:bg-slate-100 dark:hover:bg-blue-900/50 active:bg-slate-200 dark:active:bg-blue-800/60 border border-slate-200 dark:border-blue-500/20 rounded-2xl text-xl font-bold text-slate-800 dark:text-blue-100 flex items-center justify-center shadow-sm dark:shadow-none">1</button>
           <button type="button" onclick="appendPin('2')" class="keypad-btn h-12 sm:h-14 bg-slate-50 dark:bg-blue-950/40 hover:bg-slate-100 dark:hover:bg-blue-900/50 active:bg-slate-200 dark:active:bg-blue-800/60 border border-slate-200 dark:border-blue-500/20 rounded-2xl text-xl font-bold text-slate-800 dark:text-blue-100 flex items-center justify-center shadow-sm dark:shadow-none">2</button>
@@ -519,14 +594,7 @@
             <i class="fa-solid fa-backspace"></i>
           </button>
         </div>
-
       </div>
-
-      <p class="mt-6 text-[11px] text-slate-400 dark:text-blue-300/50 flex items-center gap-1.5 font-medium">
-        <i class="fa-solid fa-shield-halved text-blue-500 dark:text-blue-400"></i>
-        <span>Sistem Akses Keamanan Terenkripsi</span>
-      </p>
-
     </div>
   </div>
 
@@ -576,7 +644,7 @@
             <!-- Dynamic Injection -->
           </select>
           <p id="salaryNotice" class="text-[11px] text-blue-500 dark:text-blue-400 mt-1.5 hidden flex items-center gap-1">
-            <i class="fa-solid fa-magic"></i> Pemasukan Gajian ini akan otomatis dibagikan 50% Kebutuhan, 30% Keinginan, & 20% Tabungan!
+            <i class="fa-solid fa-magic"></i> Pemasukan Gajian ini akan otomatis dibagikan sesuai rasio alokasi pilihan Anda!
           </p>
         </div>
 
@@ -585,7 +653,6 @@
           <input type="date" id="date" required class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-800 dark:text-slate-100 text-sm focus:outline-none">
         </div>
 
-        <!-- Catatan / Keterangan OPSIONAL -->
         <div>
           <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">Catatan / Keterangan <span class="normal-case text-[10px] text-slate-400 dark:text-slate-500">(Opsional)</span></label>
           <input type="text" id="description" placeholder="Contoh: Gaji Bulan Ini, Beli Token Listrik (Boleh Kosong)" class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-800 dark:text-slate-100 text-sm focus:outline-none">
@@ -602,7 +669,41 @@
     </div>
   </div>
 
-  <!-- ==================== NOTIFIKASI POP-UP KONFIRMASI (SESUAI TEMA) ==================== -->
+  <!-- ==================== MODAL PANDUAN & BANTUAN ==================== -->
+  <div id="helpModal" class="fixed inset-0 z-[109] flex items-center justify-center bg-slate-900/60 backdrop-blur-sm opacity-0 pointer-events-none p-4 transition-opacity duration-300">
+    <div class="bg-white dark:bg-darkcard border border-blue-500/30 rounded-3xl max-w-md w-full p-6 shadow-2xl transform scale-95 transition-transform duration-300 space-y-4" id="helpModalContainer">
+      <div class="flex justify-between items-center pb-2 border-b border-slate-100 dark:border-slate-800">
+        <h3 class="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+          <i class="fa-solid fa-circle-question text-blue-500"></i>
+          Panduan & Informasi Aplikasi
+        </h3>
+        <button onclick="closeHelpModal()" class="w-7 h-7 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center justify-center select-none">
+          <i class="fa-solid fa-xmark text-xs"></i>
+        </button>
+      </div>
+
+      <div class="space-y-3 text-xs text-slate-600 dark:text-slate-300 max-h-[60vh] overflow-y-auto pr-1">
+        <div>
+          <h4 class="font-bold text-slate-800 dark:text-white">1. Alokasi Gaji Otomatis</h4>
+          <p>Setiap kali Anda mencatat pemasukan kategori "Gajian", aplikasi otomatis membagi nominal tersebut ke dalam alokasi Kebutuhan, Keinginan, dan Tabungan sesuai persentase yang Anda pilih di menu Setelan.</p>
+        </div>
+        <div>
+          <h4 class="font-bold text-slate-800 dark:text-white">2. Mode Privasi Cepat</h4>
+          <p>Ketuk ikon mata di bagian atas header untuk menyembunyikan nominal saldo dan angka transaksi secara instan demi menjaga kerahasiaan Anda di tempat umum.</p>
+        </div>
+        <div>
+          <h4 class="font-bold text-slate-800 dark:text-white">3. Cadangan & Pemulihan (Backup)</h4>
+          <p>Gunakan tombol Ekspor di menu Setelan untuk menyimpan data transaksi ke file penyimpanan HP Anda, dan Impor untuk mengembalikannya kapan saja.</p>
+        </div>
+      </div>
+
+      <button type="button" onclick="closeHelpModal()" class="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-md text-xs select-none">
+        Mengerti
+      </button>
+    </div>
+  </div>
+
+  <!-- ==================== NOTIFIKASI POP-UP KONFIRMASI ==================== -->
   <div id="customAlertModal" class="fixed inset-0 z-[110] flex items-center justify-center bg-slate-900/60 backdrop-blur-sm opacity-0 pointer-events-none p-4 transition-opacity duration-300">
     <div class="bg-white dark:bg-darkcard border border-blue-500/30 rounded-3xl max-w-sm w-full p-6 shadow-2xl transform scale-95 transition-transform duration-300 text-center space-y-4" id="customAlertContainer">
       <div id="alertIconBg" class="w-16 h-16 rounded-2xl bg-blue-500/10 text-blue-600 dark:text-blue-400 flex items-center justify-center text-3xl mx-auto shadow-inner border border-blue-500/20">
@@ -656,10 +757,9 @@
     </div>
   </div>
 
-  <!-- ==================== MODAL PIN VERIFIKASI RESET DATA (DENGAN KEYPAD NUMERIK) ==================== -->
+  <!-- ==================== MODAL PIN VERIFIKASI RESET DATA ==================== -->
   <div id="resetPinModal" class="fixed inset-0 z-[106] flex items-center justify-center bg-slate-900/60 backdrop-blur-sm opacity-0 pointer-events-none p-4 transition-opacity duration-300">
     <div class="bg-white dark:bg-darkcard border border-rose-500/30 rounded-3xl max-w-xs w-full p-6 shadow-2xl transform scale-95 transition-transform duration-300 space-y-4" id="resetPinContainer">
-      
       <div class="flex justify-between items-center pb-2 border-b border-slate-100 dark:border-slate-800">
         <h3 class="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
           <i class="fa-solid fa-shield-halved text-rose-500"></i>
@@ -674,7 +774,6 @@
         Masukkan 6 angka PIN akses Anda untuk menghapus data.
       </p>
 
-      <!-- Indicator Dots for Reset PIN -->
       <div class="flex items-center justify-center gap-2 my-2" id="resetPinDots">
         <div id="r-dot-0" class="w-3.5 h-3.5 rounded-full border-2 border-rose-500/40 bg-transparent transition-all duration-150"></div>
         <div id="r-dot-1" class="w-3.5 h-3.5 rounded-full border-2 border-rose-500/40 bg-transparent transition-all duration-150"></div>
@@ -686,7 +785,6 @@
 
       <div id="resetPinError" class="text-[11px] text-rose-500 font-semibold hidden text-center">PIN yang Anda masukkan salah!</div>
 
-      <!-- Keypad Grid for Reset PIN -->
       <div class="grid grid-cols-3 gap-2.5 w-full pt-1">
         <button type="button" onclick="appendResetPin('1')" class="h-11 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 rounded-xl text-base font-bold text-slate-800 dark:text-slate-100 flex items-center justify-center">1</button>
         <button type="button" onclick="appendResetPin('2')" class="h-11 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 rounded-xl text-base font-bold text-slate-800 dark:text-slate-100 flex items-center justify-center">2</button>
@@ -705,7 +803,6 @@
           <i class="fa-solid fa-backspace"></i>
         </button>
       </div>
-
     </div>
   </div>
 
@@ -763,8 +860,14 @@
     let transactions = JSON.parse(localStorage.getItem('fm_transactions')) || [];
     let isUnlocked = sessionStorage.getItem('fm_is_unlocked') === 'true';
 
+    // New State Settings
+    let isPrivacyMode = false;
+    let budgetRatio = localStorage.getItem('fm_budget_ratio') || '50-30-20';
+    let budgetLimit = parseFloat(localStorage.getItem('fm_budget_limit')) || 0;
+
     // Formatter helpers
     function formatCurrency(amount) {
+      if (isPrivacyMode) return 'Rp *******';
       return new Intl.NumberFormat('id-ID', {
         style: 'currency',
         currency: 'IDR',
@@ -812,6 +915,14 @@
         const year = now.getFullYear();
         const month = String(now.getMonth() + 1).padStart(2, '0');
         monthPicker.value = `${year}-${month}`;
+      }
+
+      const ratioSelect = document.getElementById('budgetRatioSelect');
+      if (ratioSelect) ratioSelect.value = budgetRatio;
+
+      const limitInput = document.getElementById('budgetLimitInput');
+      if (limitInput && budgetLimit > 0) {
+        limitInput.value = new Intl.NumberFormat('id-ID').format(budgetLimit);
       }
 
       initTheme();
@@ -1087,7 +1198,6 @@
         return;
       }
 
-      // Tombol Loading 3 Detik
       const btnSaveText = document.getElementById('btnSaveText');
       const btnSaveSpinner = document.getElementById('btnSaveSpinner');
       const btnSaveTx = document.getElementById('btnSaveTx');
@@ -1119,7 +1229,6 @@
         updateCategories();
         renderDashboard();
 
-        // Mainkan sound efek & munculkan pop-up sukses
         playTransactionChimeSound();
         showCustomAlert('Berhasil!', 'Catatan transaksi telah tersimpan.', 'success');
       }, 3000);
@@ -1232,6 +1341,85 @@
       modal.classList.add('opacity-0', 'pointer-events-none');
     }
 
+    /* Help Modal Handlers */
+    function openHelpModal() {
+      const modal = document.getElementById('helpModal');
+      const container = document.getElementById('helpModalContainer');
+      modal.classList.remove('opacity-0', 'pointer-events-none');
+      container.classList.remove('scale-95');
+      container.classList.add('scale-100');
+    }
+
+    function closeHelpModal() {
+      const modal = document.getElementById('helpModal');
+      const container = document.getElementById('helpModalContainer');
+      container.classList.remove('scale-100');
+      container.classList.add('scale-95');
+      modal.classList.add('opacity-0', 'pointer-events-none');
+    }
+
+    /* Privacy Mode Toggle */
+    function togglePrivacyMode() {
+      isPrivacyMode = !isPrivacyMode;
+      const icon = document.getElementById('privacyIcon');
+      const btn = document.getElementById('privacyToggleBtn');
+      if (isPrivacyMode) {
+        icon.className = "fa-solid fa-eye-slash text-sm text-blue-500";
+        btn.classList.add('border-blue-500/50', 'stealth-active');
+      } else {
+        icon.className = "fa-solid fa-eye text-sm";
+        btn.classList.remove('border-blue-500/50', 'stealth-active');
+      }
+      renderDashboard();
+    }
+
+    /* Export & Import Data JSON */
+    function exportDataJSON() {
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(transactions, null, 2));
+      const dlAnchor = document.createElement('a');
+      dlAnchor.setAttribute("href", dataStr);
+      dlAnchor.setAttribute("download", `FinanceManagement_Backup_${new Date().toISOString().slice(0,10)}.json`);
+      document.body.appendChild(dlAnchor);
+      dlAnchor.click();
+      dlAnchor.remove();
+      showCustomAlert('Ekspor Berhasil', 'File cadangan data JSON berhasil diunduh.', 'success');
+    }
+
+    function importDataJSON(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        try {
+          const parsed = JSON.parse(evt.target.result);
+          if (Array.isArray(parsed)) {
+            transactions = parsed;
+            localStorage.setItem('fm_transactions', JSON.stringify(transactions));
+            renderDashboard();
+            showCustomAlert('Impor Berhasil', 'Data transaksi berhasil dipulihkan.', 'success');
+          } else {
+            showCustomAlert('Format Salah', 'File JSON tidak valid.', 'error');
+          }
+        } catch (err) {
+          showCustomAlert('Gagal', 'Terjadi kesalahan membaca file.', 'error');
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    /* Change Budget Ratio & Budget Limit Handlers */
+    function changeBudgetRatio(val) {
+      budgetRatio = val;
+      localStorage.setItem('fm_budget_ratio', val);
+      renderDashboard();
+    }
+
+    function saveBudgetLimit() {
+      const val = document.getElementById('budgetLimitInput').value;
+      budgetLimit = getRawAmountValue(val);
+      localStorage.setItem('fm_budget_limit', budgetLimit);
+    }
+
     /* Dashboard & Calculations Render logic */
     function renderDashboard() {
       let totalIncome = 0;
@@ -1255,15 +1443,23 @@
       document.getElementById('totalIncome').textContent = formatCurrency(totalIncome);
       document.getElementById('totalExpense').textContent = formatCurrency(totalExpense);
 
-      // Budget Allocations (50/30/20)
+      let p1 = 50, p2 = 30, p3 = 20;
+      if (budgetRatio === '60-20-20') { p1 = 60; p2 = 20; p3 = 20; }
+      else if (budgetRatio === '70-20-10') { p1 = 70; p2 = 20; p3 = 10; }
+
+      document.getElementById('ratioTitleDisplay').textContent = `${p1} / ${p2} / ${p3}`;
+      document.getElementById('ratioTitleDisplayTab').textContent = `${p1} / ${p2} / ${p3}`;
+      document.getElementById('labelNeedsName').textContent = `Kebutuhan (${p1}%)`;
+      document.getElementById('labelWantsName').textContent = `Keinginan (${p2}%)`;
+      document.getElementById('labelSavingsName').textContent = `Tabungan & Investasi (${p3}%)`;
+
       const baseSalary = totalSalary > 0 ? totalSalary : totalIncome;
-      const needsAlloc = baseSalary * 0.50;
-      const wantsAlloc = baseSalary * 0.30;
-      const savingsAlloc = baseSalary * 0.20;
+      const needsAlloc = baseSalary * (p1 / 100);
+      const wantsAlloc = baseSalary * (p2 / 100);
+      const savingsAlloc = baseSalary * (p3 / 100);
 
       let needsSpent = 0;
       let wantsSpent = 0;
-      let savingsSpent = 0;
 
       transactions.forEach(t => {
         if (t.type === 'pengeluaran') {
@@ -1277,7 +1473,7 @@
 
       const needsRemain = Math.max(0, needsAlloc - needsSpent);
       const wantsRemain = Math.max(0, wantsAlloc - wantsSpent);
-      const savingsRemain = Math.max(0, savingsAlloc - savingsSpent);
+      const savingsRemain = Math.max(0, savingsAlloc);
 
       document.getElementById('needsAmount').textContent = formatCurrency(needsAlloc);
       document.getElementById('wantsAmount').textContent = formatCurrency(wantsAlloc);
@@ -1287,15 +1483,13 @@
       document.getElementById('wantsRemainText').textContent = formatCurrency(wantsRemain);
       document.getElementById('savingsRemainText').textContent = formatCurrency(savingsRemain);
 
-      // Tabungan view elements
       document.getElementById('needsAmountTab').textContent = formatCurrency(needsAlloc);
       document.getElementById('wantsAmountTab').textContent = formatCurrency(wantsAlloc);
       document.getElementById('savingsAmountTab').textContent = formatCurrency(savingsAlloc);
 
-      // Bars
       const needsPct = needsAlloc > 0 ? Math.min(100, Math.max(0, (needsRemain / needsAlloc) * 100)) : 0;
       const wantsPct = wantsAlloc > 0 ? Math.min(100, Math.max(0, (wantsRemain / wantsAlloc) * 100)) : 0;
-      const savingsPct = savingsAlloc > 0 ? Math.min(100, Math.max(0, (savingsRemain / savingsAlloc) * 100)) : 0;
+      const savingsPct = savingsAlloc > 0 ? 100 : 0;
 
       document.getElementById('needsBar').style.width = `${needsPct}%`;
       document.getElementById('wantsBar').style.width = `${wantsPct}%`;
@@ -1371,11 +1565,16 @@
       if (totalIncome === 0) {
         healthText.textContent = "Belum ada data pemasukan untuk dihitung kesehatan finansialnya.";
       } else if (ratio >= 20) {
-        healthText.textContent = "Sangat Baik! Anda mampu menyisihkan lebih dari 20% penghasilan untuk tabungan.";
+        healthText.textContent = "Sangat Baik! Anda mampu menyisihkan tabungan dengan sehat.";
       } else if (ratio > 0) {
-        healthText.textContent = "Cukup Baik. Usahakan untuk mengurangi pengeluaran sekunder agar rasio tabungan mencapai 20%.";
+        healthText.textContent = "Cukup Baik. Usahakan untuk mengurangi pengeluaran sekunder.";
       } else {
         healthText.textContent = "Waspada! Pengeluaran Anda melebihi atau menghabiskan seluruh pemasukan.";
+      }
+
+      if (budgetLimit > 0 && totalExpense > budgetLimit) {
+        healthText.textContent = `⚠️ PERINGATAN: Total pengeluaran telah melewati batas anggaran bulanan Anda!`;
+        healthText.className = "text-xs text-rose-500 font-bold pt-1";
       }
 
       const breakdownEl = document.getElementById('categoryBreakdown');
