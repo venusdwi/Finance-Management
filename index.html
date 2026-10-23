@@ -2,8 +2,19 @@
 <html lang="id" class="dark">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Finance HV</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Finance Management</title>
+
+  <!-- Script Penentu Tema Instan (Cegah Flicker Saat Refresh) -->
+  <script>
+    (function() {
+      if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
+    })();
+  </script>
   
   <!-- ==================== PWA MANIFEST & CONFIG iOS/Android ==================== -->
   <link rel="manifest" href="./manifest.json">
@@ -51,9 +62,14 @@
       transition: background-color 300ms ease-in-out, border-color 300ms ease-in-out, color 300ms ease-in-out, fill 300ms ease-in-out, stroke 300ms ease-in-out;
     }
 
+    html, body {
+      overscroll-behavior-y: none !important;
+      position: relative;
+      touch-action: pan-x pan-y;
+    }
+
     body {
       font-family: 'Inter', sans-serif;
-      overscroll-behavior-y: contain;
       -webkit-tap-highlight-color: transparent;
       user-select: none;
     }
@@ -893,7 +909,6 @@
         limitInput.value = new Intl.NumberFormat('id-ID').format(budgetLimit);
       }
 
-      initTheme();
       updateCategories();
       renderDashboard();
 
@@ -1668,14 +1683,6 @@
       localStorage.setItem('fm_user_pin', newPin);
       closeChangePinModal();
       showCustomAlert('PIN Diperbarui', 'PIN keamanan berhasil diubah.', 'success');
-    }
-
-    function initTheme() {
-      if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-        document.documentElement.classList.add('dark');
-      } else {
-        document.documentElement.classList.remove('dark');
-      }
     }
 
     function toggleTheme() {
