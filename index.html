@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Finance Management</title>
+  <title>Finance HV</title>
   
   <!-- ==================== PWA MANIFEST & CONFIG iOS/Android ==================== -->
   <link rel="manifest" href="./manifest.json">
@@ -11,7 +11,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Finance HV">
-  <link rel="apple-touch-icon" href="./icon-192.png">
+  <link rel="apple-touch-icon" href="./icon.png">
 
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -109,7 +109,7 @@
           <i class="fa-solid fa-chart-line"></i>
         </div>
         <div>
-          <h1 class="brand-title font-black text-lg tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-blue-600 via-blue-500 to-indigo-400">Finance Management</h1>
+          <h1 class="brand-title font-black text-lg tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-blue-600 via-blue-500 to-indigo-400">Finance HV</h1>
           <p class="text-[10px] text-slate-400 dark:text-slate-500 font-medium -mt-0.5">Pengelolaan Keuangan Cerdas</p>
         </div>
       </div>
@@ -528,7 +528,7 @@
           <i class="fa-solid fa-chart-line text-blue-100"></i>
         </div>
         <h1 class="brand-title text-3xl font-black tracking-tight text-slate-900 dark:text-white drop-shadow-sm">
-          Finance Management
+          Finance HV
         </h1>
         <p class="text-xs text-slate-500 dark:text-blue-300/70 font-medium tracking-widest uppercase mt-1">Masukkan PIN Akses Anda</p>
       </div>
@@ -811,7 +811,7 @@
   </div>
 
   <footer class="border-t border-slate-200 dark:border-darkborder py-6 text-center text-xs text-slate-400 dark:text-slate-500">
-    <p>Finance Management App &bull; Pengelolaan Keuangan Rumah Tangga Elegan & Minimalis</p>
+    <p>Finance HV App &bull; Pengelolaan Keuangan Rumah Tangga Elegan & Minimalis</p>
   </footer>
 
   <!-- ==================== JAVASCRIPT LOGIC ==================== -->
@@ -1335,7 +1335,7 @@
       const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(transactions, null, 2));
       const dlAnchor = document.createElement('a');
       dlAnchor.setAttribute("href", dataStr);
-      dlAnchor.setAttribute("download", `FinanceManagement_Backup_${new Date().toISOString().slice(0,10)}.json`);
+      dlAnchor.setAttribute("download", `FinanceHV_Backup_${new Date().toISOString().slice(0,10)}.json`);
       document.body.appendChild(dlAnchor);
       dlAnchor.click();
       dlAnchor.remove();
