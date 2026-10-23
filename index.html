@@ -109,7 +109,7 @@
         <!-- Toggle Theme (Matching Dark Gray Style in both modes) -->
         <button onclick="toggleTheme()" class="w-10 h-10 rounded-xl bg-slate-800 text-slate-300 hover:bg-slate-700 flex items-center justify-center select-none border border-slate-700/50" title="Ubah Tema">
           <i class="fa-solid fa-moon dark:hidden text-sm"></i>
-          <i class="fa-solid fa-sun hidden dark:block text-amber-400 text-sm"></i>
+          <i class="fa-solid fa-sun hidden dark:block text-slate-300 hover:text-slate-100 text-sm"></i>
         </button>
 
         <!-- Lock App Manual -->
@@ -600,14 +600,20 @@
     </div>
   </div>
 
-  <!-- ==================== NOTIFIKASI TOAST ELEGAN ==================== -->
-  <div id="toastNotification" class="fixed top-5 right-5 z-50 flex items-center gap-3 bg-white/90 dark:bg-darkcard/90 backdrop-blur-md border border-emerald-500/30 text-slate-800 dark:text-white px-5 py-4 rounded-2xl shadow-xl transform translate-y-[-150%] opacity-0 transition-all duration-300">
-    <div class="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center text-lg flex-shrink-0">
-      <i class="fa-solid fa-circle-check"></i>
-    </div>
-    <div>
-      <h4 class="font-bold text-sm text-slate-900 dark:text-white" id="toastTitle">Berhasil!</h4>
-      <p class="text-xs text-slate-500 dark:text-slate-400" id="toastMessage">Transaksi berhasil disimpan.</p>
+  <!-- ==================== NOTIFIKASI POP-UP KONFIRMASI (SESUAI TEMA BIRU APLIKASI) ==================== -->
+  <div id="customAlertModal" class="fixed inset-0 z-[110] flex items-center justify-center bg-slate-900/60 backdrop-blur-sm opacity-0 pointer-events-none p-4 transition-opacity duration-300">
+    <div class="bg-white dark:bg-darkcard border border-blue-500/30 rounded-3xl max-w-sm w-full p-6 shadow-2xl transform scale-95 transition-transform duration-300 text-center space-y-4" id="customAlertContainer">
+      <div id="alertIconBg" class="w-16 h-16 rounded-2xl bg-blue-500/10 text-blue-600 dark:text-blue-400 flex items-center justify-center text-3xl mx-auto shadow-inner border border-blue-500/20">
+        <i id="alertIcon" class="fa-solid fa-circle-check"></i>
+      </div>
+      <div class="space-y-1">
+        <h3 id="alertTitle" class="text-lg font-bold text-slate-900 dark:text-white">Berhasil!</h3>
+        <p id="alertMessage" class="text-xs text-slate-500 dark:text-slate-400">Catatan transaksi telah tersimpan.</p>
+      </div>
+      <!-- Tombol Selesai Disesuaikan dengan Tema Biru Aplikasi -->
+      <button type="button" id="alertBtn" onclick="closeCustomAlert()" class="w-full py-3 bg-gradient-to-r from-blue-600 via-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold rounded-xl shadow-lg shadow-blue-500/25 text-sm select-none transition-all">
+        Selesai
+      </button>
     </div>
   </div>
 
@@ -802,7 +808,7 @@
           }, 300);
         }
       } else {
-        showToast('Keamanan PIN', 'Kode PIN yang dimasukkan salah!');
+        showCustomAlert('Keamanan PIN', 'Kode PIN yang dimasukkan salah!', 'error');
         clearPin();
       }
     }
@@ -932,37 +938,89 @@
       const description = document.getElementById('description').value || category;
 
       if (!amount || amount <= 0) {
-        showToast('Peringatan', 'Harap masukkan nominal yang valid!');
+        showCustomAlert('Peringatan', 'Harap masukkan nominal yang valid!', 'error');
         return;
       }
 
-      const tx = {
-        id: Date.now(),
-        type,
-        amount,
-        category,
-        date,
-        description
-      };
+      // Tombol Loading 3 Detik
+      const btnSaveText = document.getElementById('btnSaveText');
+      const btnSaveSpinner = document.getElementById('btnSaveSpinner');
+      const btnSaveTx = document.getElementById('btnSaveTx');
 
-      transactions.unshift(tx);
-      localStorage.setItem('fm_transactions', JSON.stringify(transactions));
+      btnSaveTx.disabled = true;
+      btnSaveText.textContent = "Menyimpan...";
+      btnSaveSpinner.classList.remove('hidden');
 
-      playTransactionChimeSound();
-      showToast('Berhasil Simpan', 'Catatan transaksi telah tersimpan.');
+      setTimeout(() => {
+        btnSaveTx.disabled = false;
+        btnSaveText.textContent = "Simpan Transaksi";
+        btnSaveSpinner.classList.add('hidden');
 
-      closeModal();
-      document.getElementById('transactionForm').reset();
-      document.getElementById('date').valueAsDate = new Date();
-      updateCategories();
-      renderDashboard();
+        const tx = {
+          id: Date.now(),
+          type,
+          amount,
+          category,
+          date,
+          description
+        };
+
+        transactions.unshift(tx);
+        localStorage.setItem('fm_transactions', JSON.stringify(transactions));
+
+        closeModal();
+        document.getElementById('transactionForm').reset();
+        document.getElementById('date').valueAsDate = new Date();
+        updateCategories();
+        renderDashboard();
+
+        // Mainkan sound efek & munculkan pop-up sukses
+        playTransactionChimeSound();
+        showCustomAlert('Berhasil!', 'Catatan transaksi telah tersimpan.', 'success');
+      }, 3000);
     }
 
     function deleteTransaction(id) {
       transactions = transactions.filter(t => t.id !== id);
       localStorage.setItem('fm_transactions', JSON.stringify(transactions));
-      showToast('Dihapus', 'Transaksi berhasil dihapus.');
+      showCustomAlert('Dihapus', 'Transaksi berhasil dihapus.', 'info');
       renderDashboard();
+    }
+
+    /* Custom Alert Pop-Up Selesai / Konfirmasi OK (Disesuaikan Tema) */
+    function showCustomAlert(title, message, type = 'success') {
+      const alertModal = document.getElementById('customAlertModal');
+      const alertContainer = document.getElementById('customAlertContainer');
+      const alertTitle = document.getElementById('alertTitle');
+      const alertMessage = document.getElementById('alertMessage');
+      const alertIcon = document.getElementById('alertIcon');
+      const alertIconBg = document.getElementById('alertIconBg');
+      const alertBtn = document.getElementById('alertBtn');
+
+      alertTitle.textContent = title;
+      alertMessage.textContent = message;
+
+      if (type === 'error') {
+        alertIcon.className = "fa-solid fa-triangle-exclamation";
+        alertIconBg.className = "w-16 h-16 rounded-2xl bg-rose-500/10 text-rose-500 flex items-center justify-center text-3xl mx-auto shadow-inner border border-rose-500/20";
+        alertBtn.className = "w-full py-3 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl shadow-lg shadow-rose-500/25 text-sm select-none transition-all";
+      } else {
+        alertIcon.className = "fa-solid fa-circle-check";
+        alertIconBg.className = "w-16 h-16 rounded-2xl bg-blue-500/10 text-blue-600 dark:text-blue-400 flex items-center justify-center text-3xl mx-auto shadow-inner border border-blue-500/20";
+        alertBtn.className = "w-full py-3 bg-gradient-to-r from-blue-600 via-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold rounded-xl shadow-lg shadow-blue-500/25 text-sm select-none transition-all";
+      }
+
+      alertModal.classList.remove('opacity-0', 'pointer-events-none');
+      alertContainer.classList.remove('scale-95');
+      alertContainer.classList.add('scale-100');
+    }
+
+    function closeCustomAlert() {
+      const alertModal = document.getElementById('customAlertModal');
+      const alertContainer = document.getElementById('customAlertContainer');
+      alertContainer.classList.remove('scale-100');
+      alertContainer.classList.add('scale-95');
+      alertModal.classList.add('opacity-0', 'pointer-events-none');
     }
 
     /* Dashboard & Calculations Render logic */
@@ -1142,7 +1200,7 @@
     function downloadMonthlyPDF() {
       const monthVal = document.getElementById('reportMonthPicker').value;
       if (!monthVal) {
-        showToast('Peringatan', 'Pilih bulan terlebih dahulu!');
+        showCustomAlert('Peringatan', 'Pilih bulan terlebih dahulu!', 'error');
         return;
       }
 
@@ -1153,7 +1211,7 @@
       const filteredTx = transactions.filter(t => t.date.startsWith(monthVal));
 
       if (filteredTx.length === 0) {
-        showToast('Info', `Tidak ada transaksi tercatat pada bulan ${monthLabel}.`);
+        showCustomAlert('Info', `Tidak ada transaksi tercatat pada bulan ${monthLabel}.`, 'info');
         return;
       }
 
@@ -1201,7 +1259,7 @@
       doc.text(`Sisa Saldo Bulanan: ${formatCurrency(incSum - expSum)}`, 14, finalY + 12);
 
       doc.save(`Laporan_Keuangan_${monthVal}.pdf`);
-      showToast('PDF Berhasil', 'Laporan keuangan PDF telah diunduh.');
+      showCustomAlert('PDF Berhasil', 'Laporan keuangan PDF telah diunduh.', 'success');
     }
 
     /* Change PIN Handler */
@@ -1244,7 +1302,7 @@
       userPin = newPin;
       localStorage.setItem('fm_user_pin', newPin);
       closeChangePinModal();
-      showToast('PIN Diperbarui', 'PIN keamanan berhasil diubah.');
+      showCustomAlert('PIN Diperbarui', 'PIN keamanan berhasil diubah.', 'success');
     }
 
     /* Reset Data */
@@ -1253,23 +1311,8 @@
         transactions = [];
         localStorage.removeItem('fm_transactions');
         renderDashboard();
-        showToast('Reset Selesai', 'Seluruh data transaksi telah dibersihkan.');
+        showCustomAlert('Reset Selesai', 'Seluruh data transaksi telah dibersihkan.', 'info');
       }
-    }
-
-    /* Toast Notification Display */
-    function showToast(title, message) {
-      const toast = document.getElementById('toastNotification');
-      document.getElementById('toastTitle').textContent = title;
-      document.getElementById('toastMessage').textContent = message;
-
-      toast.classList.remove('translate-y-[-150%]', 'opacity-0');
-      toast.classList.add('translate-y-0', 'opacity-100');
-
-      setTimeout(() => {
-        toast.classList.remove('translate-y-0', 'opacity-100');
-        toast.classList.add('translate-y-[-150%]', 'opacity-0');
-      }, 3000);
     }
 
     /* Theme System */
