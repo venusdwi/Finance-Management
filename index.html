@@ -631,7 +631,7 @@
 
         <div>
           <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">Tanggal</label>
-          <input type="date" id="date" required class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-800 dark:text-slate-100 text-sm focus:outline-none">
+          <input type="date" id="date" required class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-800 dark:text-slate-100 text-sm focus:outline-none cursor-pointer">
         </div>
 
         <div>
@@ -890,9 +890,6 @@
         document.body.classList.add('lock-scroll');
       }
 
-      const dateEl = document.getElementById('date');
-      if (dateEl) dateEl.valueAsDate = new Date();
-      
       const monthPicker = document.getElementById('reportMonthPicker');
       if (monthPicker) {
         const now = new Date();
@@ -1119,6 +1116,12 @@
     }
 
     function openModal() {
+      // Set tanggal otomatis ke hari ini secara real-time setiap kali modal dibuka (bisa dicustom/diubah manual)
+      const dateEl = document.getElementById('date');
+      if (dateEl) {
+        dateEl.valueAsDate = new Date();
+      }
+
       const modal = document.getElementById('transactionModal');
       const container = document.getElementById('modalContainer');
       modal.classList.remove('opacity-0', 'pointer-events-none');
@@ -1203,7 +1206,6 @@
 
         closeModal();
         document.getElementById('transactionForm').reset();
-        document.getElementById('date').valueAsDate = new Date();
         updateCategories();
         renderDashboard();
 
