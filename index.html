@@ -58,8 +58,20 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
 
   <style>
-    *, *::before, *::after {
-      transition: background-color 300ms ease-in-out, border-color 300ms ease-in-out, color 300ms ease-in-out, fill 300ms ease-in-out, stroke 300ms ease-in-out;
+    /* Sinkronisasi Color Scheme Native Browser untuk Transisi Tema */
+    html {
+      color-scheme: light;
+    }
+    html.dark {
+      color-scheme: dark;
+    }
+
+    /* Transisi Halus Khusus Elemen UI (Mencegah Bug Kedip Global) */
+    body, header, nav, div, button, input, select, table, tr, td, th {
+      transition: background-color 350ms cubic-bezier(0.4, 0, 0.2, 1), 
+                  border-color 350ms cubic-bezier(0.4, 0, 0.2, 1), 
+                  color 350ms cubic-bezier(0.4, 0, 0.2, 1), 
+                  box-shadow 350ms cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     html, body {
@@ -592,11 +604,9 @@
         <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500 via-blue-600 to-indigo-800 flex items-center justify-center text-white text-2xl shadow-xl shadow-blue-600/30 border border-blue-400/30 mb-3">
           <i class="fa-solid fa-chart-line text-blue-100"></i>
         </div>
-        <!-- JUDUL: Gradasi Biru Mewah pada Mode Terang, Putih Bersih pada Mode Gelap -->
         <h1 class="brand-title text-2xl font-black tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-blue-700 via-blue-600 to-indigo-600 dark:bg-none dark:text-white drop-shadow-sm">
           Finance Management
         </h1>
-        <!-- Tulisan Masukan PIN Digeser Sedikit ke Bawah (mt-2) -->
         <p class="text-xs text-slate-500 dark:text-blue-300/70 font-medium tracking-widest uppercase mt-2">MASUKKAN PIN AKSES ANDA</p>
       </div>
 
@@ -621,7 +631,6 @@
           <button type="button" onclick="appendPin('7')" class="keypad-btn h-11 sm:h-12 bg-slate-50 dark:bg-blue-950/40 hover:bg-slate-100 dark:hover:bg-blue-900/50 active:bg-slate-200 dark:active:bg-blue-800/60 border border-slate-200 dark:border-blue-500/20 rounded-2xl text-lg font-bold text-slate-800 dark:text-blue-100 flex items-center justify-center shadow-sm dark:shadow-none cursor-pointer">7</button>
           <button type="button" onclick="appendPin('8')" class="keypad-btn h-11 sm:h-12 bg-slate-50 dark:bg-blue-950/40 hover:bg-slate-100 dark:hover:bg-blue-900/50 active:bg-slate-200 dark:active:bg-blue-800/60 border border-slate-200 dark:border-blue-500/20 rounded-2xl text-lg font-bold text-slate-800 dark:text-blue-100 flex items-center justify-center shadow-sm dark:shadow-none cursor-pointer">8</button>
           <button type="button" onclick="appendPin('9')" class="keypad-btn h-11 sm:h-12 bg-slate-50 dark:bg-blue-950/40 hover:bg-slate-100 dark:hover:bg-blue-900/50 active:bg-slate-200 dark:active:bg-blue-800/60 border border-slate-200 dark:border-blue-500/20 rounded-2xl text-lg font-bold text-slate-800 dark:text-blue-100 flex items-center justify-center shadow-sm dark:shadow-none cursor-pointer">9</button>
-          <!-- Tombol Hapus diganti Tombol Reset (Ikon Saja) dengan Tema Warna yang Selaras -->
           <button type="button" onclick="clearPin()" class="keypad-btn h-11 sm:h-12 bg-slate-50 dark:bg-blue-950/40 hover:bg-slate-100 dark:hover:bg-blue-900/50 active:bg-slate-200 dark:active:bg-blue-800/60 border border-slate-200 dark:border-blue-500/20 rounded-2xl text-sm text-slate-700 dark:text-blue-300 flex items-center justify-center shadow-sm dark:shadow-none cursor-pointer" title="Reset PIN">
             <i class="fa-solid fa-rotate-left"></i>
           </button>
@@ -633,7 +642,6 @@
 
       </div>
 
-      <!-- Tulisan Keamanan Terenkripsi & Logo Ditempatkan di Luar Kotak Keyboard di Bawahnya -->
       <div class="mt-4 flex items-center justify-center gap-1.5 text-[10px] text-slate-400 dark:text-slate-500 font-medium tracking-wider uppercase select-none">
         <i class="fa-solid fa-shield-halved text-blue-500 dark:text-blue-400"></i>
         <span>Sistem Akses Keamanan Terenkripsi</span>
@@ -1127,7 +1135,6 @@
         const dot = document.getElementById(`dot-${i}`);
         if (dot) {
           if (i < enteredPin.length) {
-            // Shadow dihilangkan dengan menghapus shadow-lg shadow-blue-500/50 dan diganti animasi stealth-active tanpa bayangan
             dot.className = "w-4 h-4 rounded-full border-2 border-blue-500 bg-blue-500 stealth-active";
           } else {
             dot.className = "w-4 h-4 rounded-full border-2 border-blue-500/40 bg-transparent";
