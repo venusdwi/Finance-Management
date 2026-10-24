@@ -61,9 +61,22 @@
     /* Sinkronisasi Color Scheme Native Browser untuk Transisi Tema */
     html {
       color-scheme: light;
+      overscroll-behavior-y: none !important;
+      height: 100%;
     }
     html.dark {
       color-scheme: dark;
+    }
+
+    /* FIX UTAMA: Menghapus position:fixed agar halaman BISA DI-SCROLL, namun tetap MEMATIKAN Pull-to-Refresh */
+    body {
+      overscroll-behavior-y: none !important;
+      min-height: 100%;
+      overflow-y: auto !important;
+      touch-action: pan-x pan-y;
+      font-family: 'Inter', sans-serif;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
     }
 
     /* Transisi Halus Khusus Elemen UI (Mencegah Bug Kedip Global) */
@@ -84,25 +97,13 @@
       will-change: transform, opacity;
     }
 
-    html, body {
-      overscroll-behavior-y: auto !important;
-      position: relative;
-      touch-action: pan-x pan-y;
-    }
-
-    body {
-      font-family: 'Inter', sans-serif;
-      -webkit-tap-highlight-color: transparent;
-      user-select: none;
-    }
-
     .brand-title {
       font-family: 'Plus Jakarta Sans', sans-serif;
       letter-spacing: -0.03em;
     }
 
     .lock-scroll {
-      overflow: auto !important;
+      overflow: hidden !important;
     }
 
     button, input, select {
@@ -979,6 +980,13 @@
       });
     }
 
+    // Refresh otomatis saat halaman kembali aktif (dibuka kembali / fokus setelah dari aplikasi lain)
+    document.addEventListener("visibilitychange", () => {
+      if (document.visibilityState === "visible") {
+        location.reload();
+      }
+    });
+
     let userPin = localStorage.getItem('fm_user_pin') || "030427";
     let enteredPin = "";
     let resetEnteredPin = "";
@@ -1495,7 +1503,6 @@
         osc.frequency.setValueAtTime(523.25, ctx.currentTime);
         osc.frequency.exponentialRampToValueAtTime(1046.50, ctx.currentTime + 0.15);
 
-        // Volume diperbesar (Gain dinaikkan menjadi 0.7)
         gain.gain.setValueAtTime(0.7, ctx.currentTime);
         gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.35);
 
@@ -1525,7 +1532,6 @@
           osc.type = 'sine';
           osc.frequency.setValueAtTime(freq, now + index * 0.12);
 
-          // Volume diperbesar (Gain puncak dinaikkan menjadi 0.6)
           gain.gain.setValueAtTime(0.001, now + index * 0.12);
           gain.gain.linearRampToValueAtTime(0.6, now + index * 0.12 + 0.02);
           gain.gain.exponentialRampToValueAtTime(0.001, now + index * 0.12 + 0.3);
