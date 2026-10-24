@@ -21,7 +21,7 @@
   <meta name="theme-color" content="#2563eb">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="Finance HV">
+  <meta name="apple-mobile-web-app-title" content="Finance">
   <link rel="apple-touch-icon" href="./icon.png">
 
   <!-- Tailwind CSS -->
@@ -72,6 +72,14 @@
                   border-color 350ms cubic-bezier(0.4, 0, 0.2, 1), 
                   color 350ms cubic-bezier(0.4, 0, 0.2, 1), 
                   box-shadow 350ms cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* Perbaikan Transisi Modal agar Anti-Flicker & Smooth */
+    .modal-backdrop {
+      transition: opacity 250ms ease-in-out, backdrop-filter 250ms ease-in-out;
+    }
+    .modal-content {
+      transition: transform 250ms cubic-bezier(0.16, 1, 0.3, 1), opacity 250ms ease-in-out;
     }
 
     html, body {
@@ -651,8 +659,8 @@
   </div>
 
   <!-- ==================== MODAL TAMBAH TRANSAKSI ==================== -->
-  <div id="transactionModal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm opacity-0 pointer-events-none p-4">
-    <div class="bg-white dark:bg-darkcard border border-slate-200 dark:border-darkborder rounded-3xl max-w-lg w-full p-6 shadow-2xl transform scale-95" id="modalContainer">
+  <div id="transactionModal" class="modal-backdrop fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm opacity-0 pointer-events-none p-4">
+    <div class="modal-content bg-white dark:bg-darkcard border border-slate-200 dark:border-darkborder rounded-3xl max-w-lg w-full p-6 shadow-2xl transform scale-95" id="modalContainer">
       <div class="flex justify-between items-center mb-6">
         <h3 class="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
           <i class="fa-solid fa-pen-to-square text-blue-500"></i>
@@ -720,8 +728,8 @@
   </div>
 
   <!-- ==================== MODAL KELOLA KATEGORI KUSTOM ==================== -->
-  <div id="categoryModal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm opacity-0 pointer-events-none p-4">
-    <div class="bg-white dark:bg-darkcard border border-slate-200 dark:border-darkborder rounded-3xl max-w-xl w-full p-6 shadow-2xl transform scale-95 space-y-5" id="categoryModalContainer">
+  <div id="categoryModal" class="modal-backdrop fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm opacity-0 pointer-events-none p-4">
+    <div class="modal-content bg-white dark:bg-darkcard border border-slate-200 dark:border-darkborder rounded-3xl max-w-xl w-full p-6 shadow-2xl transform scale-95 space-y-5" id="categoryModalContainer">
       <div class="flex justify-between items-center pb-3 border-b border-slate-100 dark:border-slate-800">
         <h3 class="text-base sm:text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2.5">
           <i class="fa-solid fa-list-check text-blue-500 text-lg"></i>
@@ -760,8 +768,8 @@
   </div>
 
   <!-- ==================== MODAL PANDUAN & BANTUAN ==================== -->
-  <div id="helpModal" class="fixed inset-0 z-[109] flex items-center justify-center bg-slate-900/60 backdrop-blur-sm opacity-0 pointer-events-none p-4 transition-opacity duration-300">
-    <div class="bg-white dark:bg-darkcard border border-blue-500/30 rounded-3xl max-w-md w-full p-6 shadow-2xl transform scale-95 transition-transform duration-300 space-y-4" id="helpModalContainer">
+  <div id="helpModal" class="modal-backdrop fixed inset-0 z-[109] flex items-center justify-center bg-slate-900/60 backdrop-blur-sm opacity-0 pointer-events-none p-4">
+    <div class="modal-content bg-white dark:bg-darkcard border border-blue-500/30 rounded-3xl max-w-md w-full p-6 shadow-2xl transform scale-95 space-y-4" id="helpModalContainer">
       <div class="flex justify-between items-center pb-2 border-b border-slate-100 dark:border-slate-800">
         <h3 class="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
           <i class="fa-solid fa-circle-question text-blue-500"></i>
@@ -794,8 +802,8 @@
   </div>
 
   <!-- ==================== NOTIFIKASI POP-UP KONFIRMASI ==================== -->
-  <div id="customAlertModal" class="fixed inset-0 z-[110] flex items-center justify-center bg-slate-900/60 backdrop-blur-sm opacity-0 pointer-events-none p-4 transition-opacity duration-300">
-    <div class="bg-white dark:bg-darkcard border border-blue-500/30 rounded-3xl max-w-sm w-full p-6 shadow-2xl transform scale-95 transition-transform duration-300 text-center space-y-4" id="customAlertContainer">
+  <div id="customAlertModal" class="modal-backdrop fixed inset-0 z-[110] flex items-center justify-center bg-slate-900/60 backdrop-blur-sm opacity-0 pointer-events-none p-4">
+    <div class="modal-content bg-white dark:bg-darkcard border border-blue-500/30 rounded-3xl max-w-sm w-full p-6 shadow-2xl transform scale-95 text-center space-y-4" id="customAlertContainer">
       <div id="alertIconBg" class="w-16 h-16 rounded-2xl bg-blue-500/10 text-blue-600 dark:text-blue-400 flex items-center justify-center text-3xl mx-auto shadow-inner border border-blue-500/20">
         <i id="alertIcon" class="fa-solid fa-circle-check"></i>
       </div>
@@ -810,8 +818,8 @@
   </div>
 
   <!-- ==================== MODAL KONFIRMASI HAPUS SINGLE TRANSAKSI ==================== -->
-  <div id="deleteTxConfirmModal" class="fixed inset-0 z-[108] flex items-center justify-center bg-slate-900/60 backdrop-blur-sm opacity-0 pointer-events-none p-4 transition-opacity duration-300">
-    <div class="bg-white dark:bg-darkcard border border-rose-500/30 rounded-3xl max-w-sm w-full p-6 shadow-2xl transform scale-95 transition-transform duration-300 text-center space-y-4" id="deleteTxConfirmContainer">
+  <div id="deleteTxConfirmModal" class="modal-backdrop fixed inset-0 z-[108] flex items-center justify-center bg-slate-900/60 backdrop-blur-sm opacity-0 pointer-events-none p-4">
+    <div class="modal-content bg-white dark:bg-darkcard border border-rose-500/30 rounded-3xl max-w-sm w-full p-6 shadow-2xl transform scale-95 text-center space-y-4" id="deleteTxConfirmContainer">
       <div class="w-16 h-16 rounded-2xl bg-rose-500/10 text-rose-500 flex items-center justify-center text-3xl mx-auto shadow-inner border border-rose-500/20">
         <i class="fa-solid fa-trash-can"></i>
       </div>
@@ -829,8 +837,8 @@
   </div>
 
   <!-- ==================== MODAL KONFIRMASI RESET DATA ==================== -->
-  <div id="resetConfirmModal" class="fixed inset-0 z-[105] flex items-center justify-center bg-slate-900/60 backdrop-blur-sm opacity-0 pointer-events-none p-4 transition-opacity duration-300">
-    <div class="bg-white dark:bg-darkcard border border-rose-500/30 rounded-3xl max-w-sm w-full p-6 shadow-2xl transform scale-95 transition-transform duration-300 text-center space-y-4" id="resetConfirmContainer">
+  <div id="resetConfirmModal" class="modal-backdrop fixed inset-0 z-[105] flex items-center justify-center bg-slate-900/60 backdrop-blur-sm opacity-0 pointer-events-none p-4">
+    <div class="modal-content bg-white dark:bg-darkcard border border-rose-500/30 rounded-3xl max-w-sm w-full p-6 shadow-2xl transform scale-95 text-center space-y-4" id="resetConfirmContainer">
       <div class="w-16 h-16 rounded-2xl bg-rose-500/10 text-rose-500 flex items-center justify-center text-3xl mx-auto shadow-inner border border-rose-500/20">
         <i class="fa-solid fa-triangle-exclamation"></i>
       </div>
@@ -848,8 +856,8 @@
   </div>
 
   <!-- ==================== MODAL PIN VERIFIKASI RESET DATA ==================== -->
-  <div id="resetPinModal" class="fixed inset-0 z-[106] flex items-center justify-center bg-slate-900/60 backdrop-blur-sm opacity-0 pointer-events-none p-4 transition-opacity duration-300">
-    <div class="bg-white dark:bg-darkcard border border-rose-500/30 rounded-3xl max-w-xs w-full p-6 shadow-2xl transform scale-95 transition-transform duration-300 space-y-4" id="resetPinContainer">
+  <div id="resetPinModal" class="modal-backdrop fixed inset-0 z-[106] flex items-center justify-center bg-slate-900/60 backdrop-blur-sm opacity-0 pointer-events-none p-4">
+    <div class="modal-content bg-white dark:bg-darkcard border border-rose-500/30 rounded-3xl max-w-xs w-full p-6 shadow-2xl transform scale-95 space-y-4" id="resetPinContainer">
       <div class="flex justify-between items-center pb-2 border-b border-slate-100 dark:border-slate-800">
         <h3 class="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
           <i class="fa-solid fa-shield-halved text-rose-500"></i>
@@ -897,8 +905,8 @@
   </div>
 
   <!-- ==================== MODAL UBAH PIN ==================== -->
-  <div id="changePinModal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm opacity-0 pointer-events-none p-4">
-    <div class="bg-white dark:bg-darkcard border border-slate-200 dark:border-darkborder rounded-3xl max-w-sm w-full p-6 shadow-2xl transform scale-95" id="changePinModalContainer">
+  <div id="changePinModal" class="modal-backdrop fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm opacity-0 pointer-events-none p-4">
+    <div class="modal-content bg-white dark:bg-darkcard border border-slate-200 dark:border-darkborder rounded-3xl max-w-sm w-full p-6 shadow-2xl transform scale-95" id="changePinModalContainer">
       <div class="flex justify-between items-center mb-4">
         <h3 class="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
           <i class="fa-solid fa-key text-blue-500"></i>
