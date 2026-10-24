@@ -83,7 +83,7 @@
     }
 
     html, body {
-      overscroll-behavior-y: none !important;
+      overscroll-behavior-y: auto !important;
       position: relative;
       touch-action: pan-x pan-y;
     }
@@ -99,9 +99,9 @@
       letter-spacing: -0.03em;
     }
 
+    /* Memastikan halaman bisa di-scroll secara normal saat aplikasi terbuka */
     .lock-scroll {
-      overflow: hidden !important;
-      height: 100vh !important;
+      overflow: auto !important;
     }
 
     button, input, select {
@@ -305,13 +305,13 @@
           <div class="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
             <div class="relative w-full sm:w-64">
               <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
-              <input type="text" id="searchInput" oninput="renderTransactions()" placeholder="Cari transaksi..." class="w-full pl-9 pr-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:outline-none text-slate-800 dark:text-slate-100">
+              <input type="text" id="searchInput" oninput="renderTransactions()" placeholder="Cari transaksi..." class="w-full pl-9 pr-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:outline-none text-slate-800 dark:text-slate-100">
             </div>
 
             <!-- Custom Filter Tipe Transaksi -->
             <div class="relative w-full sm:w-48">
               <input type="hidden" id="filterType" value="all">
-              <div id="filterSelectTrigger" onclick="toggleFilterDropdown()" class="w-full px-3.5 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-800 dark:text-slate-100 flex items-center justify-between cursor-pointer select-none shadow-inner">
+              <div id="filterSelectTrigger" onclick="toggleFilterDropdown()" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-semibold text-slate-800 dark:text-slate-100 flex items-center justify-between cursor-pointer select-none shadow-inner">
                 <span id="filterSelectLabel">Semua Tipe</span>
                 <i class="fa-solid fa-chevron-down text-xs text-slate-400 transition-transform duration-200" id="filterSelectArrow"></i>
               </div>
@@ -468,32 +468,36 @@
           </button>
         </div>
 
-        <!-- Auto-Lock Timer -->
+        <!-- Waktu Kunci Otomatis -->
         <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-800 gap-3">
           <div>
             <h4 class="font-bold text-slate-900 dark:text-white text-sm">Waktu Kunci Otomatis</h4>
             <p class="text-xs text-slate-500 dark:text-slate-400">Durasi jeda sebelum aplikasi mengunci otomatis.</p>
           </div>
-          <select id="autoLockSelect" onchange="changeAutoLock(this.value)" class="px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-semibold text-slate-800 dark:text-slate-100 focus:outline-none">
-            <option value="instant">Langsung Terkunci</option>
-            <option value="1">1 Menit Tidak Aktif</option>
-            <option value="5">5 Menit Tidak Aktif</option>
-            <option value="never">Jangan Pernah (Nonaktif)</option>
-          </select>
+          <div class="relative w-full sm:w-60">
+            <input type="hidden" id="autoLockSelect" value="never">
+            <div id="autoLockTrigger" onclick="toggleSettingsDropdown('autoLock')" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-semibold text-slate-800 dark:text-slate-100 flex items-center justify-between cursor-pointer select-none shadow-inner">
+              <span id="autoLockLabel">Jangan Pernah (Nonaktif)</span>
+              <i class="fa-solid fa-chevron-down text-xs text-slate-400 transition-transform duration-200" id="autoLockArrow"></i>
+            </div>
+            <div id="autoLockDropdownList" class="absolute left-0 right-0 top-full mt-1.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl shadow-2xl z-50 hidden p-1.5 space-y-1 divide-y divide-slate-100 dark:divide-slate-800"></div>
+          </div>
         </div>
 
-        <!-- Mata Uang -->
+        <!-- Mata Uang & Lokalisasi -->
         <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-800 gap-3">
           <div>
             <h4 class="font-bold text-slate-900 dark:text-white text-sm">Mata Uang & Lokalisasi</h4>
             <p class="text-xs text-slate-500 dark:text-slate-400">Pilih simbol mata uang utama laporan.</p>
           </div>
-          <select id="currencySelect" onchange="changeCurrency(this.value)" class="px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-semibold text-slate-800 dark:text-slate-100 focus:outline-none">
-            <option value="IDR">Rupiah (Rp - Indonesia)</option>
-            <option value="USD">US Dollar ($ - USD)</option>
-            <option value="EUR">Euro (€ - EUR)</option>
-            <option value="MYR">Ringgit (RM - Malaysia)</option>
-          </select>
+          <div class="relative w-full sm:w-64">
+            <input type="hidden" id="currencySelect" value="IDR">
+            <div id="currencyTrigger" onclick="toggleSettingsDropdown('currency')" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-semibold text-slate-800 dark:text-slate-100 flex items-center justify-between cursor-pointer select-none shadow-inner">
+              <span id="currencyLabel">Rupiah (Rp - Indonesia)</span>
+              <i class="fa-solid fa-chevron-down text-xs text-slate-400 transition-transform duration-200" id="currencyArrow"></i>
+            </div>
+            <div id="currencyDropdownList" class="absolute left-0 right-0 top-full mt-1.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl shadow-2xl z-50 hidden p-1.5 space-y-1 divide-y divide-slate-100 dark:divide-slate-800"></div>
+          </div>
         </div>
 
         <!-- Manajemen Kategori Kustom -->
@@ -530,11 +534,14 @@
             <h4 class="font-bold text-slate-900 dark:text-white text-sm">Alokasi Rasio Anggaran</h4>
             <p class="text-xs text-slate-500 dark:text-slate-400">Pilih formula pembagian persentase gaji.</p>
           </div>
-          <select id="budgetRatioSelect" onchange="changeBudgetRatio(this.value)" class="px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-semibold text-slate-800 dark:text-slate-100 focus:outline-none">
-            <option value="50-30-20">50% / 30% / 20% (Standar)</option>
-            <option value="60-20-20">60% / 20% / 20% (Hemat)</option>
-            <option value="70-20-10">70% / 20% / 10% (Fokus Kebutuhan)</option>
-          </select>
+          <div class="relative w-full sm:w-72">
+            <input type="hidden" id="budgetRatioSelect" value="50-30-20">
+            <div id="budgetRatioTrigger" onclick="toggleSettingsDropdown('budgetRatio')" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-semibold text-slate-800 dark:text-slate-100 flex items-center justify-between cursor-pointer select-none shadow-inner">
+              <span id="budgetRatioLabel">50% / 30% / 20% (Standar)</span>
+              <i class="fa-solid fa-chevron-down text-xs text-slate-400 transition-transform duration-200" id="budgetRatioArrow"></i>
+            </div>
+            <div id="budgetRatioDropdownList" class="absolute left-0 right-0 top-full mt-1.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl shadow-2xl z-50 hidden p-1.5 space-y-1 divide-y divide-slate-100 dark:divide-slate-800"></div>
+          </div>
         </div>
 
         <!-- Batas Peringatan Pengeluaran -->
@@ -682,13 +689,13 @@
           <div class="grid grid-cols-2 gap-3">
             <label class="cursor-pointer select-none">
               <input type="radio" name="type" value="pemasukan" class="peer hidden" checked onchange="updateCategories()">
-              <div class="p-3 text-center border border-slate-200 dark:border-slate-700 rounded-xl peer-checked:border-emerald-500 peer-checked:bg-emerald-50 dark:peer-checked:bg-emerald-500/10 peer-checked:text-emerald-600 dark:peer-checked:text-emerald-400 font-medium text-sm">
+              <div class="p-3 text-center border border-slate-200 dark:border-slate-700 rounded-xl peer-checked:border-emerald-500 peer-checked:bg-emerald-50 dark:peer-checked:bg-emerald-500/10 peer-checked:text-emerald-600 dark:peer-checked:text-emerald-400 font-bold text-sm">
                 <i class="fa-solid fa-circle-arrow-down mr-1"></i> Pemasukan
               </div>
             </label>
             <label class="cursor-pointer select-none">
               <input type="radio" name="type" value="pengeluaran" class="peer hidden" onchange="updateCategories()">
-              <div class="p-3 text-center border border-slate-200 dark:border-slate-700 rounded-xl peer-checked:border-rose-500 peer-checked:bg-rose-50 dark:peer-checked:bg-rose-500/10 peer-checked:text-rose-600 dark:peer-checked:text-rose-400 font-medium text-sm">
+              <div class="p-3 text-center border border-slate-200 dark:border-slate-700 rounded-xl peer-checked:border-rose-500 peer-checked:bg-rose-50 dark:peer-checked:bg-rose-500/10 peer-checked:text-rose-600 dark:peer-checked:text-rose-400 font-bold text-sm">
                 <i class="fa-solid fa-circle-arrow-up mr-1"></i> Pengeluaran
               </div>
             </label>
@@ -703,17 +710,17 @@
           </div>
         </div>
 
-        <!-- Custom Dropdown Kategori dengan Divider & Tanda Terpilih -->
+        <!-- Custom Dropdown Kategori -->
         <div class="relative">
           <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">Kategori</label>
           <input type="hidden" id="category" required value="">
-          <div id="customSelectTrigger" onclick="toggleCustomDropdown()" class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-800 dark:text-slate-100 text-sm flex items-center justify-between cursor-pointer select-none shadow-inner">
-            <span id="customSelectLabel" class="text-slate-400">Pilih kategori...</span>
+          <div id="customSelectTrigger" onclick="toggleCustomDropdown()" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-800 dark:text-slate-100 text-sm font-semibold flex items-center justify-between cursor-pointer select-none shadow-inner">
+            <span id="customSelectLabel" class="text-slate-400 font-normal">Pilih kategori...</span>
             <i class="fa-solid fa-chevron-down text-xs text-slate-400 transition-transform duration-200" id="customSelectArrow"></i>
           </div>
 
-          <!-- Dropdown Options List Box dengan Pemisah (Divider) -->
-          <div id="customDropdownList" class="absolute left-0 right-0 top-full mt-1.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl shadow-2xl max-h-56 overflow-y-auto z-50 hidden p-1.5 space-y-1 divide-y divide-slate-100 dark:divide-slate-800"></div>
+          <!-- Dropdown Options List Box -->
+          <div id="customDropdownList" class="absolute left-0 right-0 top-full mt-1.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl shadow-2xl max-h-60 overflow-y-auto z-50 hidden p-1.5 space-y-1 divide-y divide-slate-100 dark:divide-slate-800"></div>
 
           <p id="salaryNotice" class="text-[11px] text-blue-500 dark:text-blue-400 mt-1.5 hidden flex items-center gap-1">
             <i class="fa-solid fa-magic"></i> Pemasukan Gajian ini akan otomatis dibagikan sesuai rasio alokasi pilihan Anda!
@@ -722,17 +729,17 @@
 
         <div>
           <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">Tanggal</label>
-          <input type="date" id="date" required class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-800 dark:text-slate-100 text-sm focus:outline-none cursor-pointer">
+          <input type="date" id="date" required class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-800 dark:text-slate-100 text-sm font-medium focus:outline-none cursor-pointer">
         </div>
 
         <div>
           <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">Catatan / Keterangan <span class="normal-case text-[10px] text-slate-400 dark:text-slate-500">(Opsional)</span></label>
-          <input type="text" id="description" placeholder="Contoh: Gaji Bulan Ini, Beli Token Listrik (Boleh Kosong)" class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-800 dark:text-slate-100 text-sm focus:outline-none">
+          <input type="text" id="description" placeholder="Contoh: Gaji Bulan Ini, Beli Token Listrik (Boleh Kosong)" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-800 dark:text-slate-100 text-sm font-medium focus:outline-none">
         </div>
 
         <div class="flex items-center gap-3 pt-4">
-          <button type="button" id="btnCancelTx" onclick="closeModal()" class="w-1/2 py-3 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-medium rounded-xl text-sm select-none">Batal</button>
-          <button type="submit" id="btnSaveTx" class="w-1/2 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-xl shadow-lg shadow-blue-500/25 text-sm flex items-center justify-center gap-2 select-none">
+          <button type="button" id="btnCancelTx" onclick="closeModal()" class="w-1/2 py-3 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-semibold rounded-xl text-sm select-none">Batal</button>
+          <button type="submit" id="btnSaveTx" class="w-1/2 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl shadow-lg shadow-blue-500/25 text-sm flex items-center justify-center gap-2 select-none">
             <span id="btnSaveText">Simpan Transaksi</span>
             <i id="btnSaveSpinner" class="fa-solid fa-spinner fa-spin hidden"></i>
           </button>
@@ -992,7 +999,13 @@
     function resetInactivityTimer() {
       if (autoLockSetting === 'never' || !isUnlocked) return;
       clearTimeout(inactivityTimer);
-      const minutes = parseInt(autoLockSetting, 10);
+
+      if (autoLockSetting === 'instant') {
+        lockApp();
+        return;
+      }
+
+      const minutes = parseFloat(autoLockSetting);
       if (!isNaN(minutes) && minutes > 0) {
         inactivityTimer = setTimeout(() => {
           lockApp();
@@ -1069,14 +1082,7 @@
         monthPicker.value = `${year}-${month}`;
       }
 
-      const ratioSelect = document.getElementById('budgetRatioSelect');
-      if (ratioSelect) ratioSelect.value = budgetRatio;
-
-      const currSelect = document.getElementById('currencySelect');
-      if (currSelect) currSelect.value = currentCurrency;
-
-      const lockSelect = document.getElementById('autoLockSelect');
-      if (lockSelect) lockSelect.value = autoLockSetting;
+      initSettingsDropdowns();
 
       const limitInput = document.getElementById('budgetLimitInput');
       if (limitInput && budgetLimit > 0) {
@@ -1104,6 +1110,16 @@
           const filterArrow = document.getElementById('filterSelectArrow');
           if (filterArrow) filterArrow.classList.remove('rotate-180');
         }
+
+        ['autoLock', 'currency', 'budgetRatio'].forEach(type => {
+          const tEl = document.getElementById(`${type}Trigger`);
+          const lEl = document.getElementById(`${type}DropdownList`);
+          if (tEl && lEl && !tEl.contains(e.target) && !lEl.contains(e.target)) {
+            lEl.classList.add('hidden');
+            const arr = document.getElementById(`${type}Arrow`);
+            if (arr) arr.classList.remove('rotate-180');
+          }
+        });
       });
 
       document.addEventListener('keydown', (e) => {
@@ -1227,6 +1243,107 @@
       }
     }
 
+    function toggleSettingsDropdown(type) {
+      const list = document.getElementById(`${type}DropdownList`);
+      const arrow = document.getElementById(`${type}Arrow`);
+      if (!list) return;
+
+      ['autoLock', 'currency', 'budgetRatio'].forEach(t => {
+        if (t !== type) {
+          const l = document.getElementById(`${t}DropdownList`);
+          const a = document.getElementById(`${t}Arrow`);
+          if (l) l.classList.add('hidden');
+          if (a) a.classList.remove('rotate-180');
+        }
+      });
+
+      if (list.classList.contains('hidden')) {
+        list.classList.remove('hidden');
+        if (arrow) arrow.classList.add('rotate-180');
+      } else {
+        list.classList.add('hidden');
+        if (arrow) arrow.classList.remove('rotate-180');
+      }
+    }
+
+    function selectSettingsOption(type, val, labelText) {
+      const hiddenInput = document.getElementById(`${type}Select`);
+      if (hiddenInput) hiddenInput.value = val;
+      const label = document.getElementById(`${type}Label`);
+      if (label) label.textContent = labelText;
+
+      const list = document.getElementById(`${type}DropdownList`);
+      if (list) list.classList.add('hidden');
+      const arrow = document.getElementById(`${type}Arrow`);
+      if (arrow) arrow.classList.remove('rotate-180');
+
+      if (type === 'autoLock') changeAutoLock(val);
+      else if (type === 'currency') changeCurrency(val);
+      else if (type === 'budgetRatio') changeBudgetRatio(val);
+
+      initSettingsDropdowns();
+    }
+
+    function initSettingsDropdowns() {
+      const configs = [
+        {
+          type: 'autoLock',
+          currentVal: autoLockSetting,
+          options: [
+            { val: 'instant', label: 'Langsung Terkunci' },
+            { val: '1', label: '1 Menit Tidak Aktif' },
+            { val: '5', label: '5 Menit Tidak Aktif' },
+            { val: 'never', label: 'Jangan Pernah (Nonaktif)' }
+          ]
+        },
+        {
+          type: 'currency',
+          currentVal: currentCurrency,
+          options: [
+            { val: 'IDR', label: 'Rupiah (Rp - Indonesia)' },
+            { val: 'USD', label: 'US Dollar ($ - USD)' },
+            { val: 'EUR', label: 'Euro (€ - EUR)' },
+            { val: 'MYR', label: 'Ringgit (RM - Malaysia)' }
+          ]
+        },
+        {
+          type: 'budgetRatio',
+          currentVal: budgetRatio,
+          options: [
+            { val: '50-30-20', label: '50% / 30% / 20% (Standar)' },
+            { val: '60-20-20', label: '60% / 20% / 20% (Hemat)' },
+            { val: '70-20-10', label: '70% / 20% / 10% (Fokus Kebutuhan)' }
+          ]
+        }
+      ];
+
+      configs.forEach(cfg => {
+        const list = document.getElementById(`${cfg.type}DropdownList`);
+        const label = document.getElementById(`${cfg.type}Label`);
+        if (!list) return;
+        list.innerHTML = '';
+
+        cfg.options.forEach(opt => {
+          const isSelected = cfg.currentVal === opt.val;
+          const item = document.createElement('div');
+          item.className = `px-4 py-3 cursor-pointer text-sm font-semibold flex items-center justify-between transition-colors ${
+            isSelected 
+              ? 'bg-blue-50 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400' 
+              : 'text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800/80'
+          }`;
+          item.innerHTML = `
+            <span>${opt.label}</span>
+            ${isSelected ? '<i class="fa-solid fa-check text-blue-500 text-sm"></i>' : ''}
+          `;
+          item.onclick = () => selectSettingsOption(cfg.type, opt.val, opt.label);
+          list.appendChild(item);
+        });
+
+        const activeOpt = cfg.options.find(o => o.val === cfg.currentVal);
+        if (label && activeOpt) label.textContent = activeOpt.label;
+      });
+    }
+
     function changeAutoLock(val) {
       autoLockSetting = val;
       localStorage.setItem('fm_autolock', val);
@@ -1237,6 +1354,12 @@
       currentCurrency = val;
       localStorage.setItem('fm_currency', val);
       updateCurrencyUI();
+      renderDashboard();
+    }
+
+    function changeBudgetRatio(val) {
+      budgetRatio = val;
+      localStorage.setItem('fm_budget_ratio', val);
       renderDashboard();
     }
 
@@ -1458,7 +1581,7 @@
       document.getElementById('category').value = catName;
       const label = document.getElementById('customSelectLabel');
       label.textContent = catName;
-      label.className = "text-slate-800 dark:text-slate-100 font-medium";
+      label.className = "text-slate-800 dark:text-slate-100 font-semibold";
 
       const list = document.getElementById('customDropdownList');
       if (list) list.classList.add('hidden');
@@ -1483,15 +1606,15 @@
         const isSelected = currentSelected === cat;
         const item = document.createElement('div');
         
-        item.className = `px-4 py-3 cursor-pointer text-sm font-medium flex items-center justify-between transition-colors ${
+        item.className = `px-4 py-3 cursor-pointer text-sm font-semibold flex items-center justify-between transition-colors ${
           isSelected 
-            ? 'bg-blue-50 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 font-bold' 
+            ? 'bg-blue-50 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400' 
             : 'text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800/80'
         }`;
 
         item.innerHTML = `
           <span>${cat}</span>
-          ${isSelected ? '<i class="fa-solid fa-check text-blue-500 text-xs"></i>' : ''}
+          ${isSelected ? '<i class="fa-solid fa-check text-blue-500 text-sm"></i>' : ''}
         `;
         item.onclick = () => selectCustomCategory(cat);
         list.appendChild(item);
@@ -1502,7 +1625,6 @@
       }
     }
 
-    /* Custom Filter Dropdown Logic */
     function toggleFilterDropdown() {
       const list = document.getElementById('filterDropdownList');
       const arrow = document.getElementById('filterSelectArrow');
@@ -1546,14 +1668,14 @@
       options.forEach(opt => {
         const isSelected = currentVal === opt.val;
         const item = document.createElement('div');
-        item.className = `px-4 py-2.5 cursor-pointer text-xs font-semibold flex items-center justify-between transition-colors ${
+        item.className = `px-4 py-3 cursor-pointer text-sm font-semibold flex items-center justify-between transition-colors ${
           isSelected 
             ? 'bg-blue-50 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400' 
             : 'text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800/80'
         }`;
         item.innerHTML = `
           <span>${opt.label}</span>
-          ${isSelected ? '<i class="fa-solid fa-check text-blue-500 text-xs"></i>' : ''}
+          ${isSelected ? '<i class="fa-solid fa-check text-blue-500 text-sm"></i>' : ''}
         `;
         item.onclick = () => selectFilterOption(opt.val, opt.label);
         list.appendChild(item);
@@ -1837,12 +1959,6 @@
         }
       };
       reader.readAsText(file);
-    }
-
-    function changeBudgetRatio(val) {
-      budgetRatio = val;
-      localStorage.setItem('fm_budget_ratio', val);
-      renderDashboard();
     }
 
     function saveBudgetLimit() {
