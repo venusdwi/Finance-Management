@@ -968,7 +968,7 @@
     </div>
   </div>
 
-  <!-- ==================== MODAL PIN VERIFIKASI RESET DATA (LEBIH BESAR & PROPOSIONAL) ==================== -->
+  <!-- ==================== MODAL PIN VERIFIKASI RESET DATA ==================== -->
   <div id="resetPinModal" class="modal-backdrop fixed inset-0 z-[106] flex items-center justify-center bg-slate-900/60 backdrop-blur-sm opacity-0 pointer-events-none p-4">
     <div class="modal-content bg-white dark:bg-darkcard border border-rose-500/30 rounded-3xl max-w-md w-full p-6 sm:p-7 shadow-2xl transform scale-95 space-y-5" id="resetPinContainer">
       <div class="flex justify-between items-center pb-3 border-b border-slate-100 dark:border-slate-800">
@@ -1645,7 +1645,12 @@
     function openModal() {
       const dateEl = document.getElementById('date');
       if (dateEl) {
-        dateEl.valueAsDate = new Date();
+        // Menggunakan waktu lokal real-time yang akurat saat modal dibuka
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const day = String(now.getDate()).padStart(2, '0');
+        dateEl.value = `${year}-${month}-${day}`;
       }
 
       updateCategories();
@@ -1908,6 +1913,7 @@
       }
     }
 
+    /* ==================== PENYESUAIAN KHUSUS RINCIAN TABUNGAN ==================== */
     function openAllocationDetailModal(typeKey) {
       let title = "";
       let allowedCategories = [];
@@ -1941,13 +1947,14 @@
         allocAmount = baseSalary * (p2 / 100);
       } else if (typeKey === 'savings') {
         title = `Tabungan & Investasi (${p3}%)`;
-        allowedCategories = ['Investasi', 'Bonus', 'Gajian'];
+        // Eksklusi 'Gajian' agar riwayat gajian tidak dimasukkan ke dalam daftar rincian
+        allowedCategories = ['Investasi', 'Bonus'];
         allocAmount = baseSalary * (p3 / 100);
       }
 
       const filteredTx = transactions.filter(t => {
         if (typeKey === 'savings') {
-          return t.type === 'pemasukan';
+          return t.type === 'pemasukan' && allowedCategories.includes(t.category);
         } else {
           return t.type === 'pengeluaran' && allowedCategories.includes(t.category);
         }
@@ -1971,7 +1978,7 @@
       container.innerHTML = '';
 
       if (filteredTx.length === 0) {
-        container.innerHTML = `<div class="p-8 text-center text-slate-400 text-xs">Belum ada transaksi tercatat untuk pos ini.</div>`;
+        container.innerHTML = `<div class="p-8 text-center text-slate-400 text-xs">Belum ada transaksi khusus terkategori untuk pos ini.</div>`;
       } else {
         filteredTx.forEach(t => {
           const div = document.createElement('div');
