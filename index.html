@@ -596,7 +596,8 @@
         <h1 class="brand-title text-2xl font-black tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-blue-700 via-blue-600 to-indigo-600 dark:bg-none dark:text-white drop-shadow-sm">
           Finance Management
         </h1>
-        <p class="text-xs text-slate-500 dark:text-blue-300/70 font-medium tracking-widest uppercase mt-1">Masukkan PIN Akses Anda</p>
+        <!-- Tulisan Masukan PIN Digeser Sedikit ke Bawah (mt-2) -->
+        <p class="text-xs text-slate-500 dark:text-blue-300/70 font-medium tracking-widest uppercase mt-2">MASUKKAN PIN AKSES ANDA</p>
       </div>
 
       <div class="w-full bg-white/80 dark:bg-slate-900/80 backdrop-blur-2xl border border-slate-200 dark:border-blue-500/20 rounded-3xl p-6 sm:p-7 shadow-2xl shadow-slate-300/50 dark:shadow-blue-950/50 flex flex-col items-center">
@@ -620,15 +621,24 @@
           <button type="button" onclick="appendPin('7')" class="keypad-btn h-11 sm:h-12 bg-slate-50 dark:bg-blue-950/40 hover:bg-slate-100 dark:hover:bg-blue-900/50 active:bg-slate-200 dark:active:bg-blue-800/60 border border-slate-200 dark:border-blue-500/20 rounded-2xl text-lg font-bold text-slate-800 dark:text-blue-100 flex items-center justify-center shadow-sm dark:shadow-none cursor-pointer">7</button>
           <button type="button" onclick="appendPin('8')" class="keypad-btn h-11 sm:h-12 bg-slate-50 dark:bg-blue-950/40 hover:bg-slate-100 dark:hover:bg-blue-900/50 active:bg-slate-200 dark:active:bg-blue-800/60 border border-slate-200 dark:border-blue-500/20 rounded-2xl text-lg font-bold text-slate-800 dark:text-blue-100 flex items-center justify-center shadow-sm dark:shadow-none cursor-pointer">8</button>
           <button type="button" onclick="appendPin('9')" class="keypad-btn h-11 sm:h-12 bg-slate-50 dark:bg-blue-950/40 hover:bg-slate-100 dark:hover:bg-blue-900/50 active:bg-slate-200 dark:active:bg-blue-800/60 border border-slate-200 dark:border-blue-500/20 rounded-2xl text-lg font-bold text-slate-800 dark:text-blue-100 flex items-center justify-center shadow-sm dark:shadow-none cursor-pointer">9</button>
-          <button type="button" onclick="clearPin()" class="keypad-btn h-11 sm:h-12 bg-rose-50 dark:bg-rose-950/40 hover:bg-rose-100 dark:hover:bg-rose-900/60 border border-rose-200 dark:border-rose-500/30 rounded-2xl text-xs font-bold text-rose-600 dark:text-rose-300 flex items-center justify-center gap-1 shadow-inner select-none cursor-pointer">
-            <i class="fa-solid fa-rotate-left text-xs"></i> Hapus
+          <!-- Tombol Hapus diganti Tombol Reset (Ikon Saja) dengan Tema Warna yang Selaras -->
+          <button type="button" onclick="clearPin()" class="keypad-btn h-11 sm:h-12 bg-slate-50 dark:bg-blue-950/40 hover:bg-slate-100 dark:hover:bg-blue-900/50 active:bg-slate-200 dark:active:bg-blue-800/60 border border-slate-200 dark:border-blue-500/20 rounded-2xl text-sm text-slate-700 dark:text-blue-300 flex items-center justify-center shadow-sm dark:shadow-none cursor-pointer" title="Reset PIN">
+            <i class="fa-solid fa-rotate-left"></i>
           </button>
           <button type="button" onclick="appendPin('0')" class="keypad-btn h-11 sm:h-12 bg-slate-50 dark:bg-blue-950/40 hover:bg-slate-100 dark:hover:bg-blue-900/50 active:bg-slate-200 dark:active:bg-blue-800/60 border border-slate-200 dark:border-blue-500/20 rounded-2xl text-lg font-bold text-slate-800 dark:text-blue-100 flex items-center justify-center shadow-sm dark:shadow-none cursor-pointer">0</button>
           <button type="button" onclick="deletePinDigit()" class="keypad-btn h-11 sm:h-12 bg-slate-50 dark:bg-blue-950/40 hover:bg-slate-100 dark:hover:bg-blue-900/50 active:bg-slate-200 dark:active:bg-blue-800/60 border border-slate-200 dark:border-blue-500/20 rounded-2xl text-base text-slate-700 dark:text-blue-300 flex items-center justify-center shadow-sm dark:shadow-none cursor-pointer" title="Hapus Digit Terakhir">
             <i class="fa-solid fa-backspace"></i>
           </button>
         </div>
+
       </div>
+
+      <!-- Tulisan Keamanan Terenkripsi & Logo Ditempatkan di Luar Kotak Keyboard di Bawahnya -->
+      <div class="mt-4 flex items-center justify-center gap-1.5 text-[10px] text-slate-400 dark:text-slate-500 font-medium tracking-wider uppercase select-none">
+        <i class="fa-solid fa-shield-halved text-blue-500 dark:text-blue-400"></i>
+        <span>Sistem Akses Keamanan Terenkripsi</span>
+      </div>
+
     </div>
   </div>
 
@@ -1117,7 +1127,8 @@
         const dot = document.getElementById(`dot-${i}`);
         if (dot) {
           if (i < enteredPin.length) {
-            dot.className = "w-4 h-4 rounded-full border-2 border-blue-500 bg-blue-500 shadow-lg shadow-blue-500/50 stealth-active";
+            // Shadow dihilangkan dengan menghapus shadow-lg shadow-blue-500/50 dan diganti animasi stealth-active tanpa bayangan
+            dot.className = "w-4 h-4 rounded-full border-2 border-blue-500 bg-blue-500 stealth-active";
           } else {
             dot.className = "w-4 h-4 rounded-full border-2 border-blue-500/40 bg-transparent";
           }
