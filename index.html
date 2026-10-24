@@ -307,11 +307,16 @@
               <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
               <input type="text" id="searchInput" oninput="renderTransactions()" placeholder="Cari transaksi..." class="w-full pl-9 pr-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:outline-none text-slate-800 dark:text-slate-100">
             </div>
-            <select id="filterType" onchange="renderTransactions()" class="w-full sm:w-auto px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-800 dark:text-slate-100 focus:outline-none">
-              <option value="all">Semua Tipe</option>
-              <option value="pemasukan">Pemasukan</option>
-              <option value="pengeluaran">Pengeluaran</option>
-            </select>
+
+            <!-- Custom Filter Tipe Transaksi -->
+            <div class="relative w-full sm:w-48">
+              <input type="hidden" id="filterType" value="all">
+              <div id="filterSelectTrigger" onclick="toggleFilterDropdown()" class="w-full px-3.5 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-800 dark:text-slate-100 flex items-center justify-between cursor-pointer select-none shadow-inner">
+                <span id="filterSelectLabel">Semua Tipe</span>
+                <i class="fa-solid fa-chevron-down text-xs text-slate-400 transition-transform duration-200" id="filterSelectArrow"></i>
+              </div>
+              <div id="filterDropdownList" class="absolute left-0 right-0 top-full mt-1.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl shadow-2xl z-50 hidden p-1.5 space-y-1 divide-y divide-slate-100 dark:divide-slate-800"></div>
+            </div>
           </div>
         </div>
 
@@ -698,9 +703,18 @@
           </div>
         </div>
 
-        <div>
+        <!-- Custom Dropdown Kategori dengan Divider & Tanda Terpilih -->
+        <div class="relative">
           <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">Kategori</label>
-          <select id="category" required onchange="checkSalaryNotice()" class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-800 dark:text-slate-100 text-sm focus:outline-none"></select>
+          <input type="hidden" id="category" required value="">
+          <div id="customSelectTrigger" onclick="toggleCustomDropdown()" class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-800 dark:text-slate-100 text-sm flex items-center justify-between cursor-pointer select-none shadow-inner">
+            <span id="customSelectLabel" class="text-slate-400">Pilih kategori...</span>
+            <i class="fa-solid fa-chevron-down text-xs text-slate-400 transition-transform duration-200" id="customSelectArrow"></i>
+          </div>
+
+          <!-- Dropdown Options List Box dengan Pemisah (Divider) -->
+          <div id="customDropdownList" class="absolute left-0 right-0 top-full mt-1.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl shadow-2xl max-h-56 overflow-y-auto z-50 hidden p-1.5 space-y-1 divide-y divide-slate-100 dark:divide-slate-800"></div>
+
           <p id="salaryNotice" class="text-[11px] text-blue-500 dark:text-blue-400 mt-1.5 hidden flex items-center gap-1">
             <i class="fa-solid fa-magic"></i> Pemasukan Gajian ini akan otomatis dibagikan sesuai rasio alokasi pilihan Anda!
           </p>
@@ -1071,7 +1085,26 @@
 
       updateCurrencyUI();
       updateCategories();
+      initFilterDropdown();
       renderDashboard();
+
+      document.addEventListener('click', (e) => {
+        const trigger = document.getElementById('customSelectTrigger');
+        const list = document.getElementById('customDropdownList');
+        if (trigger && list && !trigger.contains(e.target) && !list.contains(e.target)) {
+          list.classList.add('hidden');
+          const arrow = document.getElementById('customSelectArrow');
+          if (arrow) arrow.classList.remove('rotate-180');
+        }
+
+        const filterTrigger = document.getElementById('filterSelectTrigger');
+        const filterList = document.getElementById('filterDropdownList');
+        if (filterTrigger && filterList && !filterTrigger.contains(e.target) && !filterList.contains(e.target)) {
+          filterList.classList.add('hidden');
+          const filterArrow = document.getElementById('filterSelectArrow');
+          if (filterArrow) filterArrow.classList.remove('rotate-180');
+        }
+      });
 
       document.addEventListener('keydown', (e) => {
         resetInactivityTimer();
@@ -1388,6 +1421,7 @@
         dateEl.valueAsDate = new Date();
       }
 
+      updateCategories();
       const modal = document.getElementById('transactionModal');
       const container = document.getElementById('modalContainer');
       modal.classList.remove('opacity-0', 'pointer-events-none');
@@ -1401,22 +1435,133 @@
       container.classList.remove('scale-100');
       container.classList.add('scale-95');
       modal.classList.add('opacity-0', 'pointer-events-none');
+      
+      const list = document.getElementById('customDropdownList');
+      if (list) list.classList.add('hidden');
+    }
+
+    function toggleCustomDropdown() {
+      const list = document.getElementById('customDropdownList');
+      const arrow = document.getElementById('customSelectArrow');
+      if (!list) return;
+
+      if (list.classList.contains('hidden')) {
+        list.classList.remove('hidden');
+        if (arrow) arrow.classList.add('rotate-180');
+      } else {
+        list.classList.add('hidden');
+        if (arrow) arrow.classList.remove('rotate-180');
+      }
+    }
+
+    function selectCustomCategory(catName) {
+      document.getElementById('category').value = catName;
+      const label = document.getElementById('customSelectLabel');
+      label.textContent = catName;
+      label.className = "text-slate-800 dark:text-slate-100 font-medium";
+
+      const list = document.getElementById('customDropdownList');
+      if (list) list.classList.add('hidden');
+      const arrow = document.getElementById('customSelectArrow');
+      if (arrow) arrow.classList.remove('rotate-180');
+
+      updateCategories();
+      checkSalaryNotice();
     }
 
     function updateCategories() {
       const type = document.querySelector('input[name="type"]:checked').value;
-      const select = document.getElementById('category');
-      select.innerHTML = '';
-
       const cats = type === 'pemasukan' ? incomeCategories : expenseCategories;
-      cats.forEach(cat => {
-        const option = document.createElement('option');
-        option.value = cat;
-        option.textContent = cat;
-        select.appendChild(option);
+      
+      const list = document.getElementById('customDropdownList');
+      if (!list) return;
+      list.innerHTML = '';
+
+      const currentSelected = document.getElementById('category').value;
+
+      cats.forEach((cat) => {
+        const isSelected = currentSelected === cat;
+        const item = document.createElement('div');
+        
+        item.className = `px-4 py-3 cursor-pointer text-sm font-medium flex items-center justify-between transition-colors ${
+          isSelected 
+            ? 'bg-blue-50 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 font-bold' 
+            : 'text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800/80'
+        }`;
+
+        item.innerHTML = `
+          <span>${cat}</span>
+          ${isSelected ? '<i class="fa-solid fa-check text-blue-500 text-xs"></i>' : ''}
+        `;
+        item.onclick = () => selectCustomCategory(cat);
+        list.appendChild(item);
       });
 
-      checkSalaryNotice();
+      if (!cats.includes(currentSelected)) {
+        selectCustomCategory(cats[0]);
+      }
+    }
+
+    /* Custom Filter Dropdown Logic */
+    function toggleFilterDropdown() {
+      const list = document.getElementById('filterDropdownList');
+      const arrow = document.getElementById('filterSelectArrow');
+      if (!list) return;
+
+      if (list.classList.contains('hidden')) {
+        list.classList.remove('hidden');
+        if (arrow) arrow.classList.add('rotate-180');
+      } else {
+        list.classList.add('hidden');
+        if (arrow) arrow.classList.remove('rotate-180');
+      }
+    }
+
+    function selectFilterOption(val, labelText) {
+      document.getElementById('filterType').value = val;
+      const label = document.getElementById('filterSelectLabel');
+      if (label) label.textContent = labelText;
+
+      const list = document.getElementById('filterDropdownList');
+      if (list) list.classList.add('hidden');
+      const arrow = document.getElementById('filterSelectArrow');
+      if (arrow) arrow.classList.remove('rotate-180');
+
+      initFilterDropdown();
+      renderTransactions();
+    }
+
+    function initFilterDropdown() {
+      const list = document.getElementById('filterDropdownList');
+      if (!list) return;
+      list.innerHTML = '';
+
+      const currentVal = document.getElementById('filterType').value;
+      const options = [
+        { val: 'all', label: 'Semua Tipe' },
+        { val: 'pemasukan', label: 'Pemasukan' },
+        { val: 'pengeluaran', label: 'Pengeluaran' }
+      ];
+
+      options.forEach(opt => {
+        const isSelected = currentVal === opt.val;
+        const item = document.createElement('div');
+        item.className = `px-4 py-2.5 cursor-pointer text-xs font-semibold flex items-center justify-between transition-colors ${
+          isSelected 
+            ? 'bg-blue-50 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400' 
+            : 'text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800/80'
+        }`;
+        item.innerHTML = `
+          <span>${opt.label}</span>
+          ${isSelected ? '<i class="fa-solid fa-check text-blue-500 text-xs"></i>' : ''}
+        `;
+        item.onclick = () => selectFilterOption(opt.val, opt.label);
+        list.appendChild(item);
+      });
+
+      const activeOpt = options.find(o => o.val === currentVal);
+      const label = document.getElementById('filterSelectLabel');
+      if (label && activeOpt) label.textContent = activeOpt.label;
     }
 
     function checkSalaryNotice() {
@@ -1442,6 +1587,11 @@
 
       if (!amount || amount <= 0) {
         showCustomAlert('Peringatan', 'Harap masukkan nominal yang valid!', 'error');
+        return;
+      }
+
+      if (!category) {
+        showCustomAlert('Peringatan', 'Harap pilih kategori transaksi!', 'error');
         return;
       }
 
@@ -1484,9 +1634,14 @@
       targetDeleteTxId = Number(id);
       const modal = document.getElementById('deleteTxConfirmModal');
       const container = document.getElementById('deleteTxConfirmContainer');
+      modal.style.display = 'flex';
       modal.classList.remove('opacity-0', 'pointer-events-none');
-      container.classList.remove('scale-95');
-      container.classList.add('scale-100');
+      container.classList.remove('scale-100');
+      container.classList.add('scale-95');
+      requestAnimationFrame(() => {
+        container.classList.remove('scale-95');
+        container.classList.add('scale-100');
+      });
     }
 
     function closeDeleteTxConfirmModal() {
@@ -1495,7 +1650,10 @@
       container.classList.remove('scale-100');
       container.classList.add('scale-95');
       modal.classList.add('opacity-0', 'pointer-events-none');
-      targetDeleteTxId = null;
+      setTimeout(() => {
+        modal.style.display = 'none';
+        targetDeleteTxId = null;
+      }, 250);
     }
 
     function confirmExecuteDeleteTx() {
@@ -1532,9 +1690,14 @@
         alertBtn.className = "w-full py-3 bg-gradient-to-r from-blue-600 via-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold rounded-xl shadow-lg shadow-blue-500/25 text-sm select-none transition-all";
       }
 
+      alertModal.style.display = 'flex';
       alertModal.classList.remove('opacity-0', 'pointer-events-none');
-      alertContainer.classList.remove('scale-95');
-      alertContainer.classList.add('scale-100');
+      alertContainer.classList.remove('scale-100');
+      alertContainer.classList.add('scale-95');
+      requestAnimationFrame(() => {
+        alertContainer.classList.remove('scale-95');
+        alertContainer.classList.add('scale-100');
+      });
     }
 
     function closeCustomAlert() {
@@ -1543,14 +1706,22 @@
       alertContainer.classList.remove('scale-100');
       alertContainer.classList.add('scale-95');
       alertModal.classList.add('opacity-0', 'pointer-events-none');
+      setTimeout(() => {
+        alertModal.style.display = 'none';
+      }, 250);
     }
 
     function openResetConfirmModal() {
       const modal = document.getElementById('resetConfirmModal');
       const container = document.getElementById('resetConfirmContainer');
+      modal.style.display = 'flex';
       modal.classList.remove('opacity-0', 'pointer-events-none');
-      container.classList.remove('scale-95');
-      container.classList.add('scale-100');
+      container.classList.remove('scale-100');
+      container.classList.add('scale-95');
+      requestAnimationFrame(() => {
+        container.classList.remove('scale-95');
+        container.classList.add('scale-100');
+      });
     }
 
     function closeResetConfirmModal() {
@@ -1559,6 +1730,9 @@
       container.classList.remove('scale-100');
       container.classList.add('scale-95');
       modal.classList.add('opacity-0', 'pointer-events-none');
+      setTimeout(() => {
+        modal.style.display = 'none';
+      }, 250);
     }
 
     function proceedToResetPin() {
@@ -1573,9 +1747,14 @@
       const container = document.getElementById('resetPinContainer');
       clearResetPin();
       document.getElementById('resetPinError').classList.add('hidden');
+      modal.style.display = 'flex';
       modal.classList.remove('opacity-0', 'pointer-events-none');
-      container.classList.remove('scale-95');
-      container.classList.add('scale-100');
+      container.classList.remove('scale-100');
+      container.classList.add('scale-95');
+      requestAnimationFrame(() => {
+        container.classList.remove('scale-95');
+        container.classList.add('scale-100');
+      });
     }
 
     function closeResetPinModal() {
@@ -1584,14 +1763,22 @@
       container.classList.remove('scale-100');
       container.classList.add('scale-95');
       modal.classList.add('opacity-0', 'pointer-events-none');
+      setTimeout(() => {
+        modal.style.display = 'none';
+      }, 250);
     }
 
     function openHelpModal() {
       const modal = document.getElementById('helpModal');
       const container = document.getElementById('helpModalContainer');
+      modal.style.display = 'flex';
       modal.classList.remove('opacity-0', 'pointer-events-none');
-      container.classList.remove('scale-95');
-      container.classList.add('scale-100');
+      container.classList.remove('scale-100');
+      container.classList.add('scale-95');
+      requestAnimationFrame(() => {
+        container.classList.remove('scale-95');
+        container.classList.add('scale-100');
+      });
     }
 
     function closeHelpModal() {
@@ -1600,6 +1787,9 @@
       container.classList.remove('scale-100');
       container.classList.add('scale-95');
       modal.classList.add('opacity-0', 'pointer-events-none');
+      setTimeout(() => {
+        modal.style.display = 'none';
+      }, 250);
     }
 
     function togglePrivacyMode() {
