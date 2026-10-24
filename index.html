@@ -58,7 +58,6 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
 
   <style>
-    /* Perbaikan Total agar Halaman Selalu Bisa Di-scroll dengan Normal */
     html {
       color-scheme: light;
       height: 100%;
@@ -77,7 +76,6 @@
       user-select: none;
     }
 
-    /* Transisi Halus Khusus Elemen UI */
     body, header, nav, div, button, input, select, table, tr, td, th {
       transition: background-color 350ms cubic-bezier(0.4, 0, 0.2, 1), 
                   border-color 350ms cubic-bezier(0.4, 0, 0.2, 1), 
@@ -85,7 +83,6 @@
                   box-shadow 350ms cubic-bezier(0.4, 0, 0.2, 1);
     }
 
-    /* Perbaikan Transisi Modal agar Anti-Flicker & Smooth */
     .modal-backdrop {
       transition: opacity 250ms cubic-bezier(0.4, 0, 0.2, 1), backdrop-filter 250ms cubic-bezier(0.4, 0, 0.2, 1);
       will-change: opacity;
@@ -308,7 +305,6 @@
               <input type="text" id="searchInput" oninput="renderTransactions()" placeholder="Cari transaksi..." class="w-full pl-9 pr-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:outline-none text-slate-800 dark:text-slate-100">
             </div>
 
-            <!-- Custom Filter Tipe Transaksi -->
             <div class="relative w-full sm:w-48">
               <input type="hidden" id="filterType" value="all">
               <div id="filterSelectTrigger" onclick="toggleFilterDropdown()" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-semibold text-slate-800 dark:text-slate-100 flex items-center justify-between cursor-pointer select-none shadow-inner">
@@ -371,10 +367,7 @@
           </span>
         </div>
 
-        <!-- INTERAKTIF: Kartu Alokasi Bisa Diklik Untuk Melihat Detail Rincian -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          
-          <!-- Kartu Kebutuhan Wajib -->
           <div onclick="openAllocationDetailModal('needs')" class="p-5 rounded-2xl bg-slate-50 dark:bg-slate-800/50 hover:bg-blue-50/50 dark:hover:bg-slate-800 border border-slate-100 dark:border-slate-800 cursor-pointer transition-all hover:scale-[1.01] hover:shadow-md group">
             <div class="flex justify-between items-center mb-2">
               <span class="font-bold text-sm text-slate-800 dark:text-slate-200 group-hover:text-blue-600 dark:group-hover:text-blue-400 flex items-center gap-1.5" id="labelNeedsTab">
@@ -395,7 +388,6 @@
             </div>
           </div>
 
-          <!-- Kartu Keinginan & Gaya Hidup -->
           <div onclick="openAllocationDetailModal('wants')" class="p-5 rounded-2xl bg-slate-50 dark:bg-slate-800/50 hover:bg-amber-50/50 dark:hover:bg-slate-800 border border-slate-100 dark:border-slate-800 cursor-pointer transition-all hover:scale-[1.01] hover:shadow-md group">
             <div class="flex justify-between items-center mb-2">
               <span class="font-bold text-sm text-slate-800 dark:text-slate-200 group-hover:text-amber-600 dark:group-hover:text-amber-400 flex items-center gap-1.5" id="labelWantsTab">
@@ -416,7 +408,6 @@
             </div>
           </div>
 
-          <!-- Kartu Tabungan & Investasi -->
           <div onclick="openAllocationDetailModal('savings')" class="p-5 rounded-2xl bg-slate-50 dark:bg-slate-800/50 hover:bg-emerald-50/50 dark:hover:bg-slate-800 border border-slate-100 dark:border-slate-800 cursor-pointer transition-all hover:scale-[1.01] hover:shadow-md group">
             <div class="flex justify-between items-center mb-2">
               <span class="font-bold text-sm text-slate-800 dark:text-slate-200 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 flex items-center gap-1.5" id="labelSavingsTab">
@@ -449,20 +440,37 @@
           <p class="text-sm text-slate-500 dark:text-slate-400">Analisis pengeluaran dan cetak laporan bulanan secara rinci.</p>
         </div>
 
-        <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto">
+        <div class="flex flex-wrap items-center gap-2.5 w-full sm:w-auto">
           <label for="reportMonthPicker" class="month-picker-wrapper flex-1 sm:flex-none px-4 py-2.5 bg-white dark:bg-darkcard border border-slate-200 dark:border-darkborder rounded-2xl shadow-sm hover:border-blue-500/50 transition-all select-none">
             <i class="fa-solid fa-calendar-days text-blue-500 text-sm mr-2.5 shrink-0"></i>
-            <input type="month" id="reportMonthPicker" class="bg-transparent border-none text-xs font-bold text-slate-800 dark:text-slate-100 focus:outline-none cursor-pointer w-full" style="min-width: 150px;">
+            <input type="month" id="reportMonthPicker" onchange="renderDashboard()" class="bg-transparent border-none text-xs font-bold text-slate-800 dark:text-slate-100 focus:outline-none cursor-pointer w-full" style="min-width: 150px;">
           </label>
 
-          <button onclick="downloadMonthlyPDF()" class="px-5 py-2.5 bg-rose-600 hover:bg-rose-700 text-white rounded-2xl text-xs font-bold flex items-center justify-center gap-2 shadow-md shadow-rose-600/20 whitespace-nowrap select-none active:scale-95 transition-transform">
+          <button onclick="downloadMonthlyPDF()" class="px-4 py-2.5 bg-rose-600 hover:bg-rose-700 text-white rounded-2xl text-xs font-bold flex items-center justify-center gap-2 shadow-md shadow-rose-600/20 whitespace-nowrap select-none active:scale-95 transition-transform">
             <i class="fa-solid fa-file-pdf text-sm"></i>
-            <span>Unduh PDF Bulanan</span>
+            <span>PDF</span>
           </button>
         </div>
       </div>
 
+      <!-- KARTU RINGKASAN BULANAN (3 GRID) -->
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div class="bg-white dark:bg-darkcard rounded-2xl p-4 shadow-sm border border-slate-200 dark:border-darkborder flex flex-col justify-between">
+          <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Total Masuk Bulan Ini</span>
+          <p class="text-lg sm:text-xl font-black text-emerald-600 dark:text-emerald-400 mt-1" id="reportMonthlyIncome">Rp 0</p>
+        </div>
+        <div class="bg-white dark:bg-darkcard rounded-2xl p-4 shadow-sm border border-slate-200 dark:border-darkborder flex flex-col justify-between">
+          <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Total Keluar Bulan Ini</span>
+          <p class="text-lg sm:text-xl font-black text-rose-600 dark:text-rose-400 mt-1" id="reportMonthlyExpense">Rp 0</p>
+        </div>
+        <div class="bg-white dark:bg-darkcard rounded-2xl p-4 shadow-sm border border-slate-200 dark:border-darkborder flex flex-col justify-between">
+          <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Net Cashflow (Selisih)</span>
+          <p class="text-lg sm:text-xl font-black text-blue-600 dark:text-blue-400 mt-1" id="reportMonthlyNet">Rp 0</p>
+        </div>
+      </div>
+
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- KESEHATAN FINANSIAL -->
         <div class="bg-white dark:bg-darkcard rounded-2xl p-6 shadow-sm border border-slate-200 dark:border-darkborder space-y-4">
           <h3 class="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
             <i class="fa-solid fa-heart-pulse text-rose-500"></i>
@@ -480,12 +488,32 @@
           </div>
         </div>
 
+        <!-- PENGELUARAN PER KATEGORI -->
         <div class="bg-white dark:bg-darkcard rounded-2xl p-6 shadow-sm border border-slate-200 dark:border-darkborder space-y-4">
           <h3 class="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
             <i class="fa-solid fa-chart-column text-blue-500"></i>
             Pengeluaran per Kategori
           </h3>
-          <div id="categoryBreakdown" class="space-y-3 text-xs"></div>
+          <div id="categoryBreakdown" class="space-y-3 text-xs max-h-56 overflow-y-auto pr-1"></div>
+        </div>
+      </div>
+
+      <!-- PEMASUKAN PER KATEGORI & TOP PENGELUARAN -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="bg-white dark:bg-darkcard rounded-2xl p-6 shadow-sm border border-slate-200 dark:border-darkborder space-y-4">
+          <h3 class="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+            <i class="fa-solid fa-wallet text-emerald-500"></i>
+            Sumber Pemasukan Bulan Ini
+          </h3>
+          <div id="incomeCategoryBreakdown" class="space-y-3 text-xs max-h-56 overflow-y-auto pr-1"></div>
+        </div>
+
+        <div class="bg-white dark:bg-darkcard rounded-2xl p-6 shadow-sm border border-slate-200 dark:border-darkborder space-y-4">
+          <h3 class="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+            <i class="fa-solid fa-fire text-amber-500"></i>
+            3 Pengeluaran Terbesar
+          </h3>
+          <div id="topExpensesList" class="space-y-2.5 text-xs"></div>
         </div>
       </div>
     </div>
@@ -498,8 +526,6 @@
       </div>
 
       <div class="bg-white dark:bg-darkcard rounded-2xl p-6 shadow-sm border border-slate-200 dark:border-darkborder space-y-6">
-        
-        <!-- Keamanan PIN -->
         <div class="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-800">
           <div>
             <h4 class="font-bold text-slate-900 dark:text-white text-sm">Keamanan PIN</h4>
@@ -510,7 +536,6 @@
           </button>
         </div>
 
-        <!-- Waktu Kunci Otomatis -->
         <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-800 gap-3">
           <div>
             <h4 class="font-bold text-slate-900 dark:text-white text-sm">Waktu Kunci Otomatis</h4>
@@ -526,7 +551,6 @@
           </div>
         </div>
 
-        <!-- Mata Uang & Lokalisasi -->
         <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-800 gap-3">
           <div>
             <h4 class="font-bold text-slate-900 dark:text-white text-sm">Mata Uang & Lokalisasi</h4>
@@ -542,7 +566,6 @@
           </div>
         </div>
 
-        <!-- Manajemen Kategori Kustom -->
         <div class="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-800">
           <div>
             <h4 class="font-bold text-slate-900 dark:text-white text-sm">Kelola Kategori Kustom</h4>
@@ -553,7 +576,6 @@
           </button>
         </div>
 
-        <!-- Cadangan & Pemulihan Data -->
         <div class="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-800">
           <div>
             <h4 class="font-bold text-slate-900 dark:text-white text-sm">Cadangan & Pemulihan Data</h4>
@@ -570,7 +592,6 @@
           </div>
         </div>
 
-        <!-- Alokasi Rasio Anggaran -->
         <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-800 gap-3">
           <div>
             <h4 class="font-bold text-slate-900 dark:text-white text-sm">Alokasi Rasio Anggaran</h4>
@@ -586,7 +607,6 @@
           </div>
         </div>
 
-        <!-- Batas Peringatan Pengeluaran -->
         <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-800 gap-3">
           <div>
             <h4 class="font-bold text-slate-900 dark:text-white text-sm">Batas Peringatan Pengeluaran</h4>
@@ -598,7 +618,6 @@
           </div>
         </div>
 
-        <!-- Pusat Bantuan & Panduan -->
         <div class="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-800">
           <div>
             <h4 class="font-bold text-slate-900 dark:text-white text-sm">Pusat Bantuan & Panduan</h4>
@@ -609,7 +628,6 @@
           </button>
         </div>
 
-        <!-- Hapus Semua Data -->
         <div class="flex items-center justify-between pt-2">
           <div>
             <h4 class="font-bold text-rose-600 dark:text-rose-400 text-sm">Hapus Semua Data</h4>
@@ -752,7 +770,6 @@
           </div>
         </div>
 
-        <!-- Custom Dropdown Kategori -->
         <div class="relative">
           <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">Kategori</label>
           <input type="hidden" id="category" required value="">
@@ -761,7 +778,6 @@
             <i class="fa-solid fa-chevron-down text-xs text-slate-400 transition-transform duration-200" id="customSelectArrow"></i>
           </div>
 
-          <!-- Dropdown Options List Box -->
           <div id="customDropdownList" class="absolute left-0 right-0 top-full mt-1.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl shadow-2xl max-h-60 overflow-y-auto z-50 hidden p-1.5 space-y-1 divide-y divide-slate-100 dark:divide-slate-800"></div>
 
           <p id="salaryNotice" class="text-[11px] text-blue-500 dark:text-blue-400 mt-1.5 hidden flex items-center gap-1">
@@ -805,7 +821,6 @@
         </button>
       </div>
 
-      <!-- Ringkasan Anggaran Pos -->
       <div class="grid grid-cols-2 gap-3 p-3.5 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-100 dark:border-slate-800">
         <div>
           <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Total Anggaran:</span>
@@ -817,7 +832,6 @@
         </div>
       </div>
 
-      <!-- List Transaksi Terkait -->
       <div class="max-h-64 overflow-y-auto space-y-2 pr-1" id="allocDetailTxList"></div>
 
       <button type="button" onclick="closeAllocationDetailModal()" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl text-xs select-none">
@@ -954,49 +968,49 @@
     </div>
   </div>
 
-  <!-- ==================== MODAL PIN VERIFIKASI RESET DATA ==================== -->
+  <!-- ==================== MODAL PIN VERIFIKASI RESET DATA (LEBIH BESAR & PROPOSIONAL) ==================== -->
   <div id="resetPinModal" class="modal-backdrop fixed inset-0 z-[106] flex items-center justify-center bg-slate-900/60 backdrop-blur-sm opacity-0 pointer-events-none p-4">
-    <div class="modal-content bg-white dark:bg-darkcard border border-rose-500/30 rounded-3xl max-w-xs w-full p-6 shadow-2xl transform scale-95 space-y-4" id="resetPinContainer">
-      <div class="flex justify-between items-center pb-2 border-b border-slate-100 dark:border-slate-800">
-        <h3 class="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
-          <i class="fa-solid fa-shield-halved text-rose-500"></i>
+    <div class="modal-content bg-white dark:bg-darkcard border border-rose-500/30 rounded-3xl max-w-md w-full p-6 sm:p-7 shadow-2xl transform scale-95 space-y-5" id="resetPinContainer">
+      <div class="flex justify-between items-center pb-3 border-b border-slate-100 dark:border-slate-800">
+        <h3 class="text-base sm:text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+          <i class="fa-solid fa-shield-halved text-rose-500 text-lg"></i>
           Konfirmasi PIN Keamanan
         </h3>
-        <button onclick="closeResetPinModal()" class="w-7 h-7 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center justify-center select-none">
-          <i class="fa-solid fa-xmark text-xs"></i>
+        <button onclick="closeResetPinModal()" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center justify-center select-none">
+          <i class="fa-solid fa-xmark text-sm"></i>
         </button>
       </div>
 
-      <p class="text-[11px] text-slate-500 dark:text-slate-400 text-center">
-        Masukkan 6 angka PIN akses Anda untuk menghapus data.
+      <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 text-center leading-relaxed">
+        Masukkan 6 angka PIN akses Anda untuk menyetujui penghapusan data.
       </p>
 
-      <div class="flex items-center justify-center gap-2 my-2" id="resetPinDots">
-        <div id="r-dot-0" class="w-3.5 h-3.5 rounded-full border-2 border-rose-500/40 bg-transparent transition-all duration-150"></div>
-        <div id="r-dot-1" class="w-3.5 h-3.5 rounded-full border-2 border-rose-500/40 bg-transparent transition-all duration-150"></div>
-        <div id="r-dot-2" class="w-3.5 h-3.5 rounded-full border-2 border-rose-500/40 bg-transparent transition-all duration-150"></div>
-        <div id="r-dot-3" class="w-3.5 h-3.5 rounded-full border-2 border-rose-500/40 bg-transparent transition-all duration-150"></div>
-        <div id="r-dot-4" class="w-3.5 h-3.5 rounded-full border-2 border-rose-500/40 bg-transparent transition-all duration-150"></div>
-        <div id="r-dot-5" class="w-3.5 h-3.5 rounded-full border-2 border-rose-500/40 bg-transparent transition-all duration-150"></div>
+      <div class="flex items-center justify-center gap-3 my-3" id="resetPinDots">
+        <div id="r-dot-0" class="w-4 h-4 rounded-full border-2 border-rose-500/40 bg-transparent transition-all duration-150"></div>
+        <div id="r-dot-1" class="w-4 h-4 rounded-full border-2 border-rose-500/40 bg-transparent transition-all duration-150"></div>
+        <div id="r-dot-2" class="w-4 h-4 rounded-full border-2 border-rose-500/40 bg-transparent transition-all duration-150"></div>
+        <div id="r-dot-3" class="w-4 h-4 rounded-full border-2 border-rose-500/40 bg-transparent transition-all duration-150"></div>
+        <div id="r-dot-4" class="w-4 h-4 rounded-full border-2 border-rose-500/40 bg-transparent transition-all duration-150"></div>
+        <div id="r-dot-5" class="w-4 h-4 rounded-full border-2 border-rose-500/40 bg-transparent transition-all duration-150"></div>
       </div>
 
-      <div id="resetPinError" class="text-[11px] text-rose-500 font-semibold hidden text-center">PIN yang Anda masukkan salah!</div>
+      <div id="resetPinError" class="text-xs text-rose-500 font-semibold hidden text-center">PIN yang Anda masukkan salah!</div>
 
-      <div class="grid grid-cols-3 gap-2.5 w-full pt-1">
-        <button type="button" onclick="appendResetPin('1')" class="h-11 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 rounded-xl text-base font-bold text-slate-800 dark:text-slate-100 flex items-center justify-center">1</button>
-        <button type="button" onclick="appendResetPin('2')" class="h-11 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 rounded-xl text-base font-bold text-slate-800 dark:text-slate-100 flex items-center justify-center">2</button>
-        <button type="button" onclick="appendResetPin('3')" class="h-11 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 rounded-xl text-base font-bold text-slate-800 dark:text-slate-100 flex items-center justify-center">3</button>
-        <button type="button" onclick="appendResetPin('4')" class="h-11 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 rounded-xl text-base font-bold text-slate-800 dark:text-slate-100 flex items-center justify-center">4</button>
-        <button type="button" onclick="appendResetPin('5')" class="h-11 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 rounded-xl text-base font-bold text-slate-800 dark:text-slate-100 flex items-center justify-center">5</button>
-        <button type="button" onclick="appendResetPin('6')" class="h-11 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 rounded-xl text-base font-bold text-slate-800 dark:text-slate-100 flex items-center justify-center">6</button>
-        <button type="button" onclick="appendResetPin('7')" class="h-11 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 rounded-xl text-base font-bold text-slate-800 dark:text-slate-100 flex items-center justify-center">7</button>
-        <button type="button" onclick="appendResetPin('8')" class="h-11 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 rounded-xl text-base font-bold text-slate-800 dark:text-slate-100 flex items-center justify-center">8</button>
-        <button type="button" onclick="appendResetPin('9')" class="h-11 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 rounded-xl text-base font-bold text-slate-800 dark:text-slate-100 flex items-center justify-center">9</button>
-        <button type="button" onclick="clearResetPin()" class="h-11 bg-rose-50 dark:bg-rose-950/40 hover:bg-rose-100 dark:hover:bg-rose-900/60 border border-rose-200 dark:border-rose-500/30 rounded-xl text-[11px] font-bold text-rose-600 dark:text-rose-300 flex items-center justify-center gap-1 select-none">
-          <i class="fa-solid fa-rotate-left"></i> Hapus
+      <div class="grid grid-cols-3 gap-3 w-full pt-1">
+        <button type="button" onclick="appendResetPin('1')" class="h-12 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 active:bg-slate-200 dark:active:bg-slate-600 border border-slate-200 dark:border-slate-700 rounded-2xl text-lg font-bold text-slate-800 dark:text-slate-100 flex items-center justify-center cursor-pointer shadow-sm">1</button>
+        <button type="button" onclick="appendResetPin('2')" class="h-12 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 active:bg-slate-200 dark:active:bg-slate-600 border border-slate-200 dark:border-slate-700 rounded-2xl text-lg font-bold text-slate-800 dark:text-slate-100 flex items-center justify-center cursor-pointer shadow-sm">2</button>
+        <button type="button" onclick="appendResetPin('3')" class="h-12 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 active:bg-slate-200 dark:active:bg-slate-600 border border-slate-200 dark:border-slate-700 rounded-2xl text-lg font-bold text-slate-800 dark:text-slate-100 flex items-center justify-center cursor-pointer shadow-sm">3</button>
+        <button type="button" onclick="appendResetPin('4')" class="h-12 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 active:bg-slate-200 dark:active:bg-slate-600 border border-slate-200 dark:border-slate-700 rounded-2xl text-lg font-bold text-slate-800 dark:text-slate-100 flex items-center justify-center cursor-pointer shadow-sm">4</button>
+        <button type="button" onclick="appendResetPin('5')" class="h-12 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 active:bg-slate-200 dark:active:bg-slate-600 border border-slate-200 dark:border-slate-700 rounded-2xl text-lg font-bold text-slate-800 dark:text-slate-100 flex items-center justify-center cursor-pointer shadow-sm">5</button>
+        <button type="button" onclick="appendResetPin('6')" class="h-12 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 active:bg-slate-200 dark:active:bg-slate-600 border border-slate-200 dark:border-slate-700 rounded-2xl text-lg font-bold text-slate-800 dark:text-slate-100 flex items-center justify-center cursor-pointer shadow-sm">6</button>
+        <button type="button" onclick="appendResetPin('7')" class="h-12 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 active:bg-slate-200 dark:active:bg-slate-600 border border-slate-200 dark:border-slate-700 rounded-2xl text-lg font-bold text-slate-800 dark:text-slate-100 flex items-center justify-center cursor-pointer shadow-sm">7</button>
+        <button type="button" onclick="appendResetPin('8')" class="h-12 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 active:bg-slate-200 dark:active:bg-slate-600 border border-slate-200 dark:border-slate-700 rounded-2xl text-lg font-bold text-slate-800 dark:text-slate-100 flex items-center justify-center cursor-pointer shadow-sm">8</button>
+        <button type="button" onclick="appendResetPin('9')" class="h-12 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 active:bg-slate-200 dark:active:bg-slate-600 border border-slate-200 dark:border-slate-700 rounded-2xl text-lg font-bold text-slate-800 dark:text-slate-100 flex items-center justify-center cursor-pointer shadow-sm">9</button>
+        <button type="button" onclick="clearResetPin()" class="h-12 bg-rose-50 dark:bg-rose-950/40 hover:bg-rose-100 dark:hover:bg-rose-900/60 border border-rose-200 dark:border-rose-500/30 rounded-2xl text-xs font-bold text-rose-600 dark:text-rose-300 flex items-center justify-center gap-1.5 select-none cursor-pointer">
+          <i class="fa-solid fa-rotate-left"></i> Reset
         </button>
-        <button type="button" onclick="appendResetPin('0')" class="h-11 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 rounded-xl text-base font-bold text-slate-800 dark:text-slate-100 flex items-center justify-center">0</button>
-        <button type="button" onclick="deleteResetPinDigit()" class="h-11 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-700 dark:text-slate-300 flex items-center justify-center">
+        <button type="button" onclick="appendResetPin('0')" class="h-12 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 active:bg-slate-200 dark:active:bg-slate-600 border border-slate-200 dark:border-slate-700 rounded-2xl text-lg font-bold text-slate-800 dark:text-slate-100 flex items-center justify-center cursor-pointer shadow-sm">0</button>
+        <button type="button" onclick="deleteResetPinDigit()" class="h-12 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 active:bg-slate-200 dark:active:bg-slate-600 border border-slate-200 dark:border-slate-700 rounded-2xl text-base text-slate-700 dark:text-slate-300 flex items-center justify-center cursor-pointer shadow-sm">
           <i class="fa-solid fa-backspace"></i>
         </button>
       </div>
@@ -1056,7 +1070,6 @@
       });
     }
 
-    // Refresh otomatis saat halaman kembali aktif
     document.addEventListener("visibilitychange", () => {
       if (document.visibilityState === "visible") {
         location.reload();
@@ -1138,7 +1151,6 @@
       const pinScreen = document.getElementById('pinScreen');
       const pinBox = document.getElementById('pinBoxContainer');
 
-      // Pastikan body bersih dari pengunci scroll saat halaman dimuat
       document.body.classList.remove('lock-scroll', 'overflow-hidden');
       document.documentElement.classList.remove('lock-scroll', 'overflow-hidden');
 
@@ -1551,9 +1563,9 @@
         const dot = document.getElementById(`r-dot-${i}`);
         if (dot) {
           if (i < resetEnteredPin.length) {
-            dot.className = "w-3.5 h-3.5 rounded-full border-2 border-rose-500 bg-rose-500 shadow-md shadow-rose-500/50 stealth-active";
+            dot.className = "w-4 h-4 rounded-full border-2 border-rose-500 bg-rose-500 shadow-md shadow-rose-500/50 stealth-active";
           } else {
-            dot.className = "w-3.5 h-3.5 rounded-full border-2 border-rose-500/40 bg-transparent";
+            dot.className = "w-4 h-4 rounded-full border-2 border-rose-500/40 bg-transparent";
           }
         }
       }
@@ -2264,7 +2276,6 @@
       document.getElementById('wantsRemainText').textContent = formatCurrency(wantsRemain);
       document.getElementById('savingsRemainText').textContent = formatCurrency(savingsRemain);
 
-      // SINKRONISASI PADA TAB ALOKASI
       document.getElementById('labelNeedsTab').childNodes[0].nodeValue = `Kebutuhan Wajib (${p1}%) `;
       document.getElementById('labelWantsTab').childNodes[0].nodeValue = `Keinginan & Gaya Hidup (${p2}%) `;
       document.getElementById('labelSavingsTab').childNodes[0].nodeValue = `Tabungan & Investasi (${p3}%) `;
@@ -2289,7 +2300,7 @@
       document.getElementById('savingsBarTab').style.width = `100%`;
 
       renderTransactions();
-      renderReports(totalIncome, totalExpense);
+      renderReports();
     }
 
     function renderTransactions() {
@@ -2346,59 +2357,136 @@
       }
     }
 
-    function renderReports(totalIncome, totalExpense) {
-      const ratio = totalIncome > 0 ? Math.round(((totalIncome - totalExpense) / totalIncome) * 100) : 0;
+    function renderReports() {
+      const monthVal = document.getElementById('reportMonthPicker')?.value;
+      const filteredTx = monthVal ? transactions.filter(t => t.date.startsWith(monthVal)) : transactions;
+
+      let monthInc = 0;
+      let monthExp = 0;
+      const catExpenseMap = {};
+      const catIncomeMap = {};
+      let expenseList = [];
+
+      filteredTx.forEach(t => {
+        if (t.type === 'pemasukan') {
+          monthInc += t.amount;
+          catIncomeMap[t.category] = (catIncomeMap[t.category] || 0) + t.amount;
+        } else if (t.type === 'pengeluaran') {
+          monthExp += t.amount;
+          catExpenseMap[t.category] = (catExpenseMap[t.category] || 0) + t.amount;
+          expenseList.push(t);
+        }
+      });
+
+      const monthNet = monthInc - monthExp;
+
+      const elInc = document.getElementById('reportMonthlyIncome');
+      const elExp = document.getElementById('reportMonthlyExpense');
+      const elNet = document.getElementById('reportMonthlyNet');
+      if (elInc) elInc.textContent = formatCurrency(monthInc);
+      if (elExp) elExp.textContent = formatCurrency(monthExp);
+      if (elNet) {
+        elNet.textContent = formatCurrency(monthNet);
+        elNet.className = `text-lg sm:text-xl font-black mt-1 ${monthNet >= 0 ? 'text-blue-600 dark:text-blue-400' : 'text-rose-600 dark:text-rose-400'}`;
+      }
+
+      const ratio = monthInc > 0 ? Math.round((monthNet / monthInc) * 100) : 0;
       const ratioClamped = Math.max(0, Math.min(100, ratio));
 
       document.getElementById('savingsRatioText').textContent = `${ratioClamped}%`;
       document.getElementById('savingsRatioBar').style.width = `${ratioClamped}%`;
 
       const healthText = document.getElementById('healthAnalysisText');
-      if (totalIncome === 0) {
-        healthText.textContent = "Belum ada data pemasukan untuk dihitung kesehatan finansialnya.";
+      if (monthInc === 0) {
+        healthText.textContent = "Belum ada data pemasukan pada bulan ini untuk dihitung kesehatan finansialnya.";
       } else if (ratio >= 20) {
-        healthText.textContent = "Sangat Baik! Anda mampu menyisihkan tabungan dengan sehat.";
+        healthText.textContent = "Sangat Baik! Anda mampu menyisihkan tabungan dengan sehat pada bulan ini.";
       } else if (ratio > 0) {
-        healthText.textContent = "Cukup Baik. Usahakan untuk mengurangi pengeluaran sekunder.";
+        healthText.textContent = "Cukup Baik. Usahakan untuk mengoptimalkan kembali pos tabungan Anda.";
       } else {
-        healthText.textContent = "Waspada! Pengeluaran Anda melebihi atau menghabiskan seluruh pemasukan.";
+        healthText.textContent = "Waspada! Pengeluaran pada bulan ini melebihi atau menghabiskan seluruh pemasukan.";
       }
 
-      if (budgetLimit > 0 && totalExpense > budgetLimit) {
-        healthText.textContent = `⚠️ PERINGATAN: Total pengeluaran telah melewati batas anggaran bulanan Anda!`;
+      if (budgetLimit > 0 && monthExp > budgetLimit) {
+        healthText.textContent = `⚠️ PERINGATAN: Total pengeluaran bulan ini telah melewati batas anggaran bulanan Anda!`;
         healthText.className = "text-xs text-rose-500 font-bold pt-1";
       }
 
       const breakdownEl = document.getElementById('categoryBreakdown');
-      breakdownEl.innerHTML = '';
-
-      const catMap = {};
-      transactions.forEach(t => {
-        if (t.type === 'pengeluaran') {
-          catMap[t.category] = (catMap[t.category] || 0) + t.amount;
+      if (breakdownEl) {
+        breakdownEl.innerHTML = '';
+        if (Object.keys(catExpenseMap).length === 0) {
+          breakdownEl.innerHTML = `<p class="text-slate-400 text-center py-4">Belum ada pengeluaran tercatat pada bulan ini.</p>`;
+        } else {
+          Object.entries(catExpenseMap).forEach(([cat, amount]) => {
+            const pct = monthExp > 0 ? Math.round((amount / monthExp) * 100) : 0;
+            const row = document.createElement('div');
+            row.className = "space-y-1";
+            row.innerHTML = `
+              <div class="flex justify-between font-semibold">
+                <span class="text-slate-700 dark:text-slate-300">${cat}</span>
+                <span class="text-slate-900 dark:text-white">${formatCurrency(amount)} (${pct}%)</span>
+              </div>
+              <div class="w-full bg-slate-100 dark:bg-slate-800 h-2 rounded-full overflow-hidden">
+                <div class="bg-blue-500 h-full rounded-full" style="width: ${pct}%"></div>
+              </div>
+            `;
+            breakdownEl.appendChild(row);
+          });
         }
-      });
-
-      if (Object.keys(catMap).length === 0) {
-        breakdownEl.innerHTML = `<p class="text-slate-400 text-center py-4">Belum ada pengeluaran tercatat.</p>`;
-        return;
       }
 
-      Object.entries(catMap).forEach(([cat, amount]) => {
-        const pct = totalExpense > 0 ? Math.round((amount / totalExpense) * 100) : 0;
-        const row = document.createElement('div');
-        row.className = "space-y-1";
-        row.innerHTML = `
-          <div class="flex justify-between font-semibold">
-            <span class="text-slate-700 dark:text-slate-300">${cat}</span>
-            <span class="text-slate-900 dark:text-white">${formatCurrency(amount)} (${pct}%)</span>
-          </div>
-          <div class="w-full bg-slate-100 dark:bg-slate-800 h-2 rounded-full overflow-hidden">
-            <div class="bg-blue-500 h-full rounded-full" style="width: ${pct}%"></div>
-          </div>
-        `;
-        breakdownEl.appendChild(row);
-      });
+      const incomeBreakdownEl = document.getElementById('incomeCategoryBreakdown');
+      if (incomeBreakdownEl) {
+        incomeBreakdownEl.innerHTML = '';
+        if (Object.keys(catIncomeMap).length === 0) {
+          incomeBreakdownEl.innerHTML = `<p class="text-slate-400 text-center py-4">Belum ada pemasukan tercatat pada bulan ini.</p>`;
+        } else {
+          Object.entries(catIncomeMap).forEach(([cat, amount]) => {
+            const pct = monthInc > 0 ? Math.round((amount / monthInc) * 100) : 0;
+            const row = document.createElement('div');
+            row.className = "space-y-1";
+            row.innerHTML = `
+              <div class="flex justify-between font-semibold">
+                <span class="text-slate-700 dark:text-slate-300">${cat}</span>
+                <span class="text-slate-900 dark:text-white">${formatCurrency(amount)} (${pct}%)</span>
+              </div>
+              <div class="w-full bg-slate-100 dark:bg-slate-800 h-2 rounded-full overflow-hidden">
+                <div class="bg-emerald-500 h-full rounded-full" style="width: ${pct}%"></div>
+              </div>
+            `;
+            incomeBreakdownEl.appendChild(row);
+          });
+        }
+      }
+
+      const topExpEl = document.getElementById('topExpensesList');
+      if (topExpEl) {
+        topExpEl.innerHTML = '';
+        expenseList.sort((a, b) => b.amount - a.amount);
+        const top3 = expenseList.slice(0, 3);
+        if (top3.length === 0) {
+          topExpEl.innerHTML = `<p class="text-slate-400 text-center py-4">Belum ada transaksi pengeluaran.</p>`;
+        } else {
+          top3.forEach((t, idx) => {
+            const div = document.createElement('div');
+            div.className = "p-3 bg-slate-50 dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700/60 flex justify-between items-center";
+            div.innerHTML = `
+              <div class="flex items-center gap-2.5">
+                <span class="w-6 h-6 rounded-lg bg-rose-500/10 text-rose-500 font-bold text-xs flex items-center justify-center">#${idx+1}</span>
+                <div>
+                  <div class="font-bold text-xs text-slate-800 dark:text-slate-100">${t.category}</div>
+                  <div class="text-[10px] text-slate-400">${t.date} ${t.description ? '&bull; ' + t.description : ''}</div>
+                </div>
+              </div>
+              <div class="font-black text-xs text-rose-600 dark:text-rose-400">
+                - ${formatCurrency(t.amount)}
+              </div>
+            `;
+            topExpEl.appendChild(div);
+          });
+        }
+      }
     }
 
     function downloadMonthlyPDF() {
