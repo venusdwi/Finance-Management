@@ -1,6 +1,6 @@
 {
   "name": "Finance Management",
-  "short_name": "Finance Management",
+  "short_name": "Finance HV",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
