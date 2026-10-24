@@ -115,7 +115,7 @@
     }
   </style>
 </head>
-<body class="bg-slate-50 dark:bg-darkbg text-slate-800 dark:text-slate-100 min-h-screen pb-24 relative" onclick="resetInactivityTimer()" onmousemove="resetInactivityTimer()" onkeypress="resetInactivityTimer()">
+<body class="bg-slate-50 dark:bg-darkbg text-slate-800 dark:text-slate-100 min-h-screen pb-24 relative" onclick="resetInactivityTimer()" onmousemove="resetInactivityTimer()" onkeypress="resetInactivityTimer()" ontouchstart="resetInactivityTimer()">
 
   <!-- ==================== HEADER ==================== -->
   <header class="bg-white/80 dark:bg-darkcard/80 backdrop-blur-md border-b border-slate-200 dark:border-darkborder sticky top-0 z-30">
@@ -952,7 +952,7 @@
       if (autoLockSetting === 'never' || !isUnlocked) return;
       clearTimeout(inactivityTimer);
       const minutes = parseInt(autoLockSetting, 10);
-      if (!isNaN(minutes)) {
+      if (!isNaN(minutes) && minutes > 0) {
         inactivityTimer = setTimeout(() => {
           lockApp();
         }, minutes * 60 * 1000);
@@ -1003,6 +1003,7 @@
           pinScreen.classList.add('opacity-0', 'pointer-events-none');
           pinScreen.style.display = 'none';
         }
+        resetInactivityTimer();
       } else {
         document.body.classList.add('lock-scroll');
       }
@@ -1034,6 +1035,7 @@
       renderDashboard();
 
       document.addEventListener('keydown', (e) => {
+        resetInactivityTimer();
         const pinScreen = document.getElementById('pinScreen');
         if (pinScreen && pinScreen.style.display !== 'none' && !pinScreen.classList.contains('pointer-events-none')) {
           if (e.key >= '0' && e.key <= '9') {
@@ -1071,7 +1073,6 @@
         targetNav.classList.add('text-blue-600', 'dark:text-blue-400');
       }
 
-      // Otomatis scroll ke atas saat pindah menu/tab
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
@@ -1431,7 +1432,7 @@
     }
 
     function promptDeleteTransaction(id) {
-      targetDeleteTxId = id;
+      targetDeleteTxId = Number(id);
       const modal = document.getElementById('deleteTxConfirmModal');
       const container = document.getElementById('deleteTxConfirmContainer');
       modal.classList.remove('opacity-0', 'pointer-events-none');
@@ -1449,12 +1450,14 @@
     }
 
     function confirmExecuteDeleteTx() {
-      if (targetDeleteTxId) {
-        transactions = transactions.filter(t => t.id !== targetDeleteTxId);
+      if (targetDeleteTxId !== null && !isNaN(targetDeleteTxId)) {
+        transactions = transactions.filter(t => Number(t.id) !== targetDeleteTxId);
         localStorage.setItem('fm_transactions', JSON.stringify(transactions));
         closeDeleteTxConfirmModal();
         renderDashboard();
         showCustomAlert('Dihapus', 'Transaksi berhasil dihapus.', 'info');
+      } else {
+        closeDeleteTxConfirmModal();
       }
     }
 
