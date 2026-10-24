@@ -582,13 +582,13 @@
   </nav>
 
   <!-- ==================== LOCK / PIN ACCESS SCREEN ==================== -->
-  <div id="pinScreen" class="fixed inset-0 z-[100] flex flex-col items-center justify-center p-4 overflow-hidden select-none bg-slate-100 dark:bg-slate-950">
-    <div class="absolute inset-0 bg-gradient-to-br from-slate-100 via-blue-50 to-slate-200 dark:from-slate-950 dark:via-blue-950 dark:to-slate-950 opacity-95"></div>
+  <div id="pinScreen" class="fixed inset-0 z-[100] flex flex-col items-center justify-center p-4 overflow-hidden select-none bg-slate-100 dark:bg-slate-950 transition-all duration-300 ease-out opacity-100">
+    <div class="absolute inset-0 bg-gradient-to-br from-slate-100 via-blue-50 to-slate-200 dark:from-slate-950 dark:via-blue-950 dark:to-slate-950 opacity-95 pointer-events-none"></div>
     <div class="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-blue-600/10 dark:bg-blue-600/20 rounded-full blur-[100px] pointer-events-none"></div>
     <div class="absolute bottom-1/4 left-1/2 -translate-x-1/2 translate-y-1/2 w-80 h-80 bg-indigo-600/10 dark:bg-indigo-600/15 rounded-full blur-[90px] pointer-events-none"></div>
 
-    <div class="relative z-10 w-full max-w-sm flex flex-col items-center">
-      <div class="mb-6 text-center flex flex-col items-center">
+    <div id="pinBoxContainer" class="relative z-10 w-full max-w-sm flex flex-col items-center transform scale-100 transition-all duration-300 ease-out">
+      <div class="mb-6 text-center flex flex-col items-center pointer-events-none">
         <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500 via-blue-600 to-indigo-800 flex items-center justify-center text-white text-2xl shadow-xl shadow-blue-600/30 border border-blue-400/30 mb-3">
           <i class="fa-solid fa-chart-line text-blue-100"></i>
         </div>
@@ -600,7 +600,7 @@
 
       <div class="w-full bg-white/80 dark:bg-slate-900/80 backdrop-blur-2xl border border-slate-200 dark:border-blue-500/20 rounded-3xl p-6 sm:p-7 shadow-2xl shadow-slate-300/50 dark:shadow-blue-950/50 flex flex-col items-center">
         
-        <div class="flex items-center justify-center gap-3 mb-6" id="pinDots">
+        <div class="flex items-center justify-center gap-3 mb-6 pointer-events-none" id="pinDots">
           <div id="dot-0" class="w-4 h-4 rounded-full border-2 border-blue-500/40 bg-transparent transition-all duration-150"></div>
           <div id="dot-1" class="w-4 h-4 rounded-full border-2 border-blue-500/40 bg-transparent transition-all duration-150"></div>
           <div id="dot-2" class="w-4 h-4 rounded-full border-2 border-blue-500/40 bg-transparent transition-all duration-150"></div>
@@ -610,20 +610,20 @@
         </div>
 
         <div class="grid grid-cols-3 gap-3 w-full">
-          <button type="button" onclick="appendPin('1')" class="keypad-btn h-11 sm:h-12 bg-slate-50 dark:bg-blue-950/40 hover:bg-slate-100 dark:hover:bg-blue-900/50 active:bg-slate-200 dark:active:bg-blue-800/60 border border-slate-200 dark:border-blue-500/20 rounded-2xl text-lg font-bold text-slate-800 dark:text-blue-100 flex items-center justify-center shadow-sm dark:shadow-none">1</button>
-          <button type="button" onclick="appendPin('2')" class="keypad-btn h-11 sm:h-12 bg-slate-50 dark:bg-blue-950/40 hover:bg-slate-100 dark:hover:bg-blue-900/50 active:bg-slate-200 dark:active:bg-blue-800/60 border border-slate-200 dark:border-blue-500/20 rounded-2xl text-lg font-bold text-slate-800 dark:text-blue-100 flex items-center justify-center shadow-sm dark:shadow-none">2</button>
-          <button type="button" onclick="appendPin('3')" class="keypad-btn h-11 sm:h-12 bg-slate-50 dark:bg-blue-950/40 hover:bg-slate-100 dark:hover:bg-blue-900/50 active:bg-slate-200 dark:active:bg-blue-800/60 border border-slate-200 dark:border-blue-500/20 rounded-2xl text-lg font-bold text-slate-800 dark:text-blue-100 flex items-center justify-center shadow-sm dark:shadow-none">3</button>
-          <button type="button" onclick="appendPin('4')" class="keypad-btn h-11 sm:h-12 bg-slate-50 dark:bg-blue-950/40 hover:bg-slate-100 dark:hover:bg-blue-900/50 active:bg-slate-200 dark:active:bg-blue-800/60 border border-slate-200 dark:border-blue-500/20 rounded-2xl text-lg font-bold text-slate-800 dark:text-blue-100 flex items-center justify-center shadow-sm dark:shadow-none">4</button>
-          <button type="button" onclick="appendPin('5')" class="keypad-btn h-11 sm:h-12 bg-slate-50 dark:bg-blue-950/40 hover:bg-slate-100 dark:hover:bg-blue-900/50 active:bg-slate-200 dark:active:bg-blue-800/60 border border-slate-200 dark:border-blue-500/20 rounded-2xl text-lg font-bold text-slate-800 dark:text-blue-100 flex items-center justify-center shadow-sm dark:shadow-none">5</button>
-          <button type="button" onclick="appendPin('6')" class="keypad-btn h-11 sm:h-12 bg-slate-50 dark:bg-blue-950/40 hover:bg-slate-100 dark:hover:bg-blue-900/50 active:bg-slate-200 dark:active:bg-blue-800/60 border border-slate-200 dark:border-blue-500/20 rounded-2xl text-lg font-bold text-slate-800 dark:text-blue-100 flex items-center justify-center shadow-sm dark:shadow-none">6</button>
-          <button type="button" onclick="appendPin('7')" class="keypad-btn h-11 sm:h-12 bg-slate-50 dark:bg-blue-950/40 hover:bg-slate-100 dark:hover:bg-blue-900/50 active:bg-slate-200 dark:active:bg-blue-800/60 border border-slate-200 dark:border-blue-500/20 rounded-2xl text-lg font-bold text-slate-800 dark:text-blue-100 flex items-center justify-center shadow-sm dark:shadow-none">7</button>
-          <button type="button" onclick="appendPin('8')" class="keypad-btn h-11 sm:h-12 bg-slate-50 dark:bg-blue-950/40 hover:bg-slate-100 dark:hover:bg-blue-900/50 active:bg-slate-200 dark:active:bg-blue-800/60 border border-slate-200 dark:border-blue-500/20 rounded-2xl text-lg font-bold text-slate-800 dark:text-blue-100 flex items-center justify-center shadow-sm dark:shadow-none">8</button>
-          <button type="button" onclick="appendPin('9')" class="keypad-btn h-11 sm:h-12 bg-slate-50 dark:bg-blue-950/40 hover:bg-slate-100 dark:hover:bg-blue-900/50 active:bg-slate-200 dark:active:bg-blue-800/60 border border-slate-200 dark:border-blue-500/20 rounded-2xl text-lg font-bold text-slate-800 dark:text-blue-100 flex items-center justify-center shadow-sm dark:shadow-none">9</button>
-          <button type="button" onclick="clearPin()" class="keypad-btn h-11 sm:h-12 bg-rose-50 dark:bg-rose-950/40 hover:bg-rose-100 dark:hover:bg-rose-900/60 border border-rose-200 dark:border-rose-500/30 rounded-2xl text-xs font-bold text-rose-600 dark:text-rose-300 flex items-center justify-center gap-1 shadow-inner select-none">
+          <button type="button" onclick="appendPin('1')" class="keypad-btn h-11 sm:h-12 bg-slate-50 dark:bg-blue-950/40 hover:bg-slate-100 dark:hover:bg-blue-900/50 active:bg-slate-200 dark:active:bg-blue-800/60 border border-slate-200 dark:border-blue-500/20 rounded-2xl text-lg font-bold text-slate-800 dark:text-blue-100 flex items-center justify-center shadow-sm dark:shadow-none cursor-pointer">1</button>
+          <button type="button" onclick="appendPin('2')" class="keypad-btn h-11 sm:h-12 bg-slate-50 dark:bg-blue-950/40 hover:bg-slate-100 dark:hover:bg-blue-900/50 active:bg-slate-200 dark:active:bg-blue-800/60 border border-slate-200 dark:border-blue-500/20 rounded-2xl text-lg font-bold text-slate-800 dark:text-blue-100 flex items-center justify-center shadow-sm dark:shadow-none cursor-pointer">2</button>
+          <button type="button" onclick="appendPin('3')" class="keypad-btn h-11 sm:h-12 bg-slate-50 dark:bg-blue-950/40 hover:bg-slate-100 dark:hover:bg-blue-900/50 active:bg-slate-200 dark:active:bg-blue-800/60 border border-slate-200 dark:border-blue-500/20 rounded-2xl text-lg font-bold text-slate-800 dark:text-blue-100 flex items-center justify-center shadow-sm dark:shadow-none cursor-pointer">3</button>
+          <button type="button" onclick="appendPin('4')" class="keypad-btn h-11 sm:h-12 bg-slate-50 dark:bg-blue-950/40 hover:bg-slate-100 dark:hover:bg-blue-900/50 active:bg-slate-200 dark:active:bg-blue-800/60 border border-slate-200 dark:border-blue-500/20 rounded-2xl text-lg font-bold text-slate-800 dark:text-blue-100 flex items-center justify-center shadow-sm dark:shadow-none cursor-pointer">4</button>
+          <button type="button" onclick="appendPin('5')" class="keypad-btn h-11 sm:h-12 bg-slate-50 dark:bg-blue-950/40 hover:bg-slate-100 dark:hover:bg-blue-900/50 active:bg-slate-200 dark:active:bg-blue-800/60 border border-slate-200 dark:border-blue-500/20 rounded-2xl text-lg font-bold text-slate-800 dark:text-blue-100 flex items-center justify-center shadow-sm dark:shadow-none cursor-pointer">5</button>
+          <button type="button" onclick="appendPin('6')" class="keypad-btn h-11 sm:h-12 bg-slate-50 dark:bg-blue-950/40 hover:bg-slate-100 dark:hover:bg-blue-900/50 active:bg-slate-200 dark:active:bg-blue-800/60 border border-slate-200 dark:border-blue-500/20 rounded-2xl text-lg font-bold text-slate-800 dark:text-blue-100 flex items-center justify-center shadow-sm dark:shadow-none cursor-pointer">6</button>
+          <button type="button" onclick="appendPin('7')" class="keypad-btn h-11 sm:h-12 bg-slate-50 dark:bg-blue-950/40 hover:bg-slate-100 dark:hover:bg-blue-900/50 active:bg-slate-200 dark:active:bg-blue-800/60 border border-slate-200 dark:border-blue-500/20 rounded-2xl text-lg font-bold text-slate-800 dark:text-blue-100 flex items-center justify-center shadow-sm dark:shadow-none cursor-pointer">7</button>
+          <button type="button" onclick="appendPin('8')" class="keypad-btn h-11 sm:h-12 bg-slate-50 dark:bg-blue-950/40 hover:bg-slate-100 dark:hover:bg-blue-900/50 active:bg-slate-200 dark:active:bg-blue-800/60 border border-slate-200 dark:border-blue-500/20 rounded-2xl text-lg font-bold text-slate-800 dark:text-blue-100 flex items-center justify-center shadow-sm dark:shadow-none cursor-pointer">8</button>
+          <button type="button" onclick="appendPin('9')" class="keypad-btn h-11 sm:h-12 bg-slate-50 dark:bg-blue-950/40 hover:bg-slate-100 dark:hover:bg-blue-900/50 active:bg-slate-200 dark:active:bg-blue-800/60 border border-slate-200 dark:border-blue-500/20 rounded-2xl text-lg font-bold text-slate-800 dark:text-blue-100 flex items-center justify-center shadow-sm dark:shadow-none cursor-pointer">9</button>
+          <button type="button" onclick="clearPin()" class="keypad-btn h-11 sm:h-12 bg-rose-50 dark:bg-rose-950/40 hover:bg-rose-100 dark:hover:bg-rose-900/60 border border-rose-200 dark:border-rose-500/30 rounded-2xl text-xs font-bold text-rose-600 dark:text-rose-300 flex items-center justify-center gap-1 shadow-inner select-none cursor-pointer">
             <i class="fa-solid fa-rotate-left text-xs"></i> Hapus
           </button>
-          <button type="button" onclick="appendPin('0')" class="keypad-btn h-11 sm:h-12 bg-slate-50 dark:bg-blue-950/40 hover:bg-slate-100 dark:hover:bg-blue-900/50 active:bg-slate-200 dark:active:bg-blue-800/60 border border-slate-200 dark:border-blue-500/20 rounded-2xl text-lg font-bold text-slate-800 dark:text-blue-100 flex items-center justify-center shadow-sm dark:shadow-none">0</button>
-          <button type="button" onclick="deletePinDigit()" class="keypad-btn h-11 sm:h-12 bg-slate-50 dark:bg-blue-950/40 hover:bg-slate-100 dark:hover:bg-blue-900/50 active:bg-slate-200 dark:active:bg-blue-800/60 border border-slate-200 dark:border-blue-500/20 rounded-2xl text-base text-slate-700 dark:text-blue-300 flex items-center justify-center shadow-sm dark:shadow-none" title="Hapus Digit Terakhir">
+          <button type="button" onclick="appendPin('0')" class="keypad-btn h-11 sm:h-12 bg-slate-50 dark:bg-blue-950/40 hover:bg-slate-100 dark:hover:bg-blue-900/50 active:bg-slate-200 dark:active:bg-blue-800/60 border border-slate-200 dark:border-blue-500/20 rounded-2xl text-lg font-bold text-slate-800 dark:text-blue-100 flex items-center justify-center shadow-sm dark:shadow-none cursor-pointer">0</button>
+          <button type="button" onclick="deletePinDigit()" class="keypad-btn h-11 sm:h-12 bg-slate-50 dark:bg-blue-950/40 hover:bg-slate-100 dark:hover:bg-blue-900/50 active:bg-slate-200 dark:active:bg-blue-800/60 border border-slate-200 dark:border-blue-500/20 rounded-2xl text-base text-slate-700 dark:text-blue-300 flex items-center justify-center shadow-sm dark:shadow-none cursor-pointer" title="Hapus Digit Terakhir">
             <i class="fa-solid fa-backspace"></i>
           </button>
         </div>
@@ -996,9 +996,11 @@
     }
 
     document.addEventListener("DOMContentLoaded", () => {
+      const pinScreen = document.getElementById('pinScreen');
+      const pinBox = document.getElementById('pinBoxContainer');
+
       if (isUnlocked) {
         document.body.classList.remove('lock-scroll');
-        const pinScreen = document.getElementById('pinScreen');
         if (pinScreen) {
           pinScreen.classList.add('opacity-0', 'pointer-events-none');
           pinScreen.style.display = 'none';
@@ -1006,6 +1008,16 @@
         resetInactivityTimer();
       } else {
         document.body.classList.add('lock-scroll');
+        if (pinScreen && pinBox) {
+          pinScreen.style.display = 'flex';
+          pinScreen.classList.remove('opacity-0', 'pointer-events-none');
+          pinBox.classList.remove('scale-100');
+          pinBox.classList.add('scale-95');
+          requestAnimationFrame(() => {
+            pinBox.classList.remove('scale-95');
+            pinBox.classList.add('scale-100');
+          });
+        }
       }
 
       const monthPicker = document.getElementById('reportMonthPicker');
@@ -1119,7 +1131,10 @@
         sessionStorage.setItem('fm_is_unlocked', 'true');
         document.body.classList.remove('lock-scroll');
         const pinScreen = document.getElementById('pinScreen');
-        if (pinScreen) {
+        const pinBox = document.getElementById('pinBoxContainer');
+        if (pinScreen && pinBox) {
+          pinBox.classList.remove('scale-100');
+          pinBox.classList.add('scale-95');
           pinScreen.classList.add('opacity-0', 'pointer-events-none');
           setTimeout(() => {
             pinScreen.style.display = 'none';
@@ -1139,9 +1154,16 @@
       clearPin();
       document.body.classList.add('lock-scroll');
       const pinScreen = document.getElementById('pinScreen');
-      if (pinScreen) {
+      const pinBox = document.getElementById('pinBoxContainer');
+      if (pinScreen && pinBox) {
         pinScreen.style.display = 'flex';
-        setTimeout(() => pinScreen.classList.remove('opacity-0', 'pointer-events-none'), 10);
+        pinBox.classList.remove('scale-100');
+        pinBox.classList.add('scale-95');
+        pinScreen.classList.remove('opacity-0', 'pointer-events-none');
+        requestAnimationFrame(() => {
+          pinBox.classList.remove('scale-95');
+          pinBox.classList.add('scale-100');
+        });
       }
     }
 
