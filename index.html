@@ -58,19 +58,17 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
 
   <style>
-    /* Sinkronisasi Color Scheme Native Browser untuk Transisi Tema */
+    /* Perbaikan Total agar Halaman Selalu Bisa Di-scroll dengan Normal */
     html {
       color-scheme: light;
-      overscroll-behavior-y: none !important;
       height: 100%;
+      overflow-y: auto !important;
     }
     html.dark {
       color-scheme: dark;
     }
 
-    /* FIX UTAMA: Menghapus position:fixed agar halaman BISA DI-SCROLL, namun tetap MEMATIKAN Pull-to-Refresh */
     body {
-      overscroll-behavior-y: none !important;
       min-height: 100%;
       overflow-y: auto !important;
       touch-action: pan-x pan-y;
@@ -79,7 +77,7 @@
       user-select: none;
     }
 
-    /* Transisi Halus Khusus Elemen UI (Mencegah Bug Kedip Global) */
+    /* Transisi Halus Khusus Elemen UI */
     body, header, nav, div, button, input, select, table, tr, td, th {
       transition: background-color 350ms cubic-bezier(0.4, 0, 0.2, 1), 
                   border-color 350ms cubic-bezier(0.4, 0, 0.2, 1), 
@@ -347,11 +345,11 @@
       </div>
     </div>
 
-    <!-- TABUNGAN VIEW -->
+    <!-- TABUNGAN / ALOKASI VIEW -->
     <div id="viewTabungan" class="tab-view hidden space-y-8">
       <div>
         <h2 class="text-2xl font-bold text-slate-900 dark:text-white">Alokasi & Tabungan</h2>
-        <p class="text-sm text-slate-500 dark:text-slate-400">Pembagian anggaran berdasarkan formula persentase pilihan Anda.</p>
+        <p class="text-sm text-slate-500 dark:text-slate-400">Pembagian anggaran berdasarkan formula persentase pilihan Anda. Ketuk kartu untuk melihat rincian transaksi.</p>
       </div>
 
       <div class="bg-white dark:bg-darkcard rounded-2xl p-6 shadow-sm border border-slate-200 dark:border-darkborder">
@@ -373,30 +371,72 @@
           </span>
         </div>
 
+        <!-- INTERAKTIF: Kartu Alokasi Bisa Diklik Untuk Melihat Detail Rincian -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div class="p-5 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800">
+          
+          <!-- Kartu Kebutuhan Wajib -->
+          <div onclick="openAllocationDetailModal('needs')" class="p-5 rounded-2xl bg-slate-50 dark:bg-slate-800/50 hover:bg-blue-50/50 dark:hover:bg-slate-800 border border-slate-100 dark:border-slate-800 cursor-pointer transition-all hover:scale-[1.01] hover:shadow-md group">
             <div class="flex justify-between items-center mb-2">
-              <span class="font-semibold text-sm text-slate-800 dark:text-slate-200" id="labelNeedsTab">Kebutuhan Wajib</span>
-              <span class="text-xs font-bold text-blue-600 dark:text-blue-400" id="needsAmountTab">Rp 0</span>
+              <span class="font-bold text-sm text-slate-800 dark:text-slate-200 group-hover:text-blue-600 dark:group-hover:text-blue-400 flex items-center gap-1.5" id="labelNeedsTab">
+                Kebutuhan Wajib
+                <i class="fa-solid fa-chevron-right text-xs opacity-0 group-hover:opacity-100 transition-opacity"></i>
+              </span>
+              <span class="text-xs font-black text-blue-600 dark:text-blue-400" id="needsAmountTab">Rp 0</span>
             </div>
-            <p class="text-xs text-slate-500 dark:text-slate-400 mb-4">Pengeluaran pokok harian, tagihan, cicilan, dan kontrakan.</p>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mb-3">Pengeluaran pokok harian, tagihan, cicilan, dan kontrakan.</p>
+            <div class="space-y-1.5 pt-2 border-t border-slate-200/60 dark:border-slate-700/60">
+              <div class="flex justify-between text-[11px]">
+                <span class="text-slate-400">Sisa Anggaran:</span>
+                <span id="needsRemainTab" class="font-bold text-slate-700 dark:text-slate-200">Rp 0</span>
+              </div>
+              <div class="w-full bg-slate-200 dark:bg-slate-700 h-2 rounded-full overflow-hidden">
+                <div id="needsBarTab" class="bg-blue-500 h-full rounded-full transition-all duration-300" style="width: 0%"></div>
+              </div>
+            </div>
           </div>
 
-          <div class="p-5 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800">
+          <!-- Kartu Keinginan & Gaya Hidup -->
+          <div onclick="openAllocationDetailModal('wants')" class="p-5 rounded-2xl bg-slate-50 dark:bg-slate-800/50 hover:bg-amber-50/50 dark:hover:bg-slate-800 border border-slate-100 dark:border-slate-800 cursor-pointer transition-all hover:scale-[1.01] hover:shadow-md group">
             <div class="flex justify-between items-center mb-2">
-              <span class="font-semibold text-sm text-slate-800 dark:text-slate-200" id="labelWantsTab">Keinginan & Gaya Hidup</span>
-              <span class="text-xs font-bold text-amber-600 dark:text-amber-400" id="wantsAmountTab">Rp 0</span>
+              <span class="font-bold text-sm text-slate-800 dark:text-slate-200 group-hover:text-amber-600 dark:group-hover:text-amber-400 flex items-center gap-1.5" id="labelWantsTab">
+                Keinginan & Gaya Hidup
+                <i class="fa-solid fa-chevron-right text-xs opacity-0 group-hover:opacity-100 transition-opacity"></i>
+              </span>
+              <span class="text-xs font-black text-amber-600 dark:text-amber-400" id="wantsAmountTab">Rp 0</span>
             </div>
-            <p class="text-xs text-slate-500 dark:text-slate-400 mb-4">Rekreasi, hiburan, hobi, dan belanja barang impian.</p>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mb-3">Rekreasi, hiburan, hobi, dan belanja barang impian.</p>
+            <div class="space-y-1.5 pt-2 border-t border-slate-200/60 dark:border-slate-700/60">
+              <div class="flex justify-between text-[11px]">
+                <span class="text-slate-400">Sisa Anggaran:</span>
+                <span id="wantsRemainTab" class="font-bold text-slate-700 dark:text-slate-200">Rp 0</span>
+              </div>
+              <div class="w-full bg-slate-200 dark:bg-slate-700 h-2 rounded-full overflow-hidden">
+                <div id="wantsBarTab" class="bg-amber-500 h-full rounded-full transition-all duration-300" style="width: 0%"></div>
+              </div>
+            </div>
           </div>
 
-          <div class="p-5 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800">
+          <!-- Kartu Tabungan & Investasi -->
+          <div onclick="openAllocationDetailModal('savings')" class="p-5 rounded-2xl bg-slate-50 dark:bg-slate-800/50 hover:bg-emerald-50/50 dark:hover:bg-slate-800 border border-slate-100 dark:border-slate-800 cursor-pointer transition-all hover:scale-[1.01] hover:shadow-md group">
             <div class="flex justify-between items-center mb-2">
-              <span class="font-semibold text-sm text-slate-800 dark:text-slate-200" id="labelSavingsTab">Tabungan & Investasi</span>
-              <span class="text-xs font-bold text-emerald-600 dark:text-emerald-400" id="savingsAmountTab">Rp 0</span>
+              <span class="font-bold text-sm text-slate-800 dark:text-slate-200 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 flex items-center gap-1.5" id="labelSavingsTab">
+                Tabungan & Investasi
+                <i class="fa-solid fa-chevron-right text-xs opacity-0 group-hover:opacity-100 transition-opacity"></i>
+              </span>
+              <span class="text-xs font-black text-emerald-600 dark:text-emerald-400" id="savingsAmountTab">Rp 0</span>
             </div>
-            <p class="text-xs text-slate-500 dark:text-slate-400 mb-4">Dana darurat, tabungan jangka panjang, dan portofolio investasi.</p>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mb-3">Dana darurat, tabungan jangka panjang, dan portofolio investasi.</p>
+            <div class="space-y-1.5 pt-2 border-t border-slate-200/60 dark:border-slate-700/60">
+              <div class="flex justify-between text-[11px]">
+                <span class="text-slate-400">Total Terkumpul:</span>
+                <span id="savingsRemainTab" class="font-bold text-slate-700 dark:text-slate-200">Rp 0</span>
+              </div>
+              <div class="w-full bg-slate-200 dark:bg-slate-700 h-2 rounded-full overflow-hidden">
+                <div id="savingsBarTab" class="bg-emerald-500 h-full rounded-full transition-all duration-300" style="width: 100%"></div>
+              </div>
+            </div>
           </div>
+
         </div>
       </div>
     </div>
@@ -750,6 +790,42 @@
     </div>
   </div>
 
+  <!-- ==================== MODAL DETAIL RINCIAN TRANSAKSI PER POS ALOKASI ==================== -->
+  <div id="allocationDetailModal" class="modal-backdrop fixed inset-0 z-[107] flex items-center justify-center bg-slate-900/60 backdrop-blur-sm opacity-0 pointer-events-none p-4">
+    <div class="modal-content bg-white dark:bg-darkcard border border-slate-200 dark:border-darkborder rounded-3xl max-w-lg w-full p-6 shadow-2xl transform scale-95 space-y-4" id="allocationDetailContainer">
+      <div class="flex justify-between items-center pb-3 border-b border-slate-100 dark:border-slate-800">
+        <div>
+          <h3 class="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2" id="allocDetailTitle">
+            Rincian Pos Alokasi
+          </h3>
+          <p class="text-xs text-slate-400 mt-0.5" id="allocDetailSubtitle">Daftar penggunaan anggaran pos ini</p>
+        </div>
+        <button onclick="closeAllocationDetailModal()" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center justify-center select-none">
+          <i class="fa-solid fa-xmark text-sm"></i>
+        </button>
+      </div>
+
+      <!-- Ringkasan Anggaran Pos -->
+      <div class="grid grid-cols-2 gap-3 p-3.5 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-100 dark:border-slate-800">
+        <div>
+          <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Total Anggaran:</span>
+          <p class="text-sm font-black text-slate-800 dark:text-slate-100" id="allocDetailTotal">Rp 0</p>
+        </div>
+        <div>
+          <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Sisa / Terkumpul:</span>
+          <p class="text-sm font-black text-blue-600 dark:text-blue-400" id="allocDetailRemain">Rp 0</p>
+        </div>
+      </div>
+
+      <!-- List Transaksi Terkait -->
+      <div class="max-h-64 overflow-y-auto space-y-2 pr-1" id="allocDetailTxList"></div>
+
+      <button type="button" onclick="closeAllocationDetailModal()" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl text-xs select-none">
+        Tutup Rincian
+      </button>
+    </div>
+  </div>
+
   <!-- ==================== MODAL KELOLA KATEGORI KUSTOM ==================== -->
   <div id="categoryModal" class="modal-backdrop fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm opacity-0 pointer-events-none p-4">
     <div class="modal-content bg-white dark:bg-darkcard border border-slate-200 dark:border-darkborder rounded-3xl max-w-xl w-full p-6 shadow-2xl transform scale-95 space-y-5" id="categoryModalContainer">
@@ -980,7 +1056,7 @@
       });
     }
 
-    // Refresh otomatis saat halaman kembali aktif (dibuka kembali / fokus setelah dari aplikasi lain)
+    // Refresh otomatis saat halaman kembali aktif
     document.addEventListener("visibilitychange", () => {
       if (document.visibilityState === "visible") {
         location.reload();
@@ -1062,8 +1138,11 @@
       const pinScreen = document.getElementById('pinScreen');
       const pinBox = document.getElementById('pinBoxContainer');
 
+      // Pastikan body bersih dari pengunci scroll saat halaman dimuat
+      document.body.classList.remove('lock-scroll', 'overflow-hidden');
+      document.documentElement.classList.remove('lock-scroll', 'overflow-hidden');
+
       if (isUnlocked) {
-        document.body.classList.remove('lock-scroll');
         if (pinScreen) {
           pinScreen.classList.add('opacity-0', 'pointer-events-none');
           pinScreen.style.display = 'none';
@@ -1214,7 +1293,9 @@
         playSuccessSound();
         isUnlocked = true;
         sessionStorage.setItem('fm_is_unlocked', 'true');
-        document.body.classList.remove('lock-scroll');
+        document.body.classList.remove('lock-scroll', 'overflow-hidden');
+        document.documentElement.classList.remove('lock-scroll', 'overflow-hidden');
+
         const pinScreen = document.getElementById('pinScreen');
         const pinBox = document.getElementById('pinBoxContainer');
         if (pinScreen && pinBox) {
@@ -1387,6 +1468,8 @@
       container.classList.remove('scale-100');
       container.classList.add('scale-95');
       modal.classList.add('opacity-0', 'pointer-events-none');
+      document.body.classList.remove('lock-scroll', 'overflow-hidden');
+      document.documentElement.classList.remove('lock-scroll', 'overflow-hidden');
       updateCategories();
     }
 
@@ -1570,6 +1653,8 @@
       container.classList.remove('scale-100');
       container.classList.add('scale-95');
       modal.classList.add('opacity-0', 'pointer-events-none');
+      document.body.classList.remove('lock-scroll', 'overflow-hidden');
+      document.documentElement.classList.remove('lock-scroll', 'overflow-hidden');
       
       const list = document.getElementById('customDropdownList');
       if (list) list.classList.add('hidden');
@@ -1791,6 +1876,8 @@
       container.classList.remove('scale-100');
       container.classList.add('scale-95');
       modal.classList.add('opacity-0', 'pointer-events-none');
+      document.body.classList.remove('lock-scroll', 'overflow-hidden');
+      document.documentElement.classList.remove('lock-scroll', 'overflow-hidden');
       setTimeout(() => {
         modal.style.display = 'none';
         targetDeleteTxId = null;
@@ -1807,6 +1894,119 @@
       } else {
         closeDeleteTxConfirmModal();
       }
+    }
+
+    function openAllocationDetailModal(typeKey) {
+      let title = "";
+      let allowedCategories = [];
+
+      let totalIncome = 0;
+      let totalSalary = 0;
+
+      transactions.forEach(t => {
+        if (t.type === 'pemasukan') {
+          totalIncome += t.amount;
+          if (t.category === 'Gajian') totalSalary += t.amount;
+        }
+      });
+
+      let p1 = 50, p2 = 30, p3 = 20;
+      if (budgetRatio === '60-20-20') { p1 = 60; p2 = 20; p3 = 20; }
+      else if (budgetRatio === '70-20-10') { p1 = 70; p2 = 20; p3 = 10; }
+
+      const baseSalary = totalSalary > 0 ? totalSalary : totalIncome;
+
+      let allocAmount = 0;
+      let spentAmount = 0;
+
+      if (typeKey === 'needs') {
+        title = `Kebutuhan Wajib (${p1}%)`;
+        allowedCategories = ['Makanan & Minuman', 'Tagihan & Utilitas', 'Belanja Rumah Tangga', 'Transportasi', 'Kesehatan', 'Pendidikan'];
+        allocAmount = baseSalary * (p1 / 100);
+      } else if (typeKey === 'wants') {
+        title = `Keinginan & Gaya Hidup (${p2}%)`;
+        allowedCategories = ['Hiburan & Keinginan', 'Lainnya'];
+        allocAmount = baseSalary * (p2 / 100);
+      } else if (typeKey === 'savings') {
+        title = `Tabungan & Investasi (${p3}%)`;
+        allowedCategories = ['Investasi', 'Bonus', 'Gajian'];
+        allocAmount = baseSalary * (p3 / 100);
+      }
+
+      const filteredTx = transactions.filter(t => {
+        if (typeKey === 'savings') {
+          return t.type === 'pemasukan';
+        } else {
+          return t.type === 'pengeluaran' && allowedCategories.includes(t.category);
+        }
+      });
+
+      filteredTx.forEach(t => {
+        if (typeKey !== 'savings') spentAmount += t.amount;
+      });
+
+      document.getElementById('allocDetailTitle').textContent = title;
+      document.getElementById('allocDetailTotal').textContent = formatCurrency(allocAmount);
+
+      if (typeKey === 'savings') {
+        document.getElementById('allocDetailRemain').textContent = formatCurrency(allocAmount);
+      } else {
+        const remain = Math.max(0, allocAmount - spentAmount);
+        document.getElementById('allocDetailRemain').textContent = formatCurrency(remain);
+      }
+
+      const container = document.getElementById('allocDetailTxList');
+      container.innerHTML = '';
+
+      if (filteredTx.length === 0) {
+        container.innerHTML = `<div class="p-8 text-center text-slate-400 text-xs">Belum ada transaksi tercatat untuk pos ini.</div>`;
+      } else {
+        filteredTx.forEach(t => {
+          const div = document.createElement('div');
+          div.className = "p-3 bg-slate-50 dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700/60 flex justify-between items-center";
+          
+          const isInc = t.type === 'pemasukan';
+          const amtClass = isInc ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400';
+          const prefix = isInc ? '+' : '-';
+
+          div.innerHTML = `
+            <div>
+              <div class="font-bold text-xs text-slate-800 dark:text-slate-100">${t.category}</div>
+              <div class="text-[10px] text-slate-400">${t.date} ${t.description ? '&bull; ' + t.description : ''}</div>
+            </div>
+            <div class="font-black text-xs ${amtClass}">
+              ${prefix} ${formatCurrency(t.amount)}
+            </div>
+          `;
+          container.appendChild(div);
+        });
+      }
+
+      const modal = document.getElementById('allocationDetailModal');
+      const modalCont = document.getElementById('allocationDetailContainer');
+      modal.style.display = 'flex';
+      requestAnimationFrame(() => {
+        modal.classList.remove('opacity-0', 'pointer-events-none');
+        modalCont.classList.remove('scale-100');
+        modalCont.classList.add('scale-95');
+        requestAnimationFrame(() => {
+          modalCont.classList.remove('scale-95');
+          modalCont.classList.add('scale-100');
+        });
+      });
+    }
+
+    function closeAllocationDetailModal() {
+      const modal = document.getElementById('allocationDetailModal');
+      const container = document.getElementById('allocationDetailContainer');
+      container.classList.remove('scale-100');
+      container.classList.add('scale-95');
+      modal.classList.add('opacity-0', 'pointer-events-none');
+      document.body.classList.remove('lock-scroll', 'overflow-hidden');
+      document.documentElement.classList.remove('lock-scroll', 'overflow-hidden');
+      setTimeout(() => {
+        modal.style.display = 'none';
+      }, 250);
     }
 
     function showCustomAlert(title, message, type = 'success') {
@@ -1849,6 +2049,8 @@
       alertContainer.classList.remove('scale-100');
       alertContainer.classList.add('scale-95');
       alertModal.classList.add('opacity-0', 'pointer-events-none');
+      document.body.classList.remove('lock-scroll', 'overflow-hidden');
+      document.documentElement.classList.remove('lock-scroll', 'overflow-hidden');
       setTimeout(() => {
         alertModal.style.display = 'none';
       }, 250);
@@ -1875,6 +2077,8 @@
       container.classList.remove('scale-100');
       container.classList.add('scale-95');
       modal.classList.add('opacity-0', 'pointer-events-none');
+      document.body.classList.remove('lock-scroll', 'overflow-hidden');
+      document.documentElement.classList.remove('lock-scroll', 'overflow-hidden');
       setTimeout(() => {
         modal.style.display = 'none';
       }, 250);
@@ -1910,6 +2114,8 @@
       container.classList.remove('scale-100');
       container.classList.add('scale-95');
       modal.classList.add('opacity-0', 'pointer-events-none');
+      document.body.classList.remove('lock-scroll', 'overflow-hidden');
+      document.documentElement.classList.remove('lock-scroll', 'overflow-hidden');
       setTimeout(() => {
         modal.style.display = 'none';
       }, 250);
@@ -1936,6 +2142,8 @@
       container.classList.remove('scale-100');
       container.classList.add('scale-95');
       modal.classList.add('opacity-0', 'pointer-events-none');
+      document.body.classList.remove('lock-scroll', 'overflow-hidden');
+      document.documentElement.classList.remove('lock-scroll', 'overflow-hidden');
       setTimeout(() => {
         modal.style.display = 'none';
       }, 250);
@@ -2056,17 +2264,29 @@
       document.getElementById('wantsRemainText').textContent = formatCurrency(wantsRemain);
       document.getElementById('savingsRemainText').textContent = formatCurrency(savingsRemain);
 
+      // SINKRONISASI PADA TAB ALOKASI
+      document.getElementById('labelNeedsTab').childNodes[0].nodeValue = `Kebutuhan Wajib (${p1}%) `;
+      document.getElementById('labelWantsTab').childNodes[0].nodeValue = `Keinginan & Gaya Hidup (${p2}%) `;
+      document.getElementById('labelSavingsTab').childNodes[0].nodeValue = `Tabungan & Investasi (${p3}%) `;
+
       document.getElementById('needsAmountTab').textContent = formatCurrency(needsAlloc);
       document.getElementById('wantsAmountTab').textContent = formatCurrency(wantsAlloc);
       document.getElementById('savingsAmountTab').textContent = formatCurrency(savingsAlloc);
 
+      document.getElementById('needsRemainTab').textContent = formatCurrency(needsRemain);
+      document.getElementById('wantsRemainTab').textContent = formatCurrency(wantsRemain);
+      document.getElementById('savingsRemainTab').textContent = formatCurrency(savingsRemain);
+
       const needsPct = needsAlloc > 0 ? Math.min(100, Math.max(0, (needsRemain / needsAlloc) * 100)) : 0;
       const wantsPct = wantsAlloc > 0 ? Math.min(100, Math.max(0, (wantsRemain / wantsAlloc) * 100)) : 0;
-      const savingsPct = savingsAlloc > 0 ? 100 : 0;
 
       document.getElementById('needsBar').style.width = `${needsPct}%`;
       document.getElementById('wantsBar').style.width = `${wantsPct}%`;
-      document.getElementById('savingsBar').style.width = `${savingsPct}%`;
+      document.getElementById('savingsBar').style.width = `100%`;
+
+      document.getElementById('needsBarTab').style.width = `${needsPct}%`;
+      document.getElementById('wantsBarTab').style.width = `${wantsPct}%`;
+      document.getElementById('savingsBarTab').style.width = `100%`;
 
       renderTransactions();
       renderReports(totalIncome, totalExpense);
@@ -2260,32 +2480,9 @@
       container.classList.remove('scale-100');
       container.classList.add('scale-95');
       modal.classList.add('opacity-0', 'pointer-events-none');
+      document.body.classList.remove('lock-scroll', 'overflow-hidden');
+      document.documentElement.classList.remove('lock-scroll', 'overflow-hidden');
       document.getElementById('pinChangeError').classList.add('hidden');
-    }
-
-    function handleChangePinSubmit(e) {
-      e.preventDefault();
-      const oldPin = document.getElementById('oldPinInput').value;
-      const newPin = document.getElementById('newPinInput').value;
-      const confirmPin = document.getElementById('confirmPinInput').value;
-      const errEl = document.getElementById('pinChangeError');
-
-      if (oldPin !== userPin) {
-        errEl.textContent = "PIN lama tidak cocok!";
-        errEl.classList.remove('hidden');
-        return;
-      }
-
-      if (newPin !== confirmPin) {
-        errEl.textContent = "Konfirmasi PIN baru tidak sama!";
-        errEl.classList.remove('hidden');
-        return;
-      }
-
-      userPin = newPin;
-      localStorage.setItem('fm_user_pin', newPin);
-      closeChangePinModal();
-      showCustomAlert('PIN Diperbarui', 'PIN keamanan berhasil diubah.', 'success');
     }
 
     function toggleTheme() {
