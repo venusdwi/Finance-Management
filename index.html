@@ -635,7 +635,7 @@
           </div>
         </div>
 
-        <!-- FITUR BARU: ATUR BUDGET BULANAN PER KATEGORI -->
+        <!-- FITUR: ATUR BUDGET BULANAN PER KATEGORI -->
         <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
           <div>
             <h4 class="font-bold text-slate-900 dark:text-white text-sm">Batas Anggaran Bulanan per Kategori</h4>
@@ -690,7 +690,6 @@
           </div>
         </div>
 
-        <!-- Tombol Reset Data yang Lebih Menonjol -->
         <div class="flex items-center justify-between pt-1">
           <div>
             <h4 class="font-bold text-rose-600 dark:text-rose-400 text-sm">Hapus Semua Data</h4>
@@ -862,28 +861,27 @@
             </div>
           </div>
 
-          <div id="walletSourceBox">
+          <!-- SUMBER DOMPET CUSTOM -->
+          <div class="relative" id="walletSourceFieldContainer">
             <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1" id="walletLabelTitle">Sumber Dompet</label>
-            <select id="walletSource" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-800 dark:text-slate-100 text-sm font-semibold focus:outline-none">
-              <option value="Dompet Utama">Dompet Utama</option>
-              <option value="Tunai / Cash">Tunai / Cash</option>
-              <option value="Bank BCA">Bank BCA</option>
-              <option value="Bank Mandiri">Bank Mandiri</option>
-              <option value="E-Wallet (GoPay/OVO/Dana)">E-Wallet (GoPay/OVO/Dana)</option>
-            </select>
+            <input type="hidden" id="walletSource" value="Dompet Utama">
+            <div id="walletSourceTrigger" onclick="toggleWalletDropdown('source')" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-800 dark:text-slate-100 text-sm font-semibold flex items-center justify-between cursor-pointer select-none shadow-inner">
+              <span id="walletSourceLabel">Dompet Utama</span>
+              <i class="fa-solid fa-chevron-down text-xs text-slate-400 transition-transform duration-200" id="walletSourceArrow"></i>
+            </div>
+            <div id="walletSourceDropdownList" class="absolute left-0 right-0 top-full mt-1.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl shadow-2xl max-h-60 overflow-y-auto z-50 hidden p-1.5 space-y-1 divide-y divide-slate-100 dark:divide-slate-800"></div>
           </div>
         </div>
 
-        <!-- Kolom Tujuan Transfer (Hanya muncul jika tipe transfer) -->
-        <div id="transferTargetBox" class="hidden">
+        <!-- DOMPET TUJUAN CUSTOM (Hanya muncul jika tipe transfer) -->
+        <div id="transferTargetBox" class="relative hidden">
           <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">Dompet Tujuan</label>
-          <select id="walletTarget" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-800 dark:text-slate-100 text-sm font-semibold focus:outline-none">
-            <option value="Dompet Utama">Dompet Utama</option>
-            <option value="Tunai / Cash">Tunai / Cash</option>
-            <option value="Bank BCA">Bank BCA</option>
-            <option value="Bank Mandiri">Bank Mandiri</option>
-            <option value="E-Wallet (GoPay/OVO/Dana)">E-Wallet (GoPay/OVO/Dana)</option>
-          </select>
+          <input type="hidden" id="walletTarget" value="Tunai / Cash">
+          <div id="walletTargetTrigger" onclick="toggleWalletDropdown('target')" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-800 dark:text-slate-100 text-sm font-semibold flex items-center justify-between cursor-pointer select-none shadow-inner">
+            <span id="walletTargetLabel">Tunai / Cash</span>
+            <i class="fa-solid fa-chevron-down text-xs text-slate-400 transition-transform duration-200" id="walletTargetArrow"></i>
+          </div>
+          <div id="walletTargetDropdownList" class="absolute left-0 right-0 top-full mt-1.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl shadow-2xl max-h-60 overflow-y-auto z-50 hidden p-1.5 space-y-1 divide-y divide-slate-100 dark:divide-slate-800"></div>
         </div>
 
         <div class="relative" id="categoryFieldContainer">
@@ -1301,9 +1299,10 @@
     let incomeCategories = JSON.parse(localStorage.getItem('fm_custom_income_cats')) || ['Gajian', 'Bonus', 'Investasi', 'Usaha Sampingan', 'Lainnya'];
     let expenseCategories = JSON.parse(localStorage.getItem('fm_custom_expense_cats')) || ['Makanan & Minuman', 'Tagihan & Utilitas', 'Belanja Rumah Tangga', 'Transportasi', 'Hiburan & Keinginan', 'Pendidikan', 'Kesehatan', 'Lainnya'];
 
+    const walletOptionsList = ['Dompet Utama', 'Tunai / Cash', 'Bank BCA', 'Bank Mandiri', 'E-Wallet (GoPay/OVO/Dana)'];
+
     let pieChartInstance = null;
     let barChartInstance = null;
-
     let inactivityTimer = null;
 
     function resetInactivityTimer() {
@@ -1395,6 +1394,7 @@
       }
 
       initSettingsDropdowns();
+      initWalletDropdowns();
 
       const limitInput = document.getElementById('budgetLimitInput');
       if (limitInput && budgetLimit > 0) {
@@ -1423,6 +1423,16 @@
           if (filterArrow) filterArrow.classList.remove('rotate-180');
         }
 
+        ['walletSource', 'walletTarget'].forEach(type => {
+          const tEl = document.getElementById(`${type}Trigger`);
+          const lEl = document.getElementById(`${type}DropdownList`);
+          if (tEl && lEl && !tEl.contains(e.target) && !lEl.contains(e.target)) {
+            lEl.classList.add('hidden');
+            const arr = document.getElementById(`${type}Arrow`);
+            if (arr) arr.classList.remove('rotate-180');
+          }
+        });
+
         ['autoLock', 'currency', 'budgetRatio'].forEach(type => {
           const tEl = document.getElementById(`${type}Trigger`);
           const lEl = document.getElementById(`${type}DropdownList`);
@@ -1448,6 +1458,81 @@
         }
       });
     });
+
+    function initWalletDropdowns() {
+      ['source', 'target'].forEach(kind => {
+        const listId = kind === 'source' ? 'walletSourceDropdownList' : 'walletTargetDropdownList';
+        const labelId = kind === 'source' ? 'walletSourceLabel' : 'walletTargetLabel';
+        const hiddenId = kind === 'source' ? 'walletSource' : 'walletTarget';
+        const list = document.getElementById(listId);
+        if (!list) return;
+
+        list.innerHTML = '';
+        const currentVal = document.getElementById(hiddenId).value || (kind === 'source' ? 'Dompet Utama' : 'Tunai / Cash');
+
+        walletOptionsList.forEach(wallet => {
+          const isSelected = currentVal === wallet;
+          const item = document.createElement('div');
+          item.className = `px-4 py-3 cursor-pointer text-sm font-semibold flex items-center justify-between transition-colors ${
+            isSelected 
+              ? 'bg-blue-50 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400' 
+              : 'text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800/80'
+          }`;
+          item.innerHTML = `
+            <span>${wallet}</span>
+            ${isSelected ? '<i class="fa-solid fa-check text-blue-500 text-sm"></i>' : ''}
+          `;
+          item.onclick = () => selectWalletOption(kind, wallet);
+          list.appendChild(item);
+        });
+
+        const activeLabel = document.getElementById(labelId);
+        if (activeLabel) activeLabel.textContent = currentVal;
+      });
+    }
+
+    function toggleWalletDropdown(kind) {
+      const listId = kind === 'source' ? 'walletSourceDropdownList' : 'walletTargetDropdownList';
+      const arrowId = kind === 'source' ? 'walletSourceArrow' : 'walletTargetArrow';
+      const list = document.getElementById(listId);
+      const arrow = document.getElementById(arrowId);
+      if (!list) return;
+
+      ['source', 'target'].forEach(k => {
+        if (k !== kind) {
+          const l = document.getElementById(k === 'source' ? 'walletSourceDropdownList' : 'walletTargetDropdownList');
+          const a = document.getElementById(k === 'source' ? 'walletSourceArrow' : 'walletTargetArrow');
+          if (l) l.classList.add('hidden');
+          if (a) a.classList.remove('rotate-180');
+        }
+      });
+
+      if (list.classList.contains('hidden')) {
+        list.classList.remove('hidden');
+        if (arrow) arrow.classList.add('rotate-180');
+      } else {
+        list.classList.add('hidden');
+        if (arrow) arrow.classList.remove('rotate-180');
+      }
+    }
+
+    function selectWalletOption(kind, walletName) {
+      const hiddenId = kind === 'source' ? 'walletSource' : 'walletTarget';
+      const labelId = kind === 'source' ? 'walletSourceLabel' : 'walletTargetLabel';
+      const listId = kind === 'source' ? 'walletSourceDropdownList' : 'walletTargetDropdownList';
+      const arrowId = kind === 'source' ? 'walletSourceArrow' : 'walletTargetArrow';
+
+      document.getElementById(hiddenId).value = walletName;
+      const label = document.getElementById(labelId);
+      if (label) label.textContent = walletName;
+
+      const list = document.getElementById(listId);
+      if (list) list.classList.add('hidden');
+      const arrow = document.getElementById(arrowId);
+      if (arrow) arrow.classList.remove('rotate-180');
+
+      initWalletDropdowns();
+    }
 
     function updateCurrencyUI() {
       const sym = getCurrencySymbol();
@@ -1995,10 +2080,12 @@
 
         document.querySelector(`input[name="type"][value="${tx.type}"]`).checked = true;
         document.getElementById('amount').value = new Intl.NumberFormat('id-ID').format(tx.amount);
-        document.getElementById('walletSource').value = tx.wallet || 'Dompet Utama';
+        
+        selectWalletOption('source', tx.wallet || 'Dompet Utama');
         if (tx.type === 'transfer' && tx.targetWallet) {
-          document.getElementById('walletTarget').value = tx.targetWallet;
+          selectWalletOption('target', tx.targetWallet);
         }
+
         document.getElementById('date').value = tx.date;
         document.getElementById('description').value = tx.description || '';
         updateCategories();
@@ -2019,6 +2106,8 @@
         }
         document.getElementById('transactionForm').reset();
         document.querySelector('input[name="type"][value="pemasukan"]').checked = true;
+        selectWalletOption('source', 'Dompet Utama');
+        selectWalletOption('target', 'Tunai / Cash');
         updateCategories();
       }
 
@@ -2948,7 +3037,6 @@
         }
       });
 
-      // 1. Pie Chart Pengeluaran
       const pieCtx = document.getElementById('expensePieChart')?.getContext('2d');
       if (pieCtx) {
         const labels = Object.keys(catExpenseMap);
@@ -2980,7 +3068,6 @@
         });
       }
 
-      // 2. Bar Chart Arus Kas
       const barCtx = document.getElementById('cashflowBarChart')?.getContext('2d');
       if (barCtx) {
         if (barChartInstance) barChartInstance.destroy();
