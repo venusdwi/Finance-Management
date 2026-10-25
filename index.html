@@ -25,7 +25,7 @@
   <link rel="apple-touch-icon" href="./icon.png">
 
   <!-- Tailwind CSS -->
-  <script src="https://cdn.jsdelivr.net/npm/tailwindcss-cdn@3.4.10/tailwindcss-browser.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
       darkMode: 'class',
@@ -61,12 +61,11 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
 
   <style>
-    /* Perbaikan agar halaman selalu bisa di-scroll secara normal dan tidak terkunci */
     html {
       color-scheme: light;
       height: 100%;
-      overflow-x: hidden;
       overflow-y: auto !important;
+      overscroll-behavior-y: none; /* Mencegah pull-to-refresh bawaan browser */
     }
     html.dark {
       color-scheme: dark;
@@ -74,16 +73,28 @@
 
     body {
       min-height: 100%;
-      overflow-x: hidden;
       overflow-y: auto !important;
+      touch-action: pan-x pan-y;
       font-family: 'Inter', sans-serif;
       -webkit-tap-highlight-color: transparent;
       user-select: none;
+      overscroll-behavior-y: none; /* Mencegah efek tarik layar */
     }
 
-    /* Mematikan transisi global yang memberatkan dan memicu glitch visual saat ganti tema */
-    *, *::before, *::after {
-      transition: none !important;
+    body, header, nav, div, button, input, select, table, tr, td, th {
+      transition: background-color 350ms cubic-bezier(0.4, 0, 0.2, 1), 
+                  border-color 350ms cubic-bezier(0.4, 0, 0.2, 1), 
+                  color 350ms cubic-bezier(0.4, 0, 0.2, 1), 
+                  box-shadow 350ms cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .modal-backdrop {
+      transition: opacity 250ms cubic-bezier(0.4, 0, 0.2, 1), backdrop-filter 250ms cubic-bezier(0.4, 0, 0.2, 1);
+      will-change: opacity;
+    }
+    .modal-content {
+      transition: transform 250ms cubic-bezier(0.16, 1, 0.3, 1), opacity 250ms cubic-bezier(0.4, 0, 0.2, 1);
+      will-change: transform, opacity;
     }
 
     .brand-title {
@@ -91,15 +102,18 @@
       letter-spacing: -0.03em;
     }
 
-    /* Kelas khusus untuk mengunci scroll hanya saat layar PIN aktif */
-    body.lock-scroll, html.lock-scroll {
+    .lock-scroll {
       overflow: hidden !important;
-      height: 100vh !important;
     }
 
     button, input, select {
       outline: none !important;
       -webkit-tap-highlight-color: transparent;
+    }
+
+    button:focus, button:active, .keypad-btn:focus, .keypad-btn:active {
+      outline: none !important;
+      box-shadow: none !important;
     }
 
     .month-picker-wrapper {
@@ -123,7 +137,7 @@
     }
   </style>
 </head>
-<body class="bg-slate-50 dark:bg-darkbg text-slate-800 dark:text-slate-100 min-h-screen pb-28 relative" onclick="resetInactivityTimer()" onmousemove="resetInactivityTimer()" onkeypress="resetInactivityTimer()" ontouchstart="resetInactivityTimer()">
+<body class="bg-slate-50 dark:bg-darkbg text-slate-800 dark:text-slate-100 min-h-screen pb-24 relative" onclick="resetInactivityTimer()" onmousemove="resetInactivityTimer()" onkeypress="resetInactivityTimer()" ontouchstart="resetInactivityTimer()">
 
   <!-- ==================== HEADER ==================== -->
   <header class="bg-white/80 dark:bg-darkcard/80 backdrop-blur-md border-b border-slate-200 dark:border-darkborder sticky top-0 z-30">
@@ -139,7 +153,7 @@
       </div>
 
       <div class="flex items-center gap-2">
-        <button onclick="togglePrivacyMode()" id="privacyToggleBtn" class="w-10 h-10 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 flex items-center justify-center select-none border border-slate-200 dark:border-slate-700/80 shadow-sm active:scale-95" title="Mode Privasi (Sembunyikan Saldo)">
+        <button onclick="togglePrivacyMode()" id="privacyToggleBtn" class="w-10 h-10 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 flex items-center justify-center select-none border border-slate-200 dark:border-slate-700/80 shadow-sm transition-transform active:scale-95" title="Mode Privasi (Sembunyikan Saldo)">
           <i id="privacyIcon" class="fa-solid fa-eye text-sm"></i>
         </button>
 
@@ -219,7 +233,7 @@
         </div>
       </div>
 
-      <!-- KARTU RINCIAN SALDO PER DOMPET & REKENING -->
+      <!-- KARTU RINCIAN SALDO PER DOMPET / REKENING -->
       <div class="bg-white dark:bg-darkcard rounded-2xl p-5 shadow-sm border border-slate-200 dark:border-darkborder space-y-3">
         <div class="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-slate-800">
           <div class="flex items-center gap-2">
@@ -314,7 +328,7 @@
               <input type="hidden" id="filterType" value="all">
               <div id="filterSelectTrigger" onclick="toggleFilterDropdown()" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-semibold text-slate-800 dark:text-slate-100 flex items-center justify-between cursor-pointer select-none shadow-inner">
                 <span id="filterSelectLabel">Semua Tipe</span>
-                <i class="fa-solid fa-chevron-down text-xs text-slate-400" id="filterSelectArrow"></i>
+                <i class="fa-solid fa-chevron-down text-xs text-slate-400 transition-transform duration-200" id="filterSelectArrow"></i>
               </div>
               <div id="filterDropdownList" class="absolute left-0 right-0 top-full mt-1.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl shadow-2xl z-50 hidden p-1.5 space-y-1 divide-y divide-slate-100 dark:divide-slate-800"></div>
             </div>
@@ -374,11 +388,11 @@
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div onclick="openAllocationDetailModal('needs')" class="p-5 rounded-2xl bg-slate-50 dark:bg-slate-800/50 hover:bg-blue-50/50 dark:hover:bg-slate-800 border border-slate-100 dark:border-slate-800 cursor-pointer group">
+          <div onclick="openAllocationDetailModal('needs')" class="p-5 rounded-2xl bg-slate-50 dark:bg-slate-800/50 hover:bg-blue-50/50 dark:hover:bg-slate-800 border border-slate-100 dark:border-slate-800 cursor-pointer transition-all hover:scale-[1.01] hover:shadow-md group">
             <div class="flex justify-between items-center mb-2">
               <span class="font-bold text-sm text-slate-800 dark:text-slate-200 group-hover:text-blue-600 dark:group-hover:text-blue-400 flex items-center gap-1.5" id="labelNeedsTab">
                 Kebutuhan Wajib
-                <i class="fa-solid fa-chevron-right text-xs opacity-0 group-hover:opacity-100"></i>
+                <i class="fa-solid fa-chevron-right text-xs opacity-0 group-hover:opacity-100 transition-opacity"></i>
               </span>
               <span class="text-xs font-black text-blue-600 dark:text-blue-400" id="needsAmountTab">Rp 0</span>
             </div>
@@ -389,16 +403,16 @@
                 <span id="needsRemainTab" class="font-bold text-slate-700 dark:text-slate-200">Rp 0</span>
               </div>
               <div class="w-full bg-slate-200 dark:bg-slate-700 h-2 rounded-full overflow-hidden">
-                <div id="needsBarTab" class="bg-blue-500 h-full rounded-full" style="width: 0%"></div>
+                <div id="needsBarTab" class="bg-blue-500 h-full rounded-full transition-all duration-300" style="width: 0%"></div>
               </div>
             </div>
           </div>
 
-          <div onclick="openAllocationDetailModal('wants')" class="p-5 rounded-2xl bg-slate-50 dark:bg-slate-800/50 hover:bg-amber-50/50 dark:hover:bg-slate-800 border border-slate-100 dark:border-slate-800 cursor-pointer group">
+          <div onclick="openAllocationDetailModal('wants')" class="p-5 rounded-2xl bg-slate-50 dark:bg-slate-800/50 hover:bg-amber-50/50 dark:hover:bg-slate-800 border border-slate-100 dark:border-slate-800 cursor-pointer transition-all hover:scale-[1.01] hover:shadow-md group">
             <div class="flex justify-between items-center mb-2">
               <span class="font-bold text-sm text-slate-800 dark:text-slate-200 group-hover:text-amber-600 dark:group-hover:text-amber-400 flex items-center gap-1.5" id="labelWantsTab">
                 Keinginan & Gaya Hidup
-                <i class="fa-solid fa-chevron-right text-xs opacity-0 group-hover:opacity-100"></i>
+                <i class="fa-solid fa-chevron-right text-xs opacity-0 group-hover:opacity-100 transition-opacity"></i>
               </span>
               <span class="text-xs font-black text-amber-600 dark:text-amber-400" id="wantsAmountTab">Rp 0</span>
             </div>
@@ -409,16 +423,16 @@
                 <span id="wantsRemainTab" class="font-bold text-slate-700 dark:text-slate-200">Rp 0</span>
               </div>
               <div class="w-full bg-slate-200 dark:bg-slate-700 h-2 rounded-full overflow-hidden">
-                <div id="wantsBarTab" class="bg-amber-500 h-full rounded-full" style="width: 0%"></div>
+                <div id="wantsBarTab" class="bg-amber-500 h-full rounded-full transition-all duration-300" style="width: 0%"></div>
               </div>
             </div>
           </div>
 
-          <div onclick="openAllocationDetailModal('savings')" class="p-5 rounded-2xl bg-slate-50 dark:bg-slate-800/50 hover:bg-emerald-50/50 dark:hover:bg-slate-800 border border-slate-100 dark:border-slate-800 cursor-pointer group">
+          <div onclick="openAllocationDetailModal('savings')" class="p-5 rounded-2xl bg-slate-50 dark:bg-slate-800/50 hover:bg-emerald-50/50 dark:hover:bg-slate-800 border border-slate-100 dark:border-slate-800 cursor-pointer transition-all hover:scale-[1.01] hover:shadow-md group">
             <div class="flex justify-between items-center mb-2">
               <span class="font-bold text-sm text-slate-800 dark:text-slate-200 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 flex items-center gap-1.5" id="labelSavingsTab">
                 Tabungan & Investasi
-                <i class="fa-solid fa-chevron-right text-xs opacity-0 group-hover:opacity-100"></i>
+                <i class="fa-solid fa-chevron-right text-xs opacity-0 group-hover:opacity-100 transition-opacity"></i>
               </span>
               <span class="text-xs font-black text-emerald-600 dark:text-emerald-400" id="savingsAmountTab">Rp 0</span>
             </div>
@@ -429,7 +443,7 @@
                 <span id="savingsRemainTab" class="font-bold text-slate-700 dark:text-slate-200">Rp 0</span>
               </div>
               <div class="w-full bg-slate-200 dark:bg-slate-700 h-2 rounded-full overflow-hidden">
-                <div id="savingsBarTab" class="bg-emerald-500 h-full rounded-full" style="width: 0%"></div>
+                <div id="savingsBarTab" class="bg-emerald-500 h-full rounded-full transition-all duration-300" style="width: 0%"></div>
               </div>
             </div>
           </div>
@@ -444,7 +458,7 @@
             <i class="fa-solid fa-bullseye text-emerald-500 text-base"></i>
             <h3 class="text-base font-bold text-slate-900 dark:text-white">Target Tabungan & Impian (Savings Goals)</h3>
           </div>
-          <button onclick="openGoalModal()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold shadow-md shadow-emerald-600/20 select-none active:scale-95 flex items-center gap-1.5">
+          <button onclick="openGoalModal()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold shadow-md shadow-emerald-600/20 select-none active:scale-95 transition-transform flex items-center gap-1.5">
             <i class="fa-solid fa-plus text-xs"></i> Tambah Target
           </button>
         </div>
@@ -462,17 +476,17 @@
         </div>
 
         <div class="flex flex-wrap items-center gap-2.5 w-full sm:w-auto">
-          <label for="reportMonthPicker" class="month-picker-wrapper flex-1 sm:flex-none px-4 py-2.5 bg-white dark:bg-darkcard border border-slate-200 dark:border-darkborder rounded-2xl shadow-sm hover:border-blue-500/50 select-none">
+          <label for="reportMonthPicker" class="month-picker-wrapper flex-1 sm:flex-none px-4 py-2.5 bg-white dark:bg-darkcard border border-slate-200 dark:border-darkborder rounded-2xl shadow-sm hover:border-blue-500/50 transition-all select-none">
             <i class="fa-solid fa-calendar-days text-blue-500 text-sm mr-2.5 shrink-0"></i>
             <input type="month" id="reportMonthPicker" onchange="renderDashboard()" class="bg-transparent border-none text-xs font-bold text-slate-800 dark:text-slate-100 focus:outline-none cursor-pointer w-full" style="min-width: 150px;">
           </label>
 
-          <button onclick="downloadMonthlyPDF()" class="px-4 py-2.5 bg-rose-600 hover:bg-rose-700 text-white rounded-2xl text-xs font-bold flex items-center justify-center gap-2 shadow-md shadow-rose-600/20 whitespace-nowrap select-none active:scale-95" title="Unduh PDF">
+          <button onclick="downloadMonthlyPDF()" class="px-4 py-2.5 bg-rose-600 hover:bg-rose-700 text-white rounded-2xl text-xs font-bold flex items-center justify-center gap-2 shadow-md shadow-rose-600/20 whitespace-nowrap select-none active:scale-95 transition-transform" title="Unduh PDF">
             <i class="fa-solid fa-file-pdf text-sm"></i>
             <span>PDF</span>
           </button>
 
-          <button onclick="downloadMonthlyExcel()" class="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl text-xs font-bold flex items-center justify-center gap-2 shadow-md shadow-emerald-600/20 whitespace-nowrap select-none active:scale-95" title="Unduh Excel/CSV">
+          <button onclick="downloadMonthlyExcel()" class="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl text-xs font-bold flex items-center justify-center gap-2 shadow-md shadow-emerald-600/20 whitespace-nowrap select-none active:scale-95 transition-transform" title="Unduh Excel/CSV">
             <i class="fa-solid fa-file-excel text-sm"></i>
             <span>Excel</span>
           </button>
@@ -623,7 +637,7 @@
             <input type="hidden" id="autoLockSelect" value="never">
             <div id="autoLockTrigger" onclick="toggleSettingsDropdown('autoLock')" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-semibold text-slate-800 dark:text-slate-100 flex items-center justify-between cursor-pointer select-none shadow-inner">
               <span id="autoLockLabel">Jangan Pernah (Nonaktif)</span>
-              <i class="fa-solid fa-chevron-down text-xs text-slate-400" id="autoLockArrow"></i>
+              <i class="fa-solid fa-chevron-down text-xs text-slate-400 transition-transform duration-200" id="autoLockArrow"></i>
             </div>
             <div id="autoLockDropdownList" class="absolute left-0 right-0 top-full mt-1.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl shadow-2xl z-50 hidden p-1.5 space-y-1 divide-y divide-slate-100 dark:divide-slate-800"></div>
           </div>
@@ -655,7 +669,7 @@
             <input type="hidden" id="currencySelect" value="IDR">
             <div id="currencyTrigger" onclick="toggleSettingsDropdown('currency')" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-semibold text-slate-800 dark:text-slate-100 flex items-center justify-between cursor-pointer select-none shadow-inner">
               <span id="currencyLabel">Rupiah (Rp - Indonesia)</span>
-              <i class="fa-solid fa-chevron-down text-xs text-slate-400" id="currencyArrow"></i>
+              <i class="fa-solid fa-chevron-down text-xs text-slate-400 transition-transform duration-200" id="currencyArrow"></i>
             </div>
             <div id="currencyDropdownList" class="absolute left-0 right-0 top-full mt-1.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl shadow-2xl z-50 hidden p-1.5 space-y-1 divide-y divide-slate-100 dark:divide-slate-800"></div>
           </div>
@@ -670,7 +684,7 @@
             <input type="hidden" id="budgetRatioSelect" value="50-30-20">
             <div id="budgetRatioTrigger" onclick="toggleSettingsDropdown('budgetRatio')" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-semibold text-slate-800 dark:text-slate-100 flex items-center justify-between cursor-pointer select-none shadow-inner">
               <span id="budgetRatioLabel">50% / 30% / 20% (Standar)</span>
-              <i class="fa-solid fa-chevron-down text-xs text-slate-400" id="budgetRatioArrow"></i>
+              <i class="fa-solid fa-chevron-down text-xs text-slate-400 transition-transform duration-200" id="budgetRatioArrow"></i>
             </div>
             <div id="budgetRatioDropdownList" class="absolute left-0 right-0 top-full mt-1.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl shadow-2xl z-50 hidden p-1.5 space-y-1 divide-y divide-slate-100 dark:divide-slate-800"></div>
           </div>
@@ -745,7 +759,7 @@
             <h4 class="font-bold text-rose-600 dark:text-rose-400 text-sm">Hapus Semua Data</h4>
             <p class="text-xs text-slate-500 dark:text-slate-400">Bersihkan seluruh catatan transaksi dari penyimpanan lokal.</p>
           </div>
-          <button onclick="openResetConfirmModal()" class="px-4 py-2 bg-rose-500 hover:bg-rose-600 text-white rounded-xl text-xs font-bold shadow-md shadow-rose-500/20 select-none active:scale-95 flex items-center gap-1.5">
+          <button onclick="openResetConfirmModal()" class="px-4 py-2 bg-rose-500 hover:bg-rose-600 text-white rounded-xl text-xs font-bold shadow-md shadow-rose-500/20 select-none active:scale-95 transition-transform flex items-center gap-1.5">
             <i class="fa-solid fa-trash-can"></i> Reset Data
           </button>
         </div>
@@ -803,12 +817,12 @@
   </nav>
 
   <!-- ==================== LOCK / PIN ACCESS SCREEN ==================== -->
-  <div id="pinScreen" class="fixed inset-0 z-[100] flex flex-col items-center justify-center p-4 overflow-hidden select-none bg-slate-100 dark:bg-slate-950">
+  <div id="pinScreen" class="fixed inset-0 z-[100] flex flex-col items-center justify-center p-4 overflow-hidden select-none bg-slate-100 dark:bg-slate-950 transition-all duration-300 ease-out opacity-100">
     <div class="absolute inset-0 bg-gradient-to-br from-slate-100 via-blue-50 to-slate-200 dark:from-slate-950 dark:via-blue-950 dark:to-slate-950 opacity-95 pointer-events-none"></div>
     <div class="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-blue-600/10 dark:bg-blue-600/20 rounded-full blur-[100px] pointer-events-none"></div>
     <div class="absolute bottom-1/4 left-1/2 -translate-x-1/2 translate-y-1/2 w-80 h-80 bg-indigo-600/10 dark:bg-indigo-600/15 rounded-full blur-[90px] pointer-events-none"></div>
 
-    <div id="pinBoxContainer" class="relative z-10 w-full max-w-sm flex flex-col items-center">
+    <div id="pinBoxContainer" class="relative z-10 w-full max-w-sm flex flex-col items-center transform scale-100 transition-all duration-300 ease-out">
       <div class="mb-6 text-center flex flex-col items-center pointer-events-none">
         <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500 via-blue-600 to-indigo-800 flex items-center justify-center text-white text-2xl shadow-xl shadow-blue-600/30 border border-blue-400/30 mb-3">
           <i class="fa-solid fa-chart-line text-blue-100"></i>
@@ -822,29 +836,29 @@
       <div class="w-full bg-white/80 dark:bg-slate-900/80 backdrop-blur-2xl border border-slate-200 dark:border-blue-500/20 rounded-3xl p-6 sm:p-7 shadow-2xl shadow-slate-300/50 dark:shadow-blue-950/50 flex flex-col items-center">
         
         <div class="flex items-center justify-center gap-3 mb-6 pointer-events-none" id="pinDots">
-          <div id="dot-0" class="w-4 h-4 rounded-full border-2 border-blue-500/40 bg-transparent"></div>
-          <div id="dot-1" class="w-4 h-4 rounded-full border-2 border-blue-500/40 bg-transparent"></div>
-          <div id="dot-2" class="w-4 h-4 rounded-full border-2 border-blue-500/40 bg-transparent"></div>
-          <div id="dot-3" class="w-4 h-4 rounded-full border-2 border-blue-500/40 bg-transparent"></div>
-          <div id="dot-4" class="w-4 h-4 rounded-full border-2 border-blue-500/40 bg-transparent"></div>
-          <div id="dot-5" class="w-4 h-4 rounded-full border-2 border-blue-500/40 bg-transparent"></div>
+          <div id="dot-0" class="w-4 h-4 rounded-full border-2 border-blue-500/40 bg-transparent transition-all duration-150"></div>
+          <div id="dot-1" class="w-4 h-4 rounded-full border-2 border-blue-500/40 bg-transparent transition-all duration-150"></div>
+          <div id="dot-2" class="w-4 h-4 rounded-full border-2 border-blue-500/40 bg-transparent transition-all duration-150"></div>
+          <div id="dot-3" class="w-4 h-4 rounded-full border-2 border-blue-500/40 bg-transparent transition-all duration-150"></div>
+          <div id="dot-4" class="w-4 h-4 rounded-full border-2 border-blue-500/40 bg-transparent transition-all duration-150"></div>
+          <div id="dot-5" class="w-4 h-4 rounded-full border-2 border-blue-500/40 bg-transparent transition-all duration-150"></div>
         </div>
 
         <div class="grid grid-cols-3 gap-3 w-full">
-          <button type="button" onclick="appendPin('1')" class="keypad-btn h-11 sm:h-12 bg-slate-50 dark:bg-blue-950/40 hover:bg-slate-100 dark:hover:bg-blue-900/50 active:bg-slate-200 border border-slate-200 dark:border-blue-500/20 rounded-2xl text-lg font-bold text-slate-800 dark:text-blue-100 flex items-center justify-center shadow-sm cursor-pointer">1</button>
-          <button type="button" onclick="appendPin('2')" class="keypad-btn h-11 sm:h-12 bg-slate-50 dark:bg-blue-950/40 hover:bg-slate-100 dark:hover:bg-blue-900/50 active:bg-slate-200 border border-slate-200 dark:border-blue-500/20 rounded-2xl text-lg font-bold text-slate-800 dark:text-blue-100 flex items-center justify-center shadow-sm cursor-pointer">2</button>
-          <button type="button" onclick="appendPin('3')" class="keypad-btn h-11 sm:h-12 bg-slate-50 dark:bg-blue-950/40 hover:bg-slate-100 dark:hover:bg-blue-900/50 active:bg-slate-200 border border-slate-200 dark:border-blue-500/20 rounded-2xl text-lg font-bold text-slate-800 dark:text-blue-100 flex items-center justify-center shadow-sm cursor-pointer">3</button>
-          <button type="button" onclick="appendPin('4')" class="keypad-btn h-11 sm:h-12 bg-slate-50 dark:bg-blue-950/40 hover:bg-slate-100 dark:hover:bg-blue-900/50 active:bg-slate-200 border border-slate-200 dark:border-blue-500/20 rounded-2xl text-lg font-bold text-slate-800 dark:text-blue-100 flex items-center justify-center shadow-sm cursor-pointer">4</button>
-          <button type="button" onclick="appendPin('5')" class="keypad-btn h-11 sm:h-12 bg-slate-50 dark:bg-blue-950/40 hover:bg-slate-100 dark:hover:bg-blue-900/50 active:bg-slate-200 border border-slate-200 dark:border-blue-500/20 rounded-2xl text-lg font-bold text-slate-800 dark:text-blue-100 flex items-center justify-center shadow-sm cursor-pointer">5</button>
-          <button type="button" onclick="appendPin('6')" class="keypad-btn h-11 sm:h-12 bg-slate-50 dark:bg-blue-950/40 hover:bg-slate-100 dark:hover:bg-blue-900/50 active:bg-slate-200 border border-slate-200 dark:border-blue-500/20 rounded-2xl text-lg font-bold text-slate-800 dark:text-blue-100 flex items-center justify-center shadow-sm cursor-pointer">6</button>
-          <button type="button" onclick="appendPin('7')" class="keypad-btn h-11 sm:h-12 bg-slate-50 dark:bg-blue-950/40 hover:bg-slate-100 dark:hover:bg-blue-900/50 active:bg-slate-200 border border-slate-200 dark:border-blue-500/20 rounded-2xl text-lg font-bold text-slate-800 dark:text-blue-100 flex items-center justify-center shadow-sm cursor-pointer">7</button>
-          <button type="button" onclick="appendPin('8')" class="keypad-btn h-11 sm:h-12 bg-slate-50 dark:bg-blue-950/40 hover:bg-slate-100 dark:hover:bg-blue-900/50 active:bg-slate-200 border border-slate-200 dark:border-blue-500/20 rounded-2xl text-lg font-bold text-slate-800 dark:text-blue-100 flex items-center justify-center shadow-sm cursor-pointer">8</button>
-          <button type="button" onclick="appendPin('9')" class="keypad-btn h-11 sm:h-12 bg-slate-50 dark:bg-blue-950/40 hover:bg-slate-100 dark:hover:bg-blue-900/50 active:bg-slate-200 border border-slate-200 dark:border-blue-500/20 rounded-2xl text-lg font-bold text-slate-800 dark:text-blue-100 flex items-center justify-center shadow-sm cursor-pointer">9</button>
-          <button type="button" onclick="clearPin()" class="keypad-btn h-11 sm:h-12 bg-slate-50 dark:bg-blue-950/40 hover:bg-slate-100 dark:hover:bg-blue-900/50 active:bg-slate-200 border border-slate-200 dark:border-blue-500/20 rounded-2xl text-sm text-slate-700 dark:text-blue-300 flex items-center justify-center shadow-sm cursor-pointer" title="Reset PIN">
+          <button type="button" onclick="appendPin('1')" class="keypad-btn h-11 sm:h-12 bg-slate-50 dark:bg-blue-950/40 hover:bg-slate-100 dark:hover:bg-blue-900/50 active:bg-slate-200 dark:active:bg-blue-800/60 border border-slate-200 dark:border-blue-500/20 rounded-2xl text-lg font-bold text-slate-800 dark:text-blue-100 flex items-center justify-center shadow-sm dark:shadow-none cursor-pointer">1</button>
+          <button type="button" onclick="appendPin('2')" class="keypad-btn h-11 sm:h-12 bg-slate-50 dark:bg-blue-950/40 hover:bg-slate-100 dark:hover:bg-blue-900/50 active:bg-slate-200 dark:active:bg-blue-800/60 border border-slate-200 dark:border-blue-500/20 rounded-2xl text-lg font-bold text-slate-800 dark:text-blue-100 flex items-center justify-center shadow-sm dark:shadow-none cursor-pointer">2</button>
+          <button type="button" onclick="appendPin('3')" class="keypad-btn h-11 sm:h-12 bg-slate-50 dark:bg-blue-950/40 hover:bg-slate-100 dark:hover:bg-blue-900/50 active:bg-slate-200 dark:active:bg-blue-800/60 border border-slate-200 dark:border-blue-500/20 rounded-2xl text-lg font-bold text-slate-800 dark:text-blue-100 flex items-center justify-center shadow-sm dark:shadow-none cursor-pointer">3</button>
+          <button type="button" onclick="appendPin('4')" class="keypad-btn h-11 sm:h-12 bg-slate-50 dark:bg-blue-950/40 hover:bg-slate-100 dark:hover:bg-blue-900/50 active:bg-slate-200 dark:active:bg-blue-800/60 border border-slate-200 dark:border-blue-500/20 rounded-2xl text-lg font-bold text-slate-800 dark:text-blue-100 flex items-center justify-center shadow-sm dark:shadow-none cursor-pointer">4</button>
+          <button type="button" onclick="appendPin('5')" class="keypad-btn h-11 sm:h-12 bg-slate-50 dark:bg-blue-950/40 hover:bg-slate-100 dark:hover:bg-blue-900/50 active:bg-slate-200 dark:active:bg-blue-800/60 border border-slate-200 dark:border-blue-500/20 rounded-2xl text-lg font-bold text-slate-800 dark:text-blue-100 flex items-center justify-center shadow-sm dark:shadow-none cursor-pointer">5</button>
+          <button type="button" onclick="appendPin('6')" class="keypad-btn h-11 sm:h-12 bg-slate-50 dark:bg-blue-950/40 hover:bg-slate-100 dark:hover:bg-blue-900/50 active:bg-slate-200 dark:active:bg-blue-800/60 border border-slate-200 dark:border-blue-500/20 rounded-2xl text-lg font-bold text-slate-800 dark:text-blue-100 flex items-center justify-center shadow-sm dark:shadow-none cursor-pointer">6</button>
+          <button type="button" onclick="appendPin('7')" class="keypad-btn h-11 sm:h-12 bg-slate-50 dark:bg-blue-950/40 hover:bg-slate-100 dark:hover:bg-blue-900/50 active:bg-slate-200 dark:active:bg-blue-800/60 border border-slate-200 dark:border-blue-500/20 rounded-2xl text-lg font-bold text-slate-800 dark:text-blue-100 flex items-center justify-center shadow-sm dark:shadow-none cursor-pointer">7</button>
+          <button type="button" onclick="appendPin('8')" class="keypad-btn h-11 sm:h-12 bg-slate-50 dark:bg-blue-950/40 hover:bg-slate-100 dark:hover:bg-blue-900/50 active:bg-slate-200 dark:active:bg-blue-800/60 border border-slate-200 dark:border-blue-500/20 rounded-2xl text-lg font-bold text-slate-800 dark:text-blue-100 flex items-center justify-center shadow-sm dark:shadow-none cursor-pointer">8</button>
+          <button type="button" onclick="appendPin('9')" class="keypad-btn h-11 sm:h-12 bg-slate-50 dark:bg-blue-950/40 hover:bg-slate-100 dark:hover:bg-blue-900/50 active:bg-slate-200 dark:active:bg-blue-800/60 border border-slate-200 dark:border-blue-500/20 rounded-2xl text-lg font-bold text-slate-800 dark:text-blue-100 flex items-center justify-center shadow-sm dark:shadow-none cursor-pointer">9</button>
+          <button type="button" onclick="clearPin()" class="keypad-btn h-11 sm:h-12 bg-slate-50 dark:bg-blue-950/40 hover:bg-slate-100 dark:hover:bg-blue-900/50 active:bg-slate-200 dark:active:bg-blue-800/60 border border-slate-200 dark:border-blue-500/20 rounded-2xl text-sm text-slate-700 dark:text-blue-300 flex items-center justify-center shadow-sm dark:shadow-none cursor-pointer" title="Reset PIN">
             <i class="fa-solid fa-rotate-left"></i>
           </button>
-          <button type="button" onclick="appendPin('0')" class="keypad-btn h-11 sm:h-12 bg-slate-50 dark:bg-blue-950/40 hover:bg-slate-100 dark:hover:bg-blue-900/50 active:bg-slate-200 border border-slate-200 dark:border-blue-500/20 rounded-2xl text-lg font-bold text-slate-800 dark:text-blue-100 flex items-center justify-center shadow-sm cursor-pointer">0</button>
-          <button type="button" onclick="deletePinDigit()" class="keypad-btn h-11 sm:h-12 bg-slate-50 dark:bg-blue-950/40 hover:bg-slate-100 dark:hover:bg-blue-900/50 active:bg-slate-200 border border-slate-200 dark:border-blue-500/20 rounded-2xl text-base text-slate-700 dark:text-blue-300 flex items-center justify-center shadow-sm cursor-pointer" title="Hapus Digit Terakhir">
+          <button type="button" onclick="appendPin('0')" class="keypad-btn h-11 sm:h-12 bg-slate-50 dark:bg-blue-950/40 hover:bg-slate-100 dark:hover:bg-blue-900/50 active:bg-slate-200 dark:active:bg-blue-800/60 border border-slate-200 dark:border-blue-500/20 rounded-2xl text-lg font-bold text-slate-800 dark:text-blue-100 flex items-center justify-center shadow-sm dark:shadow-none cursor-pointer">0</button>
+          <button type="button" onclick="deletePinDigit()" class="keypad-btn h-11 sm:h-12 bg-slate-50 dark:bg-blue-950/40 hover:bg-slate-100 dark:hover:bg-blue-900/50 active:bg-slate-200 dark:active:bg-blue-800/60 border border-slate-200 dark:border-blue-500/20 rounded-2xl text-base text-slate-700 dark:text-blue-300 flex items-center justify-center shadow-sm dark:shadow-none cursor-pointer" title="Hapus Digit Terakhir">
             <i class="fa-solid fa-backspace"></i>
           </button>
         </div>
@@ -870,7 +884,7 @@
           <i class="fa-solid fa-pen-to-square text-blue-500"></i>
           Tambah Transaksi Baru
         </h3>
-        <button onclick="closeModal()" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 hover:bg-slate-200 flex items-center justify-center select-none">
+        <button onclick="closeModal()" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center justify-center select-none">
           <i class="fa-solid fa-xmark"></i>
         </button>
       </div>
@@ -916,7 +930,7 @@
             <input type="hidden" id="walletSource" value="Dompet Utama">
             <div id="walletSourceTrigger" onclick="toggleWalletDropdown('source')" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-800 dark:text-slate-100 text-sm font-semibold flex items-center justify-between cursor-pointer select-none shadow-inner">
               <span id="walletSourceLabel">Dompet Utama</span>
-              <i class="fa-solid fa-chevron-down text-xs text-slate-400" id="walletSourceArrow"></i>
+              <i class="fa-solid fa-chevron-down text-xs text-slate-400 transition-transform duration-200" id="walletSourceArrow"></i>
             </div>
             <div id="walletSourceDropdownList" class="absolute left-0 right-0 top-full mt-1.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl shadow-2xl max-h-60 overflow-y-auto z-50 hidden p-1.5 space-y-1 divide-y divide-slate-100 dark:divide-slate-800"></div>
           </div>
@@ -927,7 +941,7 @@
           <input type="hidden" id="walletTarget" value="Tunai / Cash">
           <div id="walletTargetTrigger" onclick="toggleWalletDropdown('target')" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-800 dark:text-slate-100 text-sm font-semibold flex items-center justify-between cursor-pointer select-none shadow-inner">
             <span id="walletTargetLabel">Tunai / Cash</span>
-            <i class="fa-solid fa-chevron-down text-xs text-slate-400" id="walletTargetArrow"></i>
+            <i class="fa-solid fa-chevron-down text-xs text-slate-400 transition-transform duration-200" id="walletTargetArrow"></i>
           </div>
           <div id="walletTargetDropdownList" class="absolute left-0 right-0 top-full mt-1.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl shadow-2xl max-h-60 overflow-y-auto z-50 hidden p-1.5 space-y-1 divide-y divide-slate-100 dark:divide-slate-800"></div>
         </div>
@@ -937,7 +951,7 @@
           <input type="hidden" id="category" value="">
           <div id="customSelectTrigger" onclick="toggleCustomDropdown()" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-800 dark:text-slate-100 text-sm font-semibold flex items-center justify-between cursor-pointer select-none shadow-inner">
             <span id="customSelectLabel" class="text-slate-400 font-normal">Pilih kategori...</span>
-            <i class="fa-solid fa-chevron-down text-xs text-slate-400" id="customSelectArrow"></i>
+            <i class="fa-solid fa-chevron-down text-xs text-slate-400 transition-transform duration-200" id="customSelectArrow"></i>
           </div>
 
           <div id="customDropdownList" class="absolute left-0 right-0 top-full mt-1.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl shadow-2xl max-h-60 overflow-y-auto z-50 hidden p-1.5 space-y-1 divide-y divide-slate-100 dark:divide-slate-800"></div>
@@ -958,7 +972,7 @@
         </div>
 
         <div class="flex items-center gap-3 pt-4">
-          <button type="button" id="btnCancelTx" onclick="closeModal()" class="w-1/2 py-3 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-700 dark:text-slate-300 font-semibold rounded-xl text-sm select-none">Batal</button>
+          <button type="button" id="btnCancelTx" onclick="closeModal()" class="w-1/2 py-3 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-semibold rounded-xl text-sm select-none">Batal</button>
           <button type="submit" id="btnSaveTx" class="w-1/2 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl shadow-lg shadow-blue-500/25 text-sm flex items-center justify-center gap-2 select-none">
             <span id="btnSaveText">Simpan Transaksi</span>
             <i id="btnSaveSpinner" class="fa-solid fa-spinner fa-spin hidden"></i>
@@ -976,7 +990,7 @@
           <i class="fa-solid fa-bullseye text-emerald-500"></i>
           Tambah Target Impian
         </h3>
-        <button onclick="closeGoalModal()" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 hover:bg-slate-200 flex items-center justify-center select-none">
+        <button onclick="closeGoalModal()" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center justify-center select-none">
           <i class="fa-solid fa-xmark text-sm"></i>
         </button>
       </div>
@@ -1014,7 +1028,7 @@
           <i class="fa-solid fa-piggy-bank text-emerald-500"></i>
           Tambah Tabungan Celengan
         </h3>
-        <button onclick="closeAddGoalFundModal()" class="w-7 h-7 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 hover:bg-slate-200 flex items-center justify-center select-none">
+        <button onclick="closeAddGoalFundModal()" class="w-7 h-7 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center justify-center select-none">
           <i class="fa-solid fa-xmark text-xs"></i>
         </button>
       </div>
@@ -1049,8 +1063,8 @@
         </p>
       </div>
       <div class="flex items-center gap-3 pt-2">
-        <button type="button" onclick="closeDeleteGoalConfirmModal()" class="w-1/2 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-700 dark:text-slate-300 font-medium rounded-xl text-sm select-none">Batal</button>
-        <button type="button" onclick="confirmExecuteDeleteGoal()" class="w-1/2 py-2.5 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl shadow-lg shadow-rose-500/25 text-sm select-none">Hapus</button>
+        <button type="button" onclick="closeDeleteGoalConfirmModal()" class="w-1/2 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-medium rounded-xl text-sm select-none">Batal</button>
+        <button type="button" onclick="confirmExecuteDeleteGoal()" class="w-1/2 py-2.5 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl shadow-lg shadow-rose-500/25 text-sm select-none transition-all">Hapus</button>
       </div>
     </div>
   </div>
@@ -1063,7 +1077,7 @@
           <i class="fa-solid fa-rotate text-blue-500"></i>
           Kelola Transaksi Rutin (Otomatis)
         </h3>
-        <button onclick="closeRecurringModal()" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 hover:bg-slate-200 flex items-center justify-center select-none">
+        <button onclick="closeRecurringModal()" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center justify-center select-none">
           <i class="fa-solid fa-xmark text-sm"></i>
         </button>
       </div>
@@ -1101,7 +1115,7 @@
           <i class="fa-solid fa-wallet text-blue-500 text-lg"></i>
           Kelola Daftar Dompet & Rekening
         </h3>
-        <button onclick="closeWalletManagerModal()" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 hover:bg-slate-200 flex items-center justify-center select-none">
+        <button onclick="closeWalletManagerModal()" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center justify-center select-none">
           <i class="fa-solid fa-xmark text-sm"></i>
         </button>
       </div>
@@ -1111,7 +1125,7 @@
           <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2">Tambah Dompet Baru</label>
           <div class="flex gap-2.5">
             <input type="text" id="newWalletNameInput" placeholder="Nama Dompet / Bank / E-Wallet..." class="flex-1 px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl text-xs font-medium text-slate-800 dark:text-slate-100 focus:outline-none shadow-inner">
-            <button onclick="addNewWalletOption()" class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl text-xs font-bold shadow-md shadow-blue-500/20 whitespace-nowrap active:scale-95">
+            <button onclick="addNewWalletOption()" class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl text-xs font-bold shadow-md shadow-blue-500/20 whitespace-nowrap active:scale-95 transition-transform">
               <i class="fa-solid fa-plus mr-1"></i> Tambah
             </button>
           </div>
@@ -1123,7 +1137,7 @@
         </div>
       </div>
 
-      <button type="button" onclick="closeWalletManagerModal()" class="w-full py-3.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-2xl shadow-lg shadow-blue-500/25 text-sm select-none active:scale-95">
+      <button type="button" onclick="closeWalletManagerModal()" class="w-full py-3.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-2xl shadow-lg shadow-blue-500/25 text-sm select-none active:scale-95 transition-transform">
         Selesai
       </button>
     </div>
@@ -1139,7 +1153,7 @@
           </h3>
           <p class="text-xs text-slate-400 mt-0.5" id="allocDetailSubtitle">Daftar penggunaan anggaran pos ini</p>
         </div>
-        <button onclick="closeAllocationDetailModal()" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 hover:bg-slate-200 flex items-center justify-center select-none">
+        <button onclick="closeAllocationDetailModal()" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center justify-center select-none">
           <i class="fa-solid fa-xmark text-sm"></i>
         </button>
       </div>
@@ -1171,7 +1185,7 @@
           <i class="fa-solid fa-list-check text-blue-500 text-lg"></i>
           Kelola Kategori Kustom
         </h3>
-        <button onclick="closeCategoryModal()" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 hover:bg-slate-200 flex items-center justify-center select-none">
+        <button onclick="closeCategoryModal()" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center justify-center select-none">
           <i class="fa-solid fa-xmark text-sm"></i>
         </button>
       </div>
@@ -1185,7 +1199,7 @@
               <option value="pengeluaran">Pengeluaran</option>
             </select>
             <input type="text" id="newCatNameInput" placeholder="Nama Kategori Baru..." class="flex-1 px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl text-xs font-medium text-slate-800 dark:text-slate-100 focus:outline-none shadow-inner">
-            <button onclick="addNewCategory()" class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl text-xs font-bold shadow-md shadow-blue-500/20 whitespace-nowrap active:scale-95">
+            <button onclick="addNewCategory()" class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl text-xs font-bold shadow-md shadow-blue-500/20 whitespace-nowrap active:scale-95 transition-transform">
               <i class="fa-solid fa-plus mr-1"></i> Tambah
             </button>
           </div>
@@ -1197,7 +1211,7 @@
         </div>
       </div>
 
-      <button type="button" onclick="closeCategoryModal()" class="w-full py-3.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-2xl shadow-lg shadow-blue-500/25 text-sm select-none active:scale-95">
+      <button type="button" onclick="closeCategoryModal()" class="w-full py-3.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-2xl shadow-lg shadow-blue-500/25 text-sm select-none active:scale-95 transition-transform">
         Selesai
       </button>
     </div>
@@ -1211,7 +1225,7 @@
           <i class="fa-solid fa-coins text-amber-500 text-lg"></i>
           Batas Budget Pengeluaran per Kategori
         </h3>
-        <button onclick="closeCategoryBudgetModal()" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 hover:bg-slate-200 flex items-center justify-center select-none">
+        <button onclick="closeCategoryBudgetModal()" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center justify-center select-none">
           <i class="fa-solid fa-xmark text-sm"></i>
         </button>
       </div>
@@ -1220,7 +1234,7 @@
 
       <div id="categoryBudgetInputsList" class="max-h-72 overflow-y-auto space-y-3 pr-1 text-xs"></div>
 
-      <button type="button" onclick="saveCategoryBudgets()" class="w-full py-3.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-2xl shadow-lg shadow-blue-500/25 text-sm select-none active:scale-95">
+      <button type="button" onclick="saveCategoryBudgets()" class="w-full py-3.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-2xl shadow-lg shadow-blue-500/25 text-sm select-none active:scale-95 transition-transform">
         Simpan Pengaturan Budget
       </button>
     </div>
@@ -1234,7 +1248,7 @@
           <i class="fa-solid fa-shield text-blue-500"></i>
           Pertanyaan Pemulihan
         </h3>
-        <button onclick="closeSecurityQuestionModal()" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 hover:bg-slate-200 flex items-center justify-center select-none">
+        <button onclick="closeSecurityQuestionModal()" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center justify-center select-none">
           <i class="fa-solid fa-xmark"></i>
         </button>
       </div>
@@ -1270,7 +1284,7 @@
           <i class="fa-solid fa-unlock-keyhole text-blue-500"></i>
           Pemulihan Lupa PIN
         </h3>
-        <button onclick="closeForgotPinModal()" class="w-7 h-7 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 hover:bg-slate-200 flex items-center justify-center select-none">
+        <button onclick="closeForgotPinModal()" class="w-7 h-7 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center justify-center select-none">
           <i class="fa-solid fa-xmark text-xs"></i>
         </button>
       </div>
@@ -1300,7 +1314,7 @@
           <i class="fa-solid fa-circle-question text-blue-500"></i>
           Panduan & Informasi Aplikasi
         </h3>
-        <button onclick="closeHelpModal()" class="w-7 h-7 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 hover:bg-slate-200 flex items-center justify-center select-none">
+        <button onclick="closeHelpModal()" class="w-7 h-7 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center justify-center select-none">
           <i class="fa-solid fa-xmark text-xs"></i>
         </button>
       </div>
@@ -1355,8 +1369,8 @@
         </p>
       </div>
       <div class="flex items-center gap-3 pt-2">
-        <button type="button" onclick="closeDeleteTxConfirmModal()" class="w-1/2 py-2.5 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-medium rounded-xl text-sm select-none">Batal</button>
-        <button type="button" onclick="confirmExecuteDeleteTx()" class="w-1/2 py-2.5 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl shadow-lg shadow-rose-500/25 text-sm select-none">Hapus</button>
+        <button type="button" onclick="closeDeleteTxConfirmModal()" class="w-1/2 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-medium rounded-xl text-sm select-none">Batal</button>
+        <button type="button" onclick="confirmExecuteDeleteTx()" class="w-1/2 py-2.5 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl shadow-lg shadow-rose-500/25 text-sm select-none transition-all">Hapus</button>
       </div>
     </div>
   </div>
@@ -1374,8 +1388,8 @@
         </p>
       </div>
       <div class="flex items-center gap-3 pt-2">
-        <button type="button" onclick="closeResetConfirmModal()" class="w-1/2 py-2.5 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-medium rounded-xl text-sm select-none">Batal</button>
-        <button type="button" onclick="proceedToResetPin()" class="w-1/2 py-2.5 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl shadow-lg shadow-rose-500/25 text-sm select-none">Ya, Hapus</button>
+        <button type="button" onclick="closeResetConfirmModal()" class="w-1/2 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-medium rounded-xl text-sm select-none">Batal</button>
+        <button type="button" onclick="proceedToResetPin()" class="w-1/2 py-2.5 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl shadow-lg shadow-rose-500/25 text-sm select-none transition-all">Ya, Hapus</button>
       </div>
     </div>
   </div>
@@ -1388,7 +1402,7 @@
           <i class="fa-solid fa-shield-halved text-rose-500 text-lg"></i>
           Konfirmasi PIN Keamanan
         </h3>
-        <button onclick="closeResetPinModal()" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 hover:bg-slate-200 flex items-center justify-center select-none">
+        <button onclick="closeResetPinModal()" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center justify-center select-none">
           <i class="fa-solid fa-xmark text-sm"></i>
         </button>
       </div>
@@ -1398,31 +1412,31 @@
       </p>
 
       <div class="flex items-center justify-center gap-3 my-3" id="resetPinDots">
-        <div id="r-dot-0" class="w-4 h-4 rounded-full border-2 border-rose-500/40 bg-transparent"></div>
-        <div id="r-dot-1" class="w-4 h-4 rounded-full border-2 border-rose-500/40 bg-transparent"></div>
-        <div id="r-dot-2" class="w-4 h-4 rounded-full border-2 border-rose-500/40 bg-transparent"></div>
-        <div id="r-dot-3" class="w-4 h-4 rounded-full border-2 border-rose-500/40 bg-transparent"></div>
-        <div id="r-dot-4" class="w-4 h-4 rounded-full border-2 border-rose-500/40 bg-transparent"></div>
-        <div id="r-dot-5" class="w-4 h-4 rounded-full border-2 border-rose-500/40 bg-transparent"></div>
+        <div id="r-dot-0" class="w-4 h-4 rounded-full border-2 border-rose-500/40 bg-transparent transition-all duration-150"></div>
+        <div id="r-dot-1" class="w-4 h-4 rounded-full border-2 border-rose-500/40 bg-transparent transition-all duration-150"></div>
+        <div id="r-dot-2" class="w-4 h-4 rounded-full border-2 border-rose-500/40 bg-transparent transition-all duration-150"></div>
+        <div id="r-dot-3" class="w-4 h-4 rounded-full border-2 border-rose-500/40 bg-transparent transition-all duration-150"></div>
+        <div id="r-dot-4" class="w-4 h-4 rounded-full border-2 border-rose-500/40 bg-transparent transition-all duration-150"></div>
+        <div id="r-dot-5" class="w-4 h-4 rounded-full border-2 border-rose-500/40 bg-transparent transition-all duration-150"></div>
       </div>
 
       <div id="resetPinError" class="text-xs text-rose-500 font-semibold hidden text-center">PIN yang Anda masukkan salah!</div>
 
       <div class="grid grid-cols-3 gap-3 w-full pt-1">
-        <button type="button" onclick="appendResetPin('1')" class="h-12 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 active:bg-slate-200 border border-slate-200 dark:border-slate-700 rounded-2xl text-lg font-bold text-slate-800 dark:text-slate-100 flex items-center justify-center cursor-pointer shadow-sm">1</button>
-        <button type="button" onclick="appendResetPin('2')" class="h-12 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 active:bg-slate-200 border border-slate-200 dark:border-slate-700 rounded-2xl text-lg font-bold text-slate-800 dark:text-slate-100 flex items-center justify-center cursor-pointer shadow-sm">2</button>
-        <button type="button" onclick="appendResetPin('3')" class="h-12 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 active:bg-slate-200 border border-slate-200 dark:border-slate-700 rounded-2xl text-lg font-bold text-slate-800 dark:text-slate-100 flex items-center justify-center cursor-pointer shadow-sm">3</button>
-        <button type="button" onclick="appendResetPin('4')" class="h-12 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 active:bg-slate-200 border border-slate-200 dark:border-slate-700 rounded-2xl text-lg font-bold text-slate-800 dark:text-slate-100 flex items-center justify-center cursor-pointer shadow-sm">4</button>
-        <button type="button" onclick="appendResetPin('5')" class="h-12 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 active:bg-slate-200 border border-slate-200 dark:border-slate-700 rounded-2xl text-lg font-bold text-slate-800 dark:text-slate-100 flex items-center justify-center cursor-pointer shadow-sm">5</button>
-        <button type="button" onclick="appendResetPin('6')" class="h-12 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 active:bg-slate-200 border border-slate-200 dark:border-slate-700 rounded-2xl text-lg font-bold text-slate-800 dark:text-slate-100 flex items-center justify-center cursor-pointer shadow-sm">6</button>
-        <button type="button" onclick="appendResetPin('7')" class="h-12 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 active:bg-slate-200 border border-slate-200 dark:border-slate-700 rounded-2xl text-lg font-bold text-slate-800 dark:text-slate-100 flex items-center justify-center cursor-pointer shadow-sm">7</button>
-        <button type="button" onclick="appendResetPin('8')" class="h-12 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 active:bg-slate-200 border border-slate-200 dark:border-slate-700 rounded-2xl text-lg font-bold text-slate-800 dark:text-slate-100 flex items-center justify-center cursor-pointer shadow-sm">8</button>
-        <button type="button" onclick="appendResetPin('9')" class="h-12 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 active:bg-slate-200 border border-slate-200 dark:border-slate-700 rounded-2xl text-lg font-bold text-slate-800 dark:text-slate-100 flex items-center justify-center cursor-pointer shadow-sm">9</button>
-        <button type="button" onclick="clearResetPin()" class="h-12 bg-rose-50 dark:bg-rose-950/40 hover:bg-rose-100 border border-rose-200 dark:border-rose-500/30 rounded-2xl text-xs font-bold text-rose-600 dark:text-rose-300 flex items-center justify-center gap-1.5 select-none cursor-pointer">
+        <button type="button" onclick="appendResetPin('1')" class="h-12 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 active:bg-slate-200 dark:active:bg-slate-600 border border-slate-200 dark:border-slate-700 rounded-2xl text-lg font-bold text-slate-800 dark:text-slate-100 flex items-center justify-center cursor-pointer shadow-sm">1</button>
+        <button type="button" onclick="appendResetPin('2')" class="h-12 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 active:bg-slate-200 dark:active:bg-slate-600 border border-slate-200 dark:border-slate-700 rounded-2xl text-lg font-bold text-slate-800 dark:text-slate-100 flex items-center justify-center cursor-pointer shadow-sm">2</button>
+        <button type="button" onclick="appendResetPin('3')" class="h-12 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 active:bg-slate-200 dark:active:bg-slate-600 border border-slate-200 dark:border-slate-700 rounded-2xl text-lg font-bold text-slate-800 dark:text-slate-100 flex items-center justify-center cursor-pointer shadow-sm">3</button>
+        <button type="button" onclick="appendResetPin('4')" class="h-12 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 active:bg-slate-200 dark:active:bg-slate-600 border border-slate-200 dark:border-slate-700 rounded-2xl text-lg font-bold text-slate-800 dark:text-slate-100 flex items-center justify-center cursor-pointer shadow-sm">4</button>
+        <button type="button" onclick="appendResetPin('5')" class="h-12 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 active:bg-slate-200 dark:active:bg-slate-600 border border-slate-200 dark:border-slate-700 rounded-2xl text-lg font-bold text-slate-800 dark:text-slate-100 flex items-center justify-center cursor-pointer shadow-sm">5</button>
+        <button type="button" onclick="appendResetPin('6')" class="h-12 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 active:bg-slate-200 dark:active:bg-slate-600 border border-slate-200 dark:border-slate-700 rounded-2xl text-lg font-bold text-slate-800 dark:text-slate-100 flex items-center justify-center cursor-pointer shadow-sm">6</button>
+        <button type="button" onclick="appendResetPin('7')" class="h-12 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 active:bg-slate-200 dark:active:bg-slate-600 border border-slate-200 dark:border-slate-700 rounded-2xl text-lg font-bold text-slate-800 dark:text-slate-100 flex items-center justify-center cursor-pointer shadow-sm">7</button>
+        <button type="button" onclick="appendResetPin('8')" class="h-12 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 active:bg-slate-200 dark:active:bg-slate-600 border border-slate-200 dark:border-slate-700 rounded-2xl text-lg font-bold text-slate-800 dark:text-slate-100 flex items-center justify-center cursor-pointer shadow-sm">8</button>
+        <button type="button" onclick="appendResetPin('9')" class="h-12 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 active:bg-slate-200 dark:active:bg-slate-600 border border-slate-200 dark:border-slate-700 rounded-2xl text-lg font-bold text-slate-800 dark:text-slate-100 flex items-center justify-center cursor-pointer shadow-sm">9</button>
+        <button type="button" onclick="clearResetPin()" class="h-12 bg-rose-50 dark:bg-rose-950/40 hover:bg-rose-100 dark:hover:bg-rose-900/60 border border-rose-200 dark:border-rose-500/30 rounded-2xl text-xs font-bold text-rose-600 dark:text-rose-300 flex items-center justify-center gap-1.5 select-none cursor-pointer">
           <i class="fa-solid fa-rotate-left"></i> Reset
         </button>
-        <button type="button" onclick="appendResetPin('0')" class="h-12 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 active:bg-slate-200 border border-slate-200 dark:border-slate-700 rounded-2xl text-lg font-bold text-slate-800 dark:text-slate-100 flex items-center justify-center cursor-pointer shadow-sm">0</button>
-        <button type="button" onclick="deleteResetPinDigit()" class="h-12 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 active:bg-slate-200 border border-slate-200 dark:border-slate-700 rounded-2xl text-base text-slate-700 dark:text-slate-300 flex items-center justify-center cursor-pointer shadow-sm">
+        <button type="button" onclick="appendResetPin('0')" class="h-12 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 active:bg-slate-200 dark:active:bg-slate-600 border border-slate-200 dark:border-slate-700 rounded-2xl text-lg font-bold text-slate-800 dark:text-slate-100 flex items-center justify-center cursor-pointer shadow-sm">0</button>
+        <button type="button" onclick="deleteResetPinDigit()" class="h-12 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 active:bg-slate-200 dark:active:bg-slate-600 border border-slate-200 dark:border-slate-700 rounded-2xl text-base text-slate-700 dark:text-slate-300 flex items-center justify-center cursor-pointer shadow-sm">
           <i class="fa-solid fa-backspace"></i>
         </button>
       </div>
@@ -1437,7 +1451,7 @@
           <i class="fa-solid fa-key text-blue-500"></i>
           Ubah PIN Akses
         </h3>
-        <button onclick="closeChangePinModal()" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 hover:bg-slate-200 flex items-center justify-center select-none">
+        <button onclick="closeChangePinModal()" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center justify-center select-none">
           <i class="fa-solid fa-xmark"></i>
         </button>
       </div>
@@ -1461,7 +1475,7 @@
         <div id="pinChangeError" class="text-xs text-rose-500 font-medium hidden text-center"></div>
 
         <div class="flex items-center gap-3 pt-2">
-          <button type="button" onclick="closeChangePinModal()" class="w-1/2 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-700 dark:text-slate-300 font-medium rounded-xl text-sm select-none">Batal</button>
+          <button type="button" onclick="closeChangePinModal()" class="w-1/2 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-medium rounded-xl text-sm select-none">Batal</button>
           <button type="submit" class="w-1/2 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-xl shadow-md shadow-blue-500/25 text-sm select-none">Simpan PIN</button>
         </div>
       </form>
@@ -1481,6 +1495,12 @@
           .catch(err => console.log('Gagal Service Worker:', err));
       });
     }
+
+    document.addEventListener("visibilitychange", () => {
+      if (document.visibilityState === "visible") {
+        location.reload();
+      }
+    });
 
     let userPin = localStorage.getItem('fm_user_pin') || "030427";
     let enteredPin = "";
@@ -1572,20 +1592,28 @@
 
     document.addEventListener("DOMContentLoaded", () => {
       const pinScreen = document.getElementById('pinScreen');
+      const pinBox = document.getElementById('pinBoxContainer');
+
+      document.body.classList.remove('lock-scroll', 'overflow-hidden');
+      document.documentElement.classList.remove('lock-scroll', 'overflow-hidden');
 
       if (isUnlocked) {
         if (pinScreen) {
+          pinScreen.classList.add('opacity-0', 'pointer-events-none');
           pinScreen.style.display = 'none';
         }
-        document.body.classList.remove('lock-scroll');
-        document.documentElement.classList.remove('lock-scroll');
         resetInactivityTimer();
       } else {
         document.body.classList.add('lock-scroll');
-        document.documentElement.classList.add('lock-scroll');
-        if (pinScreen) {
+        if (pinScreen && pinBox) {
           pinScreen.style.display = 'flex';
           pinScreen.classList.remove('opacity-0', 'pointer-events-none');
+          pinBox.classList.remove('scale-100');
+          pinBox.classList.add('scale-95');
+          requestAnimationFrame(() => {
+            pinBox.classList.remove('scale-95');
+            pinBox.classList.add('scale-100');
+          });
         }
       }
 
@@ -1616,12 +1644,16 @@
         const list = document.getElementById('customDropdownList');
         if (trigger && list && !trigger.contains(e.target) && !list.contains(e.target)) {
           list.classList.add('hidden');
+          const arrow = document.getElementById('customSelectArrow');
+          if (arrow) arrow.classList.remove('rotate-180');
         }
 
         const filterTrigger = document.getElementById('filterSelectTrigger');
         const filterList = document.getElementById('filterDropdownList');
         if (filterTrigger && filterList && !filterTrigger.contains(e.target) && !filterList.contains(e.target)) {
           filterList.classList.add('hidden');
+          const filterArrow = document.getElementById('filterSelectArrow');
+          if (filterArrow) filterArrow.classList.remove('rotate-180');
         }
 
         ['walletSource', 'walletTarget'].forEach(type => {
@@ -1629,6 +1661,8 @@
           const lEl = document.getElementById(`${type}DropdownList`);
           if (tEl && lEl && !tEl.contains(e.target) && !lEl.contains(e.target)) {
             lEl.classList.add('hidden');
+            const arr = document.getElementById(`${type}Arrow`);
+            if (arr) arr.classList.remove('rotate-180');
           }
         });
 
@@ -1637,6 +1671,8 @@
           const lEl = document.getElementById(`${type}DropdownList`);
           if (tEl && lEl && !tEl.contains(e.target) && !lEl.contains(e.target)) {
             lEl.classList.add('hidden');
+            const arr = document.getElementById(`${type}Arrow`);
+            if (arr) arr.classList.remove('rotate-180');
           }
         });
       });
@@ -1674,6 +1710,7 @@
       }
     }
 
+    // MANAJEMEN TARGET TABUNGAN (SAVINGS GOALS) DENGAN FITUR EDIT & SETOR DANA
     function openGoalModal(editId = null) {
       const titleEl = document.getElementById('goalModalTitle');
       const editInput = document.getElementById('editGoalId');
@@ -1710,7 +1747,7 @@
       box.classList.remove('scale-100');
       box.classList.add('scale-95');
       modal.classList.add('opacity-0', 'pointer-events-none');
-      setTimeout(() => { modal.style.display = 'none'; }, 200);
+      setTimeout(() => { modal.style.display = 'none'; }, 250);
     }
 
     function handleSaveGoal(e) {
@@ -1737,6 +1774,7 @@
       showCustomAlert('Berhasil', 'Target impian berhasil disimpan!', 'success');
     }
 
+    // MODAL TAMBAH SETORAN DANA KE CELENGAN KHUSUS
     function openAddGoalFundModal(id) {
       const goal = savingsGoals.find(g => g.id === id);
       if (!goal) return;
@@ -1760,7 +1798,7 @@
       box.classList.remove('scale-100');
       box.classList.add('scale-95');
       modal.classList.add('opacity-0', 'pointer-events-none');
-      setTimeout(() => { modal.style.display = 'none'; }, 200);
+      setTimeout(() => { modal.style.display = 'none'; }, 250);
     }
 
     function executeAddGoalFund() {
@@ -1782,6 +1820,7 @@
       }
     }
 
+    // KONFIRMASI HAPUS CELENGAN KHUSUS
     function promptDeleteGoal(id) {
       targetDeleteGoalId = Number(id);
       const modal = document.getElementById('deleteGoalConfirmModal');
@@ -1791,6 +1830,10 @@
         modal.classList.remove('opacity-0', 'pointer-events-none');
         container.classList.remove('scale-95');
         container.classList.add('scale-100');
+        requestAnimationFrame(() => {
+          container.classList.remove('scale-95');
+          container.classList.add('scale-100');
+        });
       });
     }
 
@@ -1803,7 +1846,7 @@
       setTimeout(() => {
         modal.style.display = 'none';
         targetDeleteGoalId = null;
-      }, 200);
+      }, 250);
     }
 
     function confirmExecuteDeleteGoal() {
@@ -1836,7 +1879,7 @@
       box.classList.remove('scale-100');
       box.classList.add('scale-95');
       modal.classList.add('opacity-0', 'pointer-events-none');
-      setTimeout(() => { modal.style.display = 'none'; }, 200);
+      setTimeout(() => { modal.style.display = 'none'; }, 250);
     }
 
     function addRecurringItem() {
@@ -1915,12 +1958,9 @@
       renderWalletManagerList();
       const modal = document.getElementById('walletManagerModal');
       const container = document.getElementById('walletManagerContainer');
-      modal.style.display = 'flex';
-      requestAnimationFrame(() => {
-        modal.classList.remove('opacity-0', 'pointer-events-none');
-        container.classList.remove('scale-95');
-        container.classList.add('scale-100');
-      });
+      modal.classList.remove('opacity-0', 'pointer-events-none');
+      container.classList.remove('scale-95');
+      container.classList.add('scale-100');
     }
 
     function closeWalletManagerModal() {
@@ -1929,7 +1969,6 @@
       container.classList.remove('scale-100');
       container.classList.add('scale-95');
       modal.classList.add('opacity-0', 'pointer-events-none');
-      setTimeout(() => { modal.style.display = 'none'; }, 200);
       initWalletDropdowns();
       renderDashboard();
     }
@@ -1943,7 +1982,7 @@
         div.className = "flex justify-between items-center p-3 bg-slate-50 dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700/60";
         div.innerHTML = `
           <span class="font-semibold text-slate-800 dark:text-slate-200"><i class="fa-solid fa-wallet text-blue-500 mr-2"></i> ${wallet}</span>
-          ${walletOptionsList.length > 1 ? `<button onclick="deleteWalletOption('${wallet}')" class="w-8 h-8 rounded-xl bg-rose-500/10 text-rose-500 hover:bg-rose-500 hover:text-white flex items-center justify-center"><i class="fa-solid fa-trash text-xs"></i></button>` : ''}
+          ${walletOptionsList.length > 1 ? `<button onclick="deleteWalletOption('${wallet}')" class="w-8 h-8 rounded-xl bg-rose-500/10 text-rose-500 hover:bg-rose-500 hover:text-white flex items-center justify-center transition-all"><i class="fa-solid fa-trash text-xs"></i></button>` : ''}
         `;
         container.appendChild(div);
       });
@@ -1988,7 +2027,7 @@
         walletOptionsList.forEach(wallet => {
           const isSelected = currentVal === wallet;
           const item = document.createElement('div');
-          item.className = `px-4 py-3 cursor-pointer text-sm font-semibold flex items-center justify-between ${
+          item.className = `px-4 py-3 cursor-pointer text-sm font-semibold flex items-center justify-between transition-colors ${
             isSelected 
               ? 'bg-blue-50 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400' 
               : 'text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800/80'
@@ -2008,20 +2047,26 @@
 
     function toggleWalletDropdown(kind) {
       const listId = kind === 'source' ? 'walletSourceDropdownList' : 'walletTargetDropdownList';
+      const arrowId = kind === 'source' ? 'walletSourceArrow' : 'walletTargetArrow';
       const list = document.getElementById(listId);
+      const arrow = document.getElementById(arrowId);
       if (!list) return;
 
       ['source', 'target'].forEach(k => {
         if (k !== kind) {
           const l = document.getElementById(k === 'source' ? 'walletSourceDropdownList' : 'walletTargetDropdownList');
+          const a = document.getElementById(k === 'source' ? 'walletSourceArrow' : 'walletTargetArrow');
           if (l) l.classList.add('hidden');
+          if (a) a.classList.remove('rotate-180');
         }
       });
 
       if (list.classList.contains('hidden')) {
         list.classList.remove('hidden');
+        if (arrow) arrow.classList.add('rotate-180');
       } else {
         list.classList.add('hidden');
+        if (arrow) arrow.classList.remove('rotate-180');
       }
     }
 
@@ -2029,6 +2074,7 @@
       const hiddenId = kind === 'source' ? 'walletSource' : 'walletTarget';
       const labelId = kind === 'source' ? 'walletSourceLabel' : 'walletTargetLabel';
       const listId = kind === 'source' ? 'walletSourceDropdownList' : 'walletTargetDropdownList';
+      const arrowId = kind === 'source' ? 'walletSourceArrow' : 'walletTargetArrow';
 
       document.getElementById(hiddenId).value = walletName;
       const label = document.getElementById(labelId);
@@ -2036,6 +2082,8 @@
 
       const list = document.getElementById(listId);
       if (list) list.classList.add('hidden');
+      const arrow = document.getElementById(arrowId);
+      if (arrow) arrow.classList.remove('rotate-180');
 
       initWalletDropdowns();
     }
@@ -2070,12 +2118,14 @@
       }
     }
 
+    // FIX BUG 1: PIN AKSES & STATE HANDLING SINKRON
     function appendPin(num) {
       if (enteredPin.length < 6) {
         enteredPin += num;
         updatePinDots();
 
         if (enteredPin.length === 6) {
+          // Eksekusi verifikasi tanpa jeda glitch, langsung responsif
           setTimeout(checkPin, 50);
         }
       }
@@ -2108,15 +2158,22 @@
 
     function checkPin() {
       if (enteredPin === userPin) {
+        playSuccessSound();
         isUnlocked = true;
         sessionStorage.setItem('fm_is_unlocked', 'true');
-        document.body.classList.remove('lock-scroll');
-        document.documentElement.classList.remove('lock-scroll');
+        document.body.classList.remove('lock-scroll', 'overflow-hidden');
+        document.documentElement.classList.remove('lock-scroll', 'overflow-hidden');
 
         const pinScreen = document.getElementById('pinScreen');
-        if (pinScreen) {
-          pinScreen.style.display = 'none';
-          clearPin();
+        const pinBox = document.getElementById('pinBoxContainer');
+        if (pinScreen && pinBox) {
+          pinBox.classList.remove('scale-100');
+          pinBox.classList.add('scale-95');
+          pinScreen.classList.add('opacity-0', 'pointer-events-none');
+          setTimeout(() => {
+            pinScreen.style.display = 'none';
+            clearPin();
+          }, 250);
         }
         resetInactivityTimer();
       } else {
@@ -2130,11 +2187,17 @@
       sessionStorage.removeItem('fm_is_unlocked');
       clearPin();
       document.body.classList.add('lock-scroll');
-      document.documentElement.classList.add('lock-scroll');
       const pinScreen = document.getElementById('pinScreen');
-      if (pinScreen) {
+      const pinBox = document.getElementById('pinBoxContainer');
+      if (pinScreen && pinBox) {
         pinScreen.style.display = 'flex';
+        pinBox.classList.remove('scale-100');
+        pinBox.classList.add('scale-95');
         pinScreen.classList.remove('opacity-0', 'pointer-events-none');
+        requestAnimationFrame(() => {
+          pinBox.classList.remove('scale-95');
+          pinBox.classList.add('scale-100');
+        });
       }
     }
 
@@ -2143,12 +2206,9 @@
       document.getElementById('secAnswerInput').value = secAnswer;
       const modal = document.getElementById('securityQuestionModal');
       const container = document.getElementById('secQModalContainer');
-      modal.style.display = 'flex';
-      requestAnimationFrame(() => {
-        modal.classList.remove('opacity-0', 'pointer-events-none');
-        container.classList.remove('scale-95');
-        container.classList.add('scale-100');
-      });
+      modal.classList.remove('opacity-0', 'pointer-events-none');
+      container.classList.remove('scale-95');
+      container.classList.add('scale-100');
     }
 
     function closeSecurityQuestionModal() {
@@ -2157,7 +2217,6 @@
       container.classList.remove('scale-100');
       container.classList.add('scale-95');
       modal.classList.add('opacity-0', 'pointer-events-none');
-      setTimeout(() => { modal.style.display = 'none'; }, 200);
     }
 
     function handleSaveSecurityQuestion(e) {
@@ -2194,7 +2253,7 @@
       container.classList.remove('scale-100');
       container.classList.add('scale-95');
       modal.classList.add('opacity-0', 'pointer-events-none');
-      setTimeout(() => { modal.style.display = 'none'; }, 200);
+      setTimeout(() => { modal.style.display = 'none'; }, 250);
     }
 
     function verifyForgotPinAnswer() {
@@ -2223,19 +2282,24 @@
 
     function toggleSettingsDropdown(type) {
       const list = document.getElementById(`${type}DropdownList`);
+      const arrow = document.getElementById(`${type}Arrow`);
       if (!list) return;
 
       ['autoLock', 'currency', 'budgetRatio'].forEach(t => {
         if (t !== type) {
           const l = document.getElementById(`${t}DropdownList`);
+          const a = document.getElementById(`${t}Arrow`);
           if (l) l.classList.add('hidden');
+          if (a) a.classList.remove('rotate-180');
         }
       });
 
       if (list.classList.contains('hidden')) {
         list.classList.remove('hidden');
+        if (arrow) arrow.classList.add('rotate-180');
       } else {
         list.classList.add('hidden');
+        if (arrow) arrow.classList.remove('rotate-180');
       }
     }
 
@@ -2247,6 +2311,8 @@
 
       const list = document.getElementById(`${type}DropdownList`);
       if (list) list.classList.add('hidden');
+      const arrow = document.getElementById(`${type}Arrow`);
+      if (arrow) arrow.classList.remove('rotate-180');
 
       if (type === 'autoLock') changeAutoLock(val);
       else if (type === 'currency') changeCurrency(val);
@@ -2297,7 +2363,7 @@
         cfg.options.forEach(opt => {
           const isSelected = cfg.currentVal === opt.val;
           const item = document.createElement('div');
-          item.className = `px-4 py-3 cursor-pointer text-sm font-semibold flex items-center justify-between ${
+          item.className = `px-4 py-3 cursor-pointer text-sm font-semibold flex items-center justify-between transition-colors ${
             isSelected 
               ? 'bg-blue-50 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400' 
               : 'text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800/80'
@@ -2338,12 +2404,9 @@
       renderCustomCategoryList();
       const modal = document.getElementById('categoryModal');
       const container = document.getElementById('categoryModalContainer');
-      modal.style.display = 'flex';
-      requestAnimationFrame(() => {
-        modal.classList.remove('opacity-0', 'pointer-events-none');
-        container.classList.remove('scale-95');
-        container.classList.add('scale-100');
-      });
+      modal.classList.remove('opacity-0', 'pointer-events-none');
+      container.classList.remove('scale-95');
+      container.classList.add('scale-100');
     }
 
     function closeCategoryModal() {
@@ -2352,7 +2415,6 @@
       container.classList.remove('scale-100');
       container.classList.add('scale-95');
       modal.classList.add('opacity-0', 'pointer-events-none');
-      setTimeout(() => { modal.style.display = 'none'; }, 200);
       updateCategories();
     }
 
@@ -2363,14 +2425,14 @@
       incomeCategories.forEach(cat => {
         const div = document.createElement('div');
         div.className = "flex justify-between items-center p-3 bg-slate-50 dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700/60";
-        div.innerHTML = `<span class="font-semibold text-slate-800 dark:text-slate-200"><span class="text-emerald-500 font-bold">[Pemasukan]</span> ${cat}</span> ${incomeCategories.length > 1 ? `<button onclick="deleteCategory('pemasukan', '${cat}')" class="w-8 h-8 rounded-xl bg-rose-500/10 text-rose-500 hover:bg-rose-500 hover:text-white flex items-center justify-center"><i class="fa-solid fa-trash text-xs"></i></button>` : ''}`;
+        div.innerHTML = `<span class="font-semibold text-slate-800 dark:text-slate-200"><span class="text-emerald-500 font-bold">[Pemasukan]</span> ${cat}</span> ${incomeCategories.length > 1 ? `<button onclick="deleteCategory('pemasukan', '${cat}')" class="w-8 h-8 rounded-xl bg-rose-500/10 text-rose-500 hover:bg-rose-500 hover:text-white flex items-center justify-center transition-all"><i class="fa-solid fa-trash text-xs"></i></button>` : ''}`;
         container.appendChild(div);
       });
 
       expenseCategories.forEach(cat => {
         const div = document.createElement('div');
         div.className = "flex justify-between items-center p-3 bg-slate-50 dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700/60";
-        div.innerHTML = `<span class="font-semibold text-slate-800 dark:text-slate-200"><span class="text-rose-500 font-bold">[Pengeluaran]</span> ${cat}</span> ${expenseCategories.length > 1 ? `<button onclick="deleteCategory('pengeluaran', '${cat}')" class="w-8 h-8 rounded-xl bg-rose-500/10 text-rose-500 hover:bg-rose-500 hover:text-white flex items-center justify-center"><i class="fa-solid fa-trash text-xs"></i></button>` : ''}`;
+        div.innerHTML = `<span class="font-semibold text-slate-800 dark:text-slate-200"><span class="text-rose-500 font-bold">[Pengeluaran]</span> ${cat}</span> ${expenseCategories.length > 1 ? `<button onclick="deleteCategory('pengeluaran', '${cat}')" class="w-8 h-8 rounded-xl bg-rose-500/10 text-rose-500 hover:bg-rose-500 hover:text-white flex items-center justify-center transition-all"><i class="fa-solid fa-trash text-xs"></i></button>` : ''}`;
         container.appendChild(div);
       });
     }
@@ -2426,12 +2488,9 @@
 
       const modal = document.getElementById('categoryBudgetModal');
       const box = document.getElementById('categoryBudgetContainer');
-      modal.style.display = 'flex';
-      requestAnimationFrame(() => {
-        modal.classList.remove('opacity-0', 'pointer-events-none');
-        box.classList.remove('scale-95');
-        box.classList.add('scale-100');
-      });
+      modal.classList.remove('opacity-0', 'pointer-events-none');
+      box.classList.remove('scale-95');
+      box.classList.add('scale-100');
     }
 
     function closeCategoryBudgetModal() {
@@ -2440,7 +2499,6 @@
       box.classList.remove('scale-100');
       box.classList.add('scale-95');
       modal.classList.add('opacity-0', 'pointer-events-none');
-      setTimeout(() => { modal.style.display = 'none'; }, 200);
     }
 
     function saveCategoryBudgets() {
@@ -2503,6 +2561,63 @@
       } else {
         errEl.classList.remove('hidden');
         clearResetPin();
+      }
+    }
+
+    function playSuccessSound() {
+      try {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        if (!AudioContext) return;
+        
+        const ctx = new AudioContext();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(523.25, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(1046.50, ctx.currentTime + 0.15);
+
+        gain.gain.setValueAtTime(0.7, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.35);
+
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+
+        osc.start();
+        osc.stop(ctx.currentTime + 0.35);
+      } catch (err) {
+        console.log('Web Audio Context:', err);
+      }
+    }
+
+    function playTransactionChimeSound() {
+      try {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        if (!AudioContext) return;
+        
+        const ctx = new AudioContext();
+        const now = ctx.currentTime;
+
+        const notes = [659.25, 987.77];
+        notes.forEach((freq, index) => {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(freq, now + index * 0.12);
+
+          gain.gain.setValueAtTime(0.001, now + index * 0.12);
+          gain.gain.linearRampToValueAtTime(0.6, now + index * 0.12 + 0.02);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + index * 0.12 + 0.3);
+
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+
+          osc.start(now + index * 0.12);
+          osc.stop(now + index * 0.12 + 0.3);
+        });
+      } catch (err) {
+        console.log('Web Audio Context:', err);
       }
     }
 
@@ -2575,17 +2690,20 @@
         if (modal.classList.contains('opacity-0')) {
           modal.style.display = 'none';
         }
-      }, 200);
+      }, 250);
     }
 
     function toggleCustomDropdown() {
       const list = document.getElementById('customDropdownList');
+      const arrow = document.getElementById('customSelectArrow');
       if (!list) return;
 
       if (list.classList.contains('hidden')) {
         list.classList.remove('hidden');
+        if (arrow) arrow.classList.add('rotate-180');
       } else {
         list.classList.add('hidden');
+        if (arrow) arrow.classList.remove('rotate-180');
       }
     }
 
@@ -2597,6 +2715,8 @@
 
       const list = document.getElementById('customDropdownList');
       if (list) list.classList.add('hidden');
+      const arrow = document.getElementById('customSelectArrow');
+      if (arrow) arrow.classList.remove('rotate-180');
 
       updateCategories();
       checkSalaryNotice();
@@ -2628,7 +2748,7 @@
           const isSelected = currentSelected === cat;
           const item = document.createElement('div');
           
-          item.className = `px-4 py-3 cursor-pointer text-sm font-semibold flex items-center justify-between ${
+          item.className = `px-4 py-3 cursor-pointer text-sm font-semibold flex items-center justify-between transition-colors ${
             isSelected 
               ? 'bg-blue-50 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400' 
               : 'text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800/80'
@@ -2650,12 +2770,15 @@
 
     function toggleFilterDropdown() {
       const list = document.getElementById('filterDropdownList');
+      const arrow = document.getElementById('filterSelectArrow');
       if (!list) return;
 
       if (list.classList.contains('hidden')) {
         list.classList.remove('hidden');
+        if (arrow) arrow.classList.add('rotate-180');
       } else {
         list.classList.add('hidden');
+        if (arrow) arrow.classList.remove('rotate-180');
       }
     }
 
@@ -2666,6 +2789,8 @@
 
       const list = document.getElementById('filterDropdownList');
       if (list) list.classList.add('hidden');
+      const arrow = document.getElementById('filterSelectArrow');
+      if (arrow) arrow.classList.remove('rotate-180');
 
       initFilterDropdown();
       renderTransactions();
@@ -2687,7 +2812,7 @@
       options.forEach(opt => {
         const isSelected = currentVal === opt.val;
         const item = document.createElement('div');
-        item.className = `px-4 py-3 cursor-pointer text-sm font-semibold flex items-center justify-between ${
+        item.className = `px-4 py-3 cursor-pointer text-sm font-semibold flex items-center justify-between transition-colors ${
           isSelected 
             ? 'bg-blue-50 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400' 
             : 'text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800/80'
@@ -2790,6 +2915,8 @@
         updateCategories();
         renderDashboard();
 
+        playTransactionChimeSound();
+        // FIX BUG 3: Tampilkan pop-up sukses secara bersih tanpa gangguan state
         showCustomAlert('Berhasil!', 'Catatan transaksi telah tersimpan.', 'success');
       }, 500);
     }
@@ -2801,8 +2928,12 @@
       modal.style.display = 'flex';
       requestAnimationFrame(() => {
         modal.classList.remove('opacity-0', 'pointer-events-none');
-        container.classList.remove('scale-95');
-        container.classList.add('scale-100');
+        container.classList.remove('scale-100');
+        container.classList.add('scale-95');
+        requestAnimationFrame(() => {
+          container.classList.remove('scale-95');
+          container.classList.add('scale-100');
+        });
       });
     }
 
@@ -2815,7 +2946,7 @@
       setTimeout(() => {
         modal.style.display = 'none';
         targetDeleteTxId = null;
-      }, 200);
+      }, 250);
     }
 
     function confirmExecuteDeleteTx() {
@@ -2926,8 +3057,12 @@
       modal.style.display = 'flex';
       requestAnimationFrame(() => {
         modal.classList.remove('opacity-0', 'pointer-events-none');
-        modalCont.classList.remove('scale-95');
-        modalCont.classList.add('scale-100');
+        modalCont.classList.remove('scale-100');
+        modalCont.classList.add('scale-95');
+        requestAnimationFrame(() => {
+          modalCont.classList.remove('scale-95');
+          modalCont.classList.add('scale-100');
+        });
       });
     }
 
@@ -2937,7 +3072,7 @@
       container.classList.remove('scale-100');
       container.classList.add('scale-95');
       modal.classList.add('opacity-0', 'pointer-events-none');
-      setTimeout(() => { modal.style.display = 'none'; }, 200);
+      setTimeout(() => { modal.style.display = 'none'; }, 250);
     }
 
     function showCustomAlert(title, message, type = 'success') {
@@ -2955,18 +3090,22 @@
       if (type === 'error') {
         alertIcon.className = "fa-solid fa-triangle-exclamation";
         alertIconBg.className = "w-16 h-16 rounded-2xl bg-rose-500/10 text-rose-500 flex items-center justify-center text-3xl mx-auto shadow-inner border border-rose-500/20";
-        alertBtn.className = "w-full py-3 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl shadow-lg shadow-rose-500/25 text-sm select-none";
+        alertBtn.className = "w-full py-3 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl shadow-lg shadow-rose-500/25 text-sm select-none transition-all";
       } else {
         alertIcon.className = "fa-solid fa-circle-check";
         alertIconBg.className = "w-16 h-16 rounded-2xl bg-blue-500/10 text-blue-600 dark:text-blue-400 flex items-center justify-center text-3xl mx-auto shadow-inner border border-blue-500/20";
-        alertBtn.className = "w-full py-3 bg-gradient-to-r from-blue-600 via-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold rounded-xl shadow-lg shadow-blue-500/25 text-sm select-none";
+        alertBtn.className = "w-full py-3 bg-gradient-to-r from-blue-600 via-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold rounded-xl shadow-lg shadow-blue-500/25 text-sm select-none transition-all";
       }
 
       alertModal.style.display = 'flex';
       requestAnimationFrame(() => {
         alertModal.classList.remove('opacity-0', 'pointer-events-none');
-        alertContainer.classList.remove('scale-95');
-        alertContainer.classList.add('scale-100');
+        alertContainer.classList.remove('scale-100');
+        alertContainer.classList.add('scale-95');
+        requestAnimationFrame(() => {
+          alertContainer.classList.remove('scale-95');
+          alertContainer.classList.add('scale-100');
+        });
       });
     }
 
@@ -2976,7 +3115,7 @@
       alertContainer.classList.remove('scale-100');
       alertContainer.classList.add('scale-95');
       alertModal.classList.add('opacity-0', 'pointer-events-none');
-      setTimeout(() => { alertModal.style.display = 'none'; }, 200);
+      setTimeout(() => { alertModal.style.display = 'none'; }, 250);
     }
 
     function openResetConfirmModal() {
@@ -2985,8 +3124,12 @@
       modal.style.display = 'flex';
       requestAnimationFrame(() => {
         modal.classList.remove('opacity-0', 'pointer-events-none');
-        container.classList.remove('scale-95');
-        container.classList.add('scale-100');
+        container.classList.remove('scale-100');
+        container.classList.add('scale-95');
+        requestAnimationFrame(() => {
+          container.classList.remove('scale-95');
+          container.classList.add('scale-100');
+        });
       });
     }
 
@@ -2996,7 +3139,7 @@
       container.classList.remove('scale-100');
       container.classList.add('scale-95');
       modal.classList.add('opacity-0', 'pointer-events-none');
-      setTimeout(() => { modal.style.display = 'none'; }, 200);
+      setTimeout(() => { modal.style.display = 'none'; }, 250);
     }
 
     function proceedToResetPin() {
@@ -3012,8 +3155,12 @@
       modal.style.display = 'flex';
       requestAnimationFrame(() => {
         modal.classList.remove('opacity-0', 'pointer-events-none');
-        container.classList.remove('scale-95');
-        container.classList.add('scale-100');
+        container.classList.remove('scale-100');
+        container.classList.add('scale-95');
+        requestAnimationFrame(() => {
+          container.classList.remove('scale-95');
+          container.classList.add('scale-100');
+        });
       });
     }
 
@@ -3023,7 +3170,7 @@
       container.classList.remove('scale-100');
       container.classList.add('scale-95');
       modal.classList.add('opacity-0', 'pointer-events-none');
-      setTimeout(() => { modal.style.display = 'none'; }, 200);
+      setTimeout(() => { modal.style.display = 'none'; }, 250);
     }
 
     function openHelpModal() {
@@ -3032,8 +3179,12 @@
       modal.style.display = 'flex';
       requestAnimationFrame(() => {
         modal.classList.remove('opacity-0', 'pointer-events-none');
-        container.classList.remove('scale-95');
-        container.classList.add('scale-100');
+        container.classList.remove('scale-100');
+        container.classList.add('scale-95');
+        requestAnimationFrame(() => {
+          container.classList.remove('scale-95');
+          container.classList.add('scale-100');
+        });
       });
     }
 
@@ -3043,7 +3194,7 @@
       container.classList.remove('scale-100');
       container.classList.add('scale-95');
       modal.classList.add('opacity-0', 'pointer-events-none');
-      setTimeout(() => { modal.style.display = 'none'; }, 200);
+      setTimeout(() => { modal.style.display = 'none'; }, 250);
     }
 
     function togglePrivacyMode() {
@@ -3156,7 +3307,7 @@
           const item = document.createElement('div');
           item.className = "p-2.5 bg-slate-50 dark:bg-slate-800/60 rounded-xl border border-slate-100 dark:border-slate-800 flex flex-col justify-between";
           item.innerHTML = `
-            <span class="text-[10px] font-bold text-slate-400 truncate" title="${wName}">${wName}</span>
+            <span class="text-[10px] font-bold text-slate-400 dark:text-slate-400 truncate" title="${wName}">${wName}</span>
             <p class="text-xs font-black tracking-tight ${wBal < 0 ? 'text-rose-500' : 'text-slate-800 dark:text-slate-100'} mt-1">
               ${formatCurrency(wBal)}
             </p>
@@ -3165,6 +3316,7 @@
         });
       }
 
+      // RENDER SAVINGS GOALS DENGAN TOMBOL TAMBAH DANA (+), EDIT, & HAPUS
       const goalsGrid = document.getElementById('savingsGoalsGrid');
       if (goalsGrid) {
         goalsGrid.innerHTML = '';
@@ -3179,13 +3331,13 @@
               <div class="flex justify-between items-center">
                 <span class="font-bold text-sm text-slate-800 dark:text-slate-100">${g.name}</span>
                 <div class="flex items-center gap-1.5">
-                  <button onclick="openAddGoalFundModal(${g.id})" class="px-2.5 py-1 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 rounded-lg text-xs font-bold" title="Tambah / Setor Dana">
+                  <button onclick="openAddGoalFundModal(${g.id})" class="px-2.5 py-1 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 rounded-lg text-xs font-bold transition-all" title="Tambah / Setor Dana">
                     <i class="fa-solid fa-plus text-[10px] mr-1"></i> Setor
                   </button>
-                  <button onclick="openGoalModal(${g.id})" class="p-1.5 text-slate-400 hover:text-blue-500" title="Edit Target">
+                  <button onclick="openGoalModal(${g.id})" class="p-1.5 text-slate-400 hover:text-blue-500 transition-colors" title="Edit Target">
                     <i class="fa-solid fa-pen text-xs"></i>
                   </button>
-                  <button onclick="promptDeleteGoal(${g.id})" class="p-1.5 text-slate-400 hover:text-rose-500" title="Hapus Target">
+                  <button onclick="promptDeleteGoal(${g.id})" class="p-1.5 text-slate-400 hover:text-rose-500 transition-colors" title="Hapus Target">
                     <i class="fa-solid fa-trash-can text-xs"></i>
                   </button>
                 </div>
@@ -3296,7 +3448,7 @@
         emptyState.classList.add('hidden');
         filtered.forEach(t => {
           const tr = document.createElement('tr');
-          tr.className = "hover:bg-slate-50/50 dark:hover:bg-slate-800/30";
+          tr.className = "hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors";
 
           let typeBadge = '';
           let amountFormatted = '';
@@ -3329,10 +3481,10 @@
             <td class="px-6 py-4 whitespace-nowrap">${typeBadge}</td>
             <td class="px-6 py-4 whitespace-nowrap text-right font-black ${amountClass}">${amountFormatted}</td>
             <td class="px-6 py-4 whitespace-nowrap text-center space-x-1">
-              <button onclick="openModal(${t.id})" class="p-2 text-slate-400 hover:text-blue-500 select-none" title="Edit Transaksi">
+              <button onclick="openModal(${t.id})" class="p-2 text-slate-400 hover:text-blue-500 transition-colors select-none" title="Edit Transaksi">
                 <i class="fa-solid fa-pen"></i>
               </button>
-              <button onclick="promptDeleteTransaction(${t.id})" class="p-2 text-slate-400 hover:text-rose-500 select-none" title="Hapus Transaksi">
+              <button onclick="promptDeleteTransaction(${t.id})" class="p-2 text-slate-400 hover:text-rose-500 transition-colors select-none" title="Hapus Transaksi">
                 <i class="fa-solid fa-trash-can"></i>
               </button>
             </td>
@@ -3687,12 +3839,9 @@
     function openChangePinModal() {
       const modal = document.getElementById('changePinModal');
       const container = document.getElementById('changePinModalContainer');
-      modal.style.display = 'flex';
-      requestAnimationFrame(() => {
-        modal.classList.remove('opacity-0', 'pointer-events-none');
-        container.classList.remove('scale-95');
-        container.classList.add('scale-100');
-      });
+      modal.classList.remove('opacity-0', 'pointer-events-none');
+      container.classList.remove('scale-95');
+      container.classList.add('scale-100');
     }
 
     function closeChangePinModal() {
@@ -3701,7 +3850,6 @@
       container.classList.remove('scale-100');
       container.classList.add('scale-95');
       modal.classList.add('opacity-0', 'pointer-events-none');
-      setTimeout(() => { modal.style.display = 'none'; }, 200);
       document.getElementById('pinChangeError').classList.add('hidden');
     }
 
