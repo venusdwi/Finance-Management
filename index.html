@@ -61,6 +61,14 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
 
   <style>
+    /* Transisi halus untuk perpindahan Mode Terang & Gelap */
+    html, body, div, header, nav, section, main, card, button, input, select, table, tr, td, th {
+      transition: background-color 400ms cubic-bezier(0.4, 0, 0.2, 1), 
+                  border-color 400ms cubic-bezier(0.4, 0, 0.2, 1), 
+                  color 400ms cubic-bezier(0.4, 0, 0.2, 1), 
+                  box-shadow 400ms cubic-bezier(0.4, 0, 0.2, 1) !important;
+    }
+
     html {
       color-scheme: light;
       min-height: 100%;
@@ -81,13 +89,6 @@
       user-select: none;
     }
 
-    body, header, nav, div, button, input, select, table, tr, td, th {
-      transition: background-color 350ms cubic-bezier(0.4, 0, 0.2, 1), 
-                  border-color 350ms cubic-bezier(0.4, 0, 0.2, 1), 
-                  color 350ms cubic-bezier(0.4, 0, 0.2, 1), 
-                  box-shadow 350ms cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
     .modal-backdrop {
       transition: opacity 250ms cubic-bezier(0.4, 0, 0.2, 1), backdrop-filter 250ms cubic-bezier(0.4, 0, 0.2, 1);
       will-change: opacity;
@@ -102,8 +103,11 @@
       letter-spacing: -0.03em;
     }
 
+    /* Kelas khusus untuk mengunci scroll saat modal aktif */
     .lock-scroll {
       overflow: hidden !important;
+      position: fixed;
+      width: 100%;
     }
 
     button, input, select {
@@ -877,8 +881,8 @@
   </div>
 
   <!-- ==================== MODAL TAMBAH / EDIT TRANSAKSI ==================== -->
-  <div id="transactionModal" class="modal-backdrop fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm opacity-0 pointer-events-none p-4">
-    <div class="modal-content bg-white dark:bg-darkcard border border-slate-200 dark:border-darkborder rounded-3xl max-w-lg w-full p-6 shadow-2xl transform scale-95" id="modalContainer">
+  <div id="transactionModal" class="modal-backdrop fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm opacity-0 pointer-events-none p-4 overflow-y-auto">
+    <div class="modal-content bg-white dark:bg-darkcard border border-slate-200 dark:border-darkborder rounded-3xl max-w-lg w-full p-6 shadow-2xl transform scale-95 my-auto" id="modalContainer">
       <div class="flex justify-between items-center mb-6">
         <h3 id="modalTitleText" class="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
           <i class="fa-solid fa-pen-to-square text-blue-500"></i>
@@ -1710,7 +1714,6 @@
       }
     }
 
-    // MANAJEMEN TARGET TABUNGAN (SAVINGS GOALS) DENGAN FITUR EDIT & SETOR DANA
     function openGoalModal(editId = null) {
       const titleEl = document.getElementById('goalModalTitle');
       const editInput = document.getElementById('editGoalId');
@@ -1774,7 +1777,6 @@
       showCustomAlert('Berhasil', 'Target impian berhasil disimpan!', 'success');
     }
 
-    // MODAL TAMBAH SETORAN DANA KE CELENGAN KHUSUS
     function openAddGoalFundModal(id) {
       const goal = savingsGoals.find(g => g.id === id);
       if (!goal) return;
@@ -1820,7 +1822,6 @@
       }
     }
 
-    // KONFIRMASI HAPUS CELENGAN KHUSUS
     function promptDeleteGoal(id) {
       targetDeleteGoalId = Number(id);
       const modal = document.getElementById('deleteGoalConfirmModal');
@@ -2118,14 +2119,12 @@
       }
     }
 
-    // FIX BUG 1: PIN AKSES & STATE HANDLING SINKRON
     function appendPin(num) {
       if (enteredPin.length < 6) {
         enteredPin += num;
         updatePinDots();
 
         if (enteredPin.length === 6) {
-          // Eksekusi verifikasi tanpa jeda glitch, langsung responsif
           setTimeout(checkPin, 50);
         }
       }
@@ -2667,6 +2666,9 @@
         updateCategories();
       }
 
+      // Kunci scroll halaman belakang saat pop-up transaksi terbuka
+      document.body.classList.add('lock-scroll');
+
       const modal = document.getElementById('transactionModal');
       const container = document.getElementById('modalContainer');
       modal.style.display = 'flex';
@@ -2689,6 +2691,8 @@
       setTimeout(() => {
         if (modal.classList.contains('opacity-0')) {
           modal.style.display = 'none';
+          // Buka kembali scroll halaman belakang
+          document.body.classList.remove('lock-scroll');
         }
       }, 250);
     }
@@ -2916,7 +2920,6 @@
         renderDashboard();
 
         playTransactionChimeSound();
-        // FIX BUG 3: Tampilkan pop-up sukses secara bersih tanpa gangguan state
         showCustomAlert('Berhasil!', 'Catatan transaksi telah tersimpan.', 'success');
       }, 500);
     }
@@ -3316,7 +3319,6 @@
         });
       }
 
-      // RENDER SAVINGS GOALS DENGAN TOMBOL TAMBAH DANA (+), EDIT, & HAPUS
       const goalsGrid = document.getElementById('savingsGoalsGrid');
       if (goalsGrid) {
         goalsGrid.innerHTML = '';
