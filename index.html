@@ -65,7 +65,7 @@
       color-scheme: light;
       height: 100%;
       overflow-y: auto !important;
-      overscroll-behavior-y: none; /* Mencegah pull-to-refresh bawaan browser */
+      overscroll-behavior-y: none;
     }
     html.dark {
       color-scheme: dark;
@@ -78,22 +78,23 @@
       font-family: 'Inter', sans-serif;
       -webkit-tap-highlight-color: transparent;
       user-select: none;
-      overscroll-behavior-y: none; /* Mencegah efek tarik layar */
+      overscroll-behavior-y: none;
     }
 
+    /* Optimalisasi Transisi Tema Agar Smooth & Tidak Mengganggu Performa */
     body, header, nav, div, button, input, select, table, tr, td, th {
-      transition: background-color 350ms cubic-bezier(0.4, 0, 0.2, 1), 
-                  border-color 350ms cubic-bezier(0.4, 0, 0.2, 1), 
-                  color 350ms cubic-bezier(0.4, 0, 0.2, 1), 
-                  box-shadow 350ms cubic-bezier(0.4, 0, 0.2, 1);
+      transition: background-color 200ms ease, 
+                  border-color 200ms ease, 
+                  color 200ms ease, 
+                  box-shadow 200ms ease;
     }
 
     .modal-backdrop {
-      transition: opacity 250ms cubic-bezier(0.4, 0, 0.2, 1), backdrop-filter 250ms cubic-bezier(0.4, 0, 0.2, 1);
+      transition: opacity 200ms ease, backdrop-filter 200ms ease;
       will-change: opacity;
     }
     .modal-content {
-      transition: transform 250ms cubic-bezier(0.16, 1, 0.3, 1), opacity 250ms cubic-bezier(0.4, 0, 0.2, 1);
+      transition: transform 200ms cubic-bezier(0.16, 1, 0.3, 1), opacity 200ms ease;
       will-change: transform, opacity;
     }
 
@@ -1710,7 +1711,6 @@
       }
     }
 
-    // MANAJEMEN TARGET TABUNGAN (SAVINGS GOALS) DENGAN FITUR EDIT & SETOR DANA
     function openGoalModal(editId = null) {
       const titleEl = document.getElementById('goalModalTitle');
       const editInput = document.getElementById('editGoalId');
@@ -1747,7 +1747,7 @@
       box.classList.remove('scale-100');
       box.classList.add('scale-95');
       modal.classList.add('opacity-0', 'pointer-events-none');
-      setTimeout(() => { modal.style.display = 'none'; }, 250);
+      setTimeout(() => { modal.style.display = 'none'; }, 200);
     }
 
     function handleSaveGoal(e) {
@@ -1774,7 +1774,6 @@
       showCustomAlert('Berhasil', 'Target impian berhasil disimpan!', 'success');
     }
 
-    // MODAL TAMBAH SETORAN DANA KE CELENGAN KHUSUS
     function openAddGoalFundModal(id) {
       const goal = savingsGoals.find(g => g.id === id);
       if (!goal) return;
@@ -1798,7 +1797,7 @@
       box.classList.remove('scale-100');
       box.classList.add('scale-95');
       modal.classList.add('opacity-0', 'pointer-events-none');
-      setTimeout(() => { modal.style.display = 'none'; }, 250);
+      setTimeout(() => { modal.style.display = 'none'; }, 200);
     }
 
     function executeAddGoalFund() {
@@ -1820,7 +1819,6 @@
       }
     }
 
-    // KONFIRMASI HAPUS CELENGAN KHUSUS
     function promptDeleteGoal(id) {
       targetDeleteGoalId = Number(id);
       const modal = document.getElementById('deleteGoalConfirmModal');
@@ -1830,10 +1828,6 @@
         modal.classList.remove('opacity-0', 'pointer-events-none');
         container.classList.remove('scale-95');
         container.classList.add('scale-100');
-        requestAnimationFrame(() => {
-          container.classList.remove('scale-95');
-          container.classList.add('scale-100');
-        });
       });
     }
 
@@ -1846,7 +1840,7 @@
       setTimeout(() => {
         modal.style.display = 'none';
         targetDeleteGoalId = null;
-      }, 250);
+      }, 200);
     }
 
     function confirmExecuteDeleteGoal() {
@@ -1879,7 +1873,7 @@
       box.classList.remove('scale-100');
       box.classList.add('scale-95');
       modal.classList.add('opacity-0', 'pointer-events-none');
-      setTimeout(() => { modal.style.display = 'none'; }, 250);
+      setTimeout(() => { modal.style.display = 'none'; }, 200);
     }
 
     function addRecurringItem() {
@@ -1958,9 +1952,12 @@
       renderWalletManagerList();
       const modal = document.getElementById('walletManagerModal');
       const container = document.getElementById('walletManagerContainer');
-      modal.classList.remove('opacity-0', 'pointer-events-none');
-      container.classList.remove('scale-95');
-      container.classList.add('scale-100');
+      modal.style.display = 'flex';
+      requestAnimationFrame(() => {
+        modal.classList.remove('opacity-0', 'pointer-events-none');
+        container.classList.remove('scale-95');
+        container.classList.add('scale-100');
+      });
     }
 
     function closeWalletManagerModal() {
@@ -1969,6 +1966,7 @@
       container.classList.remove('scale-100');
       container.classList.add('scale-95');
       modal.classList.add('opacity-0', 'pointer-events-none');
+      setTimeout(() => { modal.style.display = 'none'; }, 200);
       initWalletDropdowns();
       renderDashboard();
     }
@@ -2118,14 +2116,12 @@
       }
     }
 
-    // FIX BUG 1: PIN AKSES & STATE HANDLING SINKRON
     function appendPin(num) {
       if (enteredPin.length < 6) {
         enteredPin += num;
         updatePinDots();
 
         if (enteredPin.length === 6) {
-          // Eksekusi verifikasi tanpa jeda glitch, langsung responsif
           setTimeout(checkPin, 50);
         }
       }
@@ -2173,7 +2169,7 @@
           setTimeout(() => {
             pinScreen.style.display = 'none';
             clearPin();
-          }, 250);
+          }, 200);
         }
         resetInactivityTimer();
       } else {
@@ -2206,9 +2202,12 @@
       document.getElementById('secAnswerInput').value = secAnswer;
       const modal = document.getElementById('securityQuestionModal');
       const container = document.getElementById('secQModalContainer');
-      modal.classList.remove('opacity-0', 'pointer-events-none');
-      container.classList.remove('scale-95');
-      container.classList.add('scale-100');
+      modal.style.display = 'flex';
+      requestAnimationFrame(() => {
+        modal.classList.remove('opacity-0', 'pointer-events-none');
+        container.classList.remove('scale-95');
+        container.classList.add('scale-100');
+      });
     }
 
     function closeSecurityQuestionModal() {
@@ -2217,6 +2216,7 @@
       container.classList.remove('scale-100');
       container.classList.add('scale-95');
       modal.classList.add('opacity-0', 'pointer-events-none');
+      setTimeout(() => { modal.style.display = 'none'; }, 200);
     }
 
     function handleSaveSecurityQuestion(e) {
@@ -2253,7 +2253,7 @@
       container.classList.remove('scale-100');
       container.classList.add('scale-95');
       modal.classList.add('opacity-0', 'pointer-events-none');
-      setTimeout(() => { modal.style.display = 'none'; }, 250);
+      setTimeout(() => { modal.style.display = 'none'; }, 200);
     }
 
     function verifyForgotPinAnswer() {
@@ -2404,9 +2404,12 @@
       renderCustomCategoryList();
       const modal = document.getElementById('categoryModal');
       const container = document.getElementById('categoryModalContainer');
-      modal.classList.remove('opacity-0', 'pointer-events-none');
-      container.classList.remove('scale-95');
-      container.classList.add('scale-100');
+      modal.style.display = 'flex';
+      requestAnimationFrame(() => {
+        modal.classList.remove('opacity-0', 'pointer-events-none');
+        container.classList.remove('scale-95');
+        container.classList.add('scale-100');
+      });
     }
 
     function closeCategoryModal() {
@@ -2415,6 +2418,7 @@
       container.classList.remove('scale-100');
       container.classList.add('scale-95');
       modal.classList.add('opacity-0', 'pointer-events-none');
+      setTimeout(() => { modal.style.display = 'none'; }, 200);
       updateCategories();
     }
 
@@ -2488,9 +2492,12 @@
 
       const modal = document.getElementById('categoryBudgetModal');
       const box = document.getElementById('categoryBudgetContainer');
-      modal.classList.remove('opacity-0', 'pointer-events-none');
-      box.classList.remove('scale-95');
-      box.classList.add('scale-100');
+      modal.style.display = 'flex';
+      requestAnimationFrame(() => {
+        modal.classList.remove('opacity-0', 'pointer-events-none');
+        box.classList.remove('scale-95');
+        box.classList.add('scale-100');
+      });
     }
 
     function closeCategoryBudgetModal() {
@@ -2499,6 +2506,7 @@
       box.classList.remove('scale-100');
       box.classList.add('scale-95');
       modal.classList.add('opacity-0', 'pointer-events-none');
+      setTimeout(() => { modal.style.display = 'none'; }, 200);
     }
 
     function saveCategoryBudgets() {
@@ -2690,7 +2698,7 @@
         if (modal.classList.contains('opacity-0')) {
           modal.style.display = 'none';
         }
-      }, 250);
+      }, 200);
     }
 
     function toggleCustomDropdown() {
@@ -2916,7 +2924,6 @@
         renderDashboard();
 
         playTransactionChimeSound();
-        // FIX BUG 3: Tampilkan pop-up sukses secara bersih tanpa gangguan state
         showCustomAlert('Berhasil!', 'Catatan transaksi telah tersimpan.', 'success');
       }, 500);
     }
@@ -2928,12 +2935,8 @@
       modal.style.display = 'flex';
       requestAnimationFrame(() => {
         modal.classList.remove('opacity-0', 'pointer-events-none');
-        container.classList.remove('scale-100');
-        container.classList.add('scale-95');
-        requestAnimationFrame(() => {
-          container.classList.remove('scale-95');
-          container.classList.add('scale-100');
-        });
+        container.classList.remove('scale-95');
+        container.classList.add('scale-100');
       });
     }
 
@@ -2946,7 +2949,7 @@
       setTimeout(() => {
         modal.style.display = 'none';
         targetDeleteTxId = null;
-      }, 250);
+      }, 200);
     }
 
     function confirmExecuteDeleteTx() {
@@ -3057,12 +3060,8 @@
       modal.style.display = 'flex';
       requestAnimationFrame(() => {
         modal.classList.remove('opacity-0', 'pointer-events-none');
-        modalCont.classList.remove('scale-100');
-        modalCont.classList.add('scale-95');
-        requestAnimationFrame(() => {
-          modalCont.classList.remove('scale-95');
-          modalCont.classList.add('scale-100');
-        });
+        modalCont.classList.remove('scale-95');
+        modalCont.classList.add('scale-100');
       });
     }
 
@@ -3072,7 +3071,7 @@
       container.classList.remove('scale-100');
       container.classList.add('scale-95');
       modal.classList.add('opacity-0', 'pointer-events-none');
-      setTimeout(() => { modal.style.display = 'none'; }, 250);
+      setTimeout(() => { modal.style.display = 'none'; }, 200);
     }
 
     function showCustomAlert(title, message, type = 'success') {
@@ -3100,12 +3099,8 @@
       alertModal.style.display = 'flex';
       requestAnimationFrame(() => {
         alertModal.classList.remove('opacity-0', 'pointer-events-none');
-        alertContainer.classList.remove('scale-100');
-        alertContainer.classList.add('scale-95');
-        requestAnimationFrame(() => {
-          alertContainer.classList.remove('scale-95');
-          alertContainer.classList.add('scale-100');
-        });
+        alertContainer.classList.remove('scale-95');
+        alertContainer.classList.add('scale-100');
       });
     }
 
@@ -3115,7 +3110,7 @@
       alertContainer.classList.remove('scale-100');
       alertContainer.classList.add('scale-95');
       alertModal.classList.add('opacity-0', 'pointer-events-none');
-      setTimeout(() => { alertModal.style.display = 'none'; }, 250);
+      setTimeout(() => { alertModal.style.display = 'none'; }, 200);
     }
 
     function openResetConfirmModal() {
@@ -3124,12 +3119,8 @@
       modal.style.display = 'flex';
       requestAnimationFrame(() => {
         modal.classList.remove('opacity-0', 'pointer-events-none');
-        container.classList.remove('scale-100');
-        container.classList.add('scale-95');
-        requestAnimationFrame(() => {
-          container.classList.remove('scale-95');
-          container.classList.add('scale-100');
-        });
+        container.classList.remove('scale-95');
+        container.classList.add('scale-100');
       });
     }
 
@@ -3139,7 +3130,7 @@
       container.classList.remove('scale-100');
       container.classList.add('scale-95');
       modal.classList.add('opacity-0', 'pointer-events-none');
-      setTimeout(() => { modal.style.display = 'none'; }, 250);
+      setTimeout(() => { modal.style.display = 'none'; }, 200);
     }
 
     function proceedToResetPin() {
@@ -3155,12 +3146,8 @@
       modal.style.display = 'flex';
       requestAnimationFrame(() => {
         modal.classList.remove('opacity-0', 'pointer-events-none');
-        container.classList.remove('scale-100');
-        container.classList.add('scale-95');
-        requestAnimationFrame(() => {
-          container.classList.remove('scale-95');
-          container.classList.add('scale-100');
-        });
+        container.classList.remove('scale-95');
+        container.classList.add('scale-100');
       });
     }
 
@@ -3170,7 +3157,7 @@
       container.classList.remove('scale-100');
       container.classList.add('scale-95');
       modal.classList.add('opacity-0', 'pointer-events-none');
-      setTimeout(() => { modal.style.display = 'none'; }, 250);
+      setTimeout(() => { modal.style.display = 'none'; }, 200);
     }
 
     function openHelpModal() {
@@ -3179,12 +3166,8 @@
       modal.style.display = 'flex';
       requestAnimationFrame(() => {
         modal.classList.remove('opacity-0', 'pointer-events-none');
-        container.classList.remove('scale-100');
-        container.classList.add('scale-95');
-        requestAnimationFrame(() => {
-          container.classList.remove('scale-95');
-          container.classList.add('scale-100');
-        });
+        container.classList.remove('scale-95');
+        container.classList.add('scale-100');
       });
     }
 
@@ -3194,7 +3177,7 @@
       container.classList.remove('scale-100');
       container.classList.add('scale-95');
       modal.classList.add('opacity-0', 'pointer-events-none');
-      setTimeout(() => { modal.style.display = 'none'; }, 250);
+      setTimeout(() => { modal.style.display = 'none'; }, 200);
     }
 
     function togglePrivacyMode() {
@@ -3316,7 +3299,6 @@
         });
       }
 
-      // RENDER SAVINGS GOALS DENGAN TOMBOL TAMBAH DANA (+), EDIT, & HAPUS
       const goalsGrid = document.getElementById('savingsGoalsGrid');
       if (goalsGrid) {
         goalsGrid.innerHTML = '';
@@ -3839,9 +3821,12 @@
     function openChangePinModal() {
       const modal = document.getElementById('changePinModal');
       const container = document.getElementById('changePinModalContainer');
-      modal.classList.remove('opacity-0', 'pointer-events-none');
-      container.classList.remove('scale-95');
-      container.classList.add('scale-100');
+      modal.style.display = 'flex';
+      requestAnimationFrame(() => {
+        modal.classList.remove('opacity-0', 'pointer-events-none');
+        container.classList.remove('scale-95');
+        container.classList.add('scale-100');
+      });
     }
 
     function closeChangePinModal() {
@@ -3850,6 +3835,7 @@
       container.classList.remove('scale-100');
       container.classList.add('scale-95');
       modal.classList.add('opacity-0', 'pointer-events-none');
+      setTimeout(() => { modal.style.display = 'none'; }, 200);
       document.getElementById('pinChangeError').classList.add('hidden');
     }
 
