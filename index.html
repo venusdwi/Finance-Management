@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Finance Management (Finance HV)</title>
 
-  <!-- Script Penentu Tema Instan (Cegah Flicker Saat Refresh) -->
+  <!-- Script Penentu Tema Instan (Cegah Flicker Saat Refresh & Masuk PIN) -->
   <script>
     (function() {
       if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
@@ -18,7 +18,7 @@
   
   <!-- ==================== PWA MANIFEST & CONFIG iOS/Android ==================== -->
   <link rel="manifest" href="./manifest.json">
-  <meta name="theme-color" content="#2563eb">
+  <meta name="theme-color" content="#070a13">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Finance">
@@ -61,12 +61,9 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
 
   <style>
-    /* Transisi halus menyeluruh untuk perpindahan Mode Terang & Gelap */
-    html, body, div, header, nav, section, main, card, button, input, select, table, tr, td, th {
-      transition: background-color 300ms ease-in-out, 
-                  border-color 300ms ease-in-out, 
-                  color 300ms ease-in-out, 
-                  box-shadow 300ms ease-in-out !important;
+    /* Transisi halus terfokus pada properti warna untuk mencegah lag/flicker elemen berat */
+    body, header, nav, section, div, card, button, input, select, table, tr, td, th {
+      transition: background-color 200ms ease, border-color 200ms ease, color 200ms ease !important;
     }
 
     html {
@@ -74,9 +71,11 @@
       min-height: 100%;
       height: auto;
       overflow-y: auto !important;
+      background-color: #f8fafc;
     }
     html.dark {
       color-scheme: dark;
+      background-color: #070a13;
     }
 
     body {
@@ -90,12 +89,10 @@
     }
 
     .modal-backdrop {
-      transition: opacity 250ms cubic-bezier(0.4, 0, 0.2, 1), backdrop-filter 250ms cubic-bezier(0.4, 0, 0.2, 1);
-      will-change: opacity;
+      transition: opacity 200ms ease, backdrop-filter 200ms ease;
     }
     .modal-content {
-      transition: transform 250ms cubic-bezier(0.16, 1, 0.3, 1), opacity 250ms cubic-bezier(0.4, 0, 0.2, 1);
-      will-change: transform, opacity;
+      transition: transform 200ms cubic-bezier(0.16, 1, 0.3, 1), opacity 200ms ease;
     }
 
     .brand-title {
@@ -103,7 +100,6 @@
       letter-spacing: -0.03em;
     }
 
-    /* Kelas khusus untuk mengunci scroll saat modal aktif */
     .lock-scroll {
       overflow: hidden !important;
       position: fixed;
@@ -113,11 +109,6 @@
     button, input, select {
       outline: none !important;
       -webkit-tap-highlight-color: transparent;
-    }
-
-    button:focus, button:active, .keypad-btn:focus, .keypad-btn:active {
-      outline: none !important;
-      box-shadow: none !important;
     }
 
     .month-picker-wrapper {
@@ -821,12 +812,12 @@
   </nav>
 
   <!-- ==================== LOCK / PIN ACCESS SCREEN ==================== -->
-  <div id="pinScreen" class="fixed inset-0 z-[100] flex flex-col items-center justify-center p-4 overflow-hidden select-none bg-slate-100 dark:bg-slate-950 transition-opacity duration-300 ease-out opacity-100">
+  <div id="pinScreen" class="fixed inset-0 z-[100] flex flex-col items-center justify-center p-4 overflow-hidden select-none bg-slate-100 dark:bg-slate-950 transition-opacity duration-200 ease-out opacity-100">
     <div class="absolute inset-0 bg-gradient-to-br from-slate-100 via-blue-50 to-slate-200 dark:from-slate-950 dark:via-blue-950 dark:to-slate-950 opacity-95 pointer-events-none"></div>
     <div class="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-blue-600/10 dark:bg-blue-600/20 rounded-full blur-[100px] pointer-events-none"></div>
     <div class="absolute bottom-1/4 left-1/2 -translate-x-1/2 translate-y-1/2 w-80 h-80 bg-indigo-600/10 dark:bg-indigo-600/15 rounded-full blur-[90px] pointer-events-none"></div>
 
-    <div id="pinBoxContainer" class="relative z-10 w-full max-w-sm flex flex-col items-center transform scale-100 transition-all duration-300 ease-out">
+    <div id="pinBoxContainer" class="relative z-10 w-full max-w-sm flex flex-col items-center transform scale-100 transition-all duration-200 ease-out">
       <div class="mb-6 text-center flex flex-col items-center pointer-events-none">
         <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500 via-blue-600 to-indigo-800 flex items-center justify-center text-white text-2xl shadow-xl shadow-blue-600/30 border border-blue-400/30 mb-3">
           <i class="fa-solid fa-chart-line text-blue-100"></i>
@@ -1428,7 +1419,7 @@
 
       <div class="grid grid-cols-3 gap-3 w-full pt-1">
         <button type="button" onclick="appendResetPin('1')" class="h-12 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 active:bg-slate-200 dark:active:bg-slate-600 border border-slate-200 dark:border-slate-700 rounded-2xl text-lg font-bold text-slate-800 dark:text-slate-100 flex items-center justify-center cursor-pointer shadow-sm">1</button>
-        <button type="button" onclick="appendResetPin('2')" class="h-12 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 active:bg-slate-200 dark:active:bg-slate-600 border border-slate-200 dark:border-slate-700 rounded-2xl text-lg font-bold text-slate-800 dark:text-slate-100 flex items-center justify-center cursor-pointer shadow-sm">2</button>
+        <button type="button" onclick="appendResetPin('2')" class="h-12 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 active:bg-slate-200 dark:hover:bg-slate-600 border border-slate-200 dark:border-slate-700 rounded-2xl text-lg font-bold text-slate-800 dark:text-slate-100 flex items-center justify-center cursor-pointer shadow-sm">2</button>
         <button type="button" onclick="appendResetPin('3')" class="h-12 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 active:bg-slate-200 dark:active:bg-slate-600 border border-slate-200 dark:border-slate-700 rounded-2xl text-lg font-bold text-slate-800 dark:text-slate-100 flex items-center justify-center cursor-pointer shadow-sm">3</button>
         <button type="button" onclick="appendResetPin('4')" class="h-12 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 active:bg-slate-200 dark:active:bg-slate-600 border border-slate-200 dark:border-slate-700 rounded-2xl text-lg font-bold text-slate-800 dark:text-slate-100 flex items-center justify-center cursor-pointer shadow-sm">4</button>
         <button type="button" onclick="appendResetPin('5')" class="h-12 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 active:bg-slate-200 dark:active:bg-slate-600 border border-slate-200 dark:border-slate-700 rounded-2xl text-lg font-bold text-slate-800 dark:text-slate-100 flex items-center justify-center cursor-pointer shadow-sm">5</button>
@@ -1500,7 +1491,6 @@
       });
     }
 
-    // Perubahan: Menghilangkan refresh halaman kasar, diganti dengan mengunci aplikasi secara otomatis saat tidak aktif
     document.addEventListener("visibilitychange", () => {
       if (document.visibilityState === "hidden") {
         lockApp();
@@ -1751,7 +1741,7 @@
       box.classList.remove('scale-100');
       box.classList.add('scale-95');
       modal.classList.add('opacity-0', 'pointer-events-none');
-      setTimeout(() => { modal.style.display = 'none'; }, 250);
+      setTimeout(() => { modal.style.display = 'none'; }, 200);
     }
 
     function handleSaveGoal(e) {
@@ -1801,7 +1791,7 @@
       box.classList.remove('scale-100');
       box.classList.add('scale-95');
       modal.classList.add('opacity-0', 'pointer-events-none');
-      setTimeout(() => { modal.style.display = 'none'; }, 250);
+      setTimeout(() => { modal.style.display = 'none'; }, 200);
     }
 
     function executeAddGoalFund() {
@@ -1832,10 +1822,6 @@
         modal.classList.remove('opacity-0', 'pointer-events-none');
         container.classList.remove('scale-95');
         container.classList.add('scale-100');
-        requestAnimationFrame(() => {
-          container.classList.remove('scale-95');
-          container.classList.add('scale-100');
-        });
       });
     }
 
@@ -1848,7 +1834,7 @@
       setTimeout(() => {
         modal.style.display = 'none';
         targetDeleteGoalId = null;
-      }, 250);
+      }, 200);
     }
 
     function confirmExecuteDeleteGoal() {
@@ -1881,7 +1867,7 @@
       box.classList.remove('scale-100');
       box.classList.add('scale-95');
       modal.classList.add('opacity-0', 'pointer-events-none');
-      setTimeout(() => { modal.style.display = 'none'; }, 250);
+      setTimeout(() => { modal.style.display = 'none'; }, 200);
     }
 
     function addRecurringItem() {
@@ -2173,7 +2159,7 @@
           setTimeout(() => {
             pinScreen.style.display = 'none';
             clearPin();
-          }, 300);
+          }, 200);
         }
         resetInactivityTimer();
       } else {
@@ -2253,7 +2239,7 @@
       container.classList.remove('scale-100');
       container.classList.add('scale-95');
       modal.classList.add('opacity-0', 'pointer-events-none');
-      setTimeout(() => { modal.style.display = 'none'; }, 250);
+      setTimeout(() => { modal.style.display = 'none'; }, 200);
     }
 
     function verifyForgotPinAnswer() {
@@ -2667,7 +2653,6 @@
         updateCategories();
       }
 
-      // Kunci scroll halaman belakang saat pop-up transaksi terbuka
       document.body.classList.add('lock-scroll');
 
       const modal = document.getElementById('transactionModal');
@@ -2692,10 +2677,9 @@
       setTimeout(() => {
         if (modal.classList.contains('opacity-0')) {
           modal.style.display = 'none';
-          // Buka kembali scroll halaman belakang
           document.body.classList.remove('lock-scroll');
         }
-      }, 250);
+      }, 200);
     }
 
     function toggleCustomDropdown() {
@@ -2922,7 +2906,7 @@
 
         playTransactionChimeSound();
         showCustomAlert('Berhasil!', 'Catatan transaksi telah tersimpan.', 'success');
-      }, 500);
+      }, 300);
     }
 
     function promptDeleteTransaction(id) {
@@ -2950,7 +2934,7 @@
       setTimeout(() => {
         modal.style.display = 'none';
         targetDeleteTxId = null;
-      }, 250);
+      }, 200);
     }
 
     function confirmExecuteDeleteTx() {
@@ -3076,7 +3060,7 @@
       container.classList.remove('scale-100');
       container.classList.add('scale-95');
       modal.classList.add('opacity-0', 'pointer-events-none');
-      setTimeout(() => { modal.style.display = 'none'; }, 250);
+      setTimeout(() => { modal.style.display = 'none'; }, 200);
     }
 
     function showCustomAlert(title, message, type = 'success') {
@@ -3106,10 +3090,6 @@
         alertModal.classList.remove('opacity-0', 'pointer-events-none');
         alertContainer.classList.remove('scale-100');
         alertContainer.classList.add('scale-95');
-        requestAnimationFrame(() => {
-          alertContainer.classList.remove('scale-95');
-          alertContainer.classList.add('scale-100');
-        });
       });
     }
 
@@ -3119,7 +3099,7 @@
       alertContainer.classList.remove('scale-100');
       alertContainer.classList.add('scale-95');
       alertModal.classList.add('opacity-0', 'pointer-events-none');
-      setTimeout(() => { alertModal.style.display = 'none'; }, 250);
+      setTimeout(() => { alertModal.style.display = 'none'; }, 200);
     }
 
     function openResetConfirmModal() {
@@ -3130,10 +3110,6 @@
         modal.classList.remove('opacity-0', 'pointer-events-none');
         container.classList.remove('scale-100');
         container.classList.add('scale-95');
-        requestAnimationFrame(() => {
-          container.classList.remove('scale-95');
-          container.classList.add('scale-100');
-        });
       });
     }
 
@@ -3143,12 +3119,12 @@
       container.classList.remove('scale-100');
       container.classList.add('scale-95');
       modal.classList.add('opacity-0', 'pointer-events-none');
-      setTimeout(() => { modal.style.display = 'none'; }, 250);
+      setTimeout(() => { modal.style.display = 'none'; }, 200);
     }
 
     function proceedToResetPin() {
       closeResetConfirmModal();
-      setTimeout(() => { openResetPinModal(); }, 200);
+      setTimeout(() => { openResetPinModal(); }, 150);
     }
 
     function openResetPinModal() {
@@ -3161,10 +3137,6 @@
         modal.classList.remove('opacity-0', 'pointer-events-none');
         container.classList.remove('scale-100');
         container.classList.add('scale-95');
-        requestAnimationFrame(() => {
-          container.classList.remove('scale-95');
-          container.classList.add('scale-100');
-        });
       });
     }
 
@@ -3174,7 +3146,7 @@
       container.classList.remove('scale-100');
       container.classList.add('scale-95');
       modal.classList.add('opacity-0', 'pointer-events-none');
-      setTimeout(() => { modal.style.display = 'none'; }, 250);
+      setTimeout(() => { modal.style.display = 'none'; }, 200);
     }
 
     function openHelpModal() {
@@ -3185,10 +3157,6 @@
         modal.classList.remove('opacity-0', 'pointer-events-none');
         container.classList.remove('scale-100');
         container.classList.add('scale-95');
-        requestAnimationFrame(() => {
-          container.classList.remove('scale-95');
-          container.classList.add('scale-100');
-        });
       });
     }
 
@@ -3198,7 +3166,7 @@
       container.classList.remove('scale-100');
       container.classList.add('scale-95');
       modal.classList.add('opacity-0', 'pointer-events-none');
-      setTimeout(() => { modal.style.display = 'none'; }, 250);
+      setTimeout(() => { modal.style.display = 'none'; }, 200);
     }
 
     function togglePrivacyMode() {
