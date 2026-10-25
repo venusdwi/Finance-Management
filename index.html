@@ -71,9 +71,10 @@
       position: relative;
     }
 
-    /* Transisi halus mulus pada perpindahan mode terang ke gelap */
-    body, header, nav, div, button, input, select {
-      transition: background-color 250ms ease, border-color 250ms ease, color 250ms ease !important;
+    /* Perbaikan: Batasi transisi hanya pada properti warna latar dan teks utama body/card 
+       untuk mencegah flicker/glitch pada animasi PIN dan perpindahan mode tema */
+    body {
+      transition: background-color 200ms ease, color 200ms ease;
     }
 
     html {
@@ -2104,7 +2105,6 @@
         targetNav.classList.add('text-blue-600', 'dark:text-blue-400');
       }
 
-      // Logika scroll otomatis kembali ke atas halaman dengan sempurna
       if (isAlreadyActive) {
         window.scrollTo({ top: 0, behavior: 'smooth' });
       } else {
