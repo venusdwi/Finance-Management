@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Finance Management (Finance HV)</title>
 
-  <!-- Script Penentu Tema Instan (Mencegah Flicker Sejak Milidetik Pertama) -->
+  <!-- Script Penentu Tema & Status Kunci Instan (Mencegah Flicker Sejak Milidetik Pertama) -->
   <script>
     (function() {
       const isDark = localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches);
@@ -818,8 +818,15 @@
     </div>
   </nav>
 
-  <!-- ==================== LOCK / PIN ACCESS SCREEN (DIPERBAIKI AGAR TIDAK TERPOTONG/GLITCH) ==================== -->
-  <div id="pinScreen" class="fixed inset-0 z-[100] flex flex-col items-center justify-center p-4 overflow-y-auto select-none bg-slate-100 dark:bg-slate-950" style="display: flex; min-height: 100dvh; background-color: #070a13 !important;">
+  <!-- ==================== LOCK / PIN ACCESS SCREEN (DIPERBAIKI AGAR BEBAS FLICKER) ==================== -->
+  <div id="pinScreen" class="fixed inset-0 z-[100] flex flex-col items-center justify-center p-4 overflow-y-auto select-none bg-slate-100 dark:bg-slate-950" style="display: none; background-color: #070a13 !important;">
+    <!-- Script Inline Cepat untuk Menentukan Tampilan Awal PIN Screen Tanpa Flicker -->
+    <script>
+      if (sessionStorage.getItem('fm_is_unlocked') !== 'true') {
+        document.getElementById('pinScreen').style.display = 'flex';
+        document.body.classList.add('lock-scroll');
+      }
+    </script>
     <div class="absolute inset-0 bg-gradient-to-br from-slate-100 via-blue-50 to-slate-200 dark:from-slate-950 dark:via-blue-950 dark:to-slate-950 opacity-95 pointer-events-none"></div>
     <div class="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-blue-600/10 dark:bg-blue-600/20 rounded-full blur-[100px] pointer-events-none"></div>
     <div class="absolute bottom-1/4 left-1/2 -translate-x-1/2 translate-y-1/2 w-80 h-80 bg-indigo-600/10 dark:bg-indigo-600/15 rounded-full blur-[90px] pointer-events-none"></div>
@@ -1595,10 +1602,9 @@
     document.addEventListener("DOMContentLoaded", () => {
       const pinScreen = document.getElementById('pinScreen');
 
-      document.body.classList.remove('lock-scroll', 'overflow-hidden');
-      document.documentElement.classList.remove('lock-scroll', 'overflow-hidden');
-
       if (isUnlocked) {
+        document.body.classList.remove('lock-scroll', 'overflow-hidden');
+        document.documentElement.classList.remove('lock-scroll', 'overflow-hidden');
         if (pinScreen) {
           pinScreen.style.display = 'none';
         }
