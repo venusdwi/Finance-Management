@@ -69,11 +69,12 @@
       overscroll-behavior-y: none !important;
       overscroll-behavior: none !important;
       position: relative;
+      transition: background-color 300ms ease, color 300ms ease;
     }
 
-    /* Transisi halus khusus pada elemen interaktif tanpa membebani layout rendering */
-    button, input, select, .modal-backdrop, .modal-content {
-      transition: background-color 150ms ease, border-color 150ms ease, color 150ms ease, opacity 150ms ease, transform 150ms ease !important;
+    /* Transisi halus mulus pada perpindahan mode terang ke gelap dan elemen interaktif */
+    body, header, nav, div, button, input, select, .modal-backdrop, .modal-content, card {
+      transition: background-color 300ms ease, border-color 300ms ease, color 300ms ease, opacity 200ms ease, transform 200ms ease !important;
     }
 
     html {
@@ -2084,14 +2085,16 @@
     }
 
     function switchTab(tabName) {
+      const targetViewId = `view${tabName}`;
+      const targetView = document.getElementById(targetViewId);
+      const targetNav = document.getElementById(`nav${tabName}`);
+      const isAlreadyActive = targetView && !targetView.classList.contains('hidden');
+
       document.querySelectorAll('.tab-view').forEach(view => view.classList.add('hidden'));
       document.querySelectorAll('.nav-btn').forEach(btn => {
         btn.classList.remove('text-blue-600', 'dark:text-blue-400');
         btn.classList.add('text-slate-400');
       });
-
-      const targetView = document.getElementById(`view${tabName}`);
-      const targetNav = document.getElementById(`nav${tabName}`);
 
       if (targetView) targetView.classList.remove('hidden');
       if (targetNav) {
@@ -2099,7 +2102,12 @@
         targetNav.classList.add('text-blue-600', 'dark:text-blue-400');
       }
 
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      if (isAlreadyActive) {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } else {
+        window.scrollTo({ top: 0, behavior: 'instant' });
+      }
+
       if (tabName === 'Laporan' || tabName === 'Tabungan') {
         setTimeout(renderCharts, 100);
       }
