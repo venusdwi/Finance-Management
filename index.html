@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Finance Management</title>
+  <title>Finance Management (Finance HV)</title>
 
   <!-- Script Penentu Tema Instan (Cegah Flicker Saat Refresh) -->
   <script>
@@ -65,6 +65,7 @@
       color-scheme: light;
       height: 100%;
       overflow-y: auto !important;
+      overscroll-behavior-y: none; /* Mencegah pull-to-refresh bawaan browser */
     }
     html.dark {
       color-scheme: dark;
@@ -77,6 +78,7 @@
       font-family: 'Inter', sans-serif;
       -webkit-tap-highlight-color: transparent;
       user-select: none;
+      overscroll-behavior-y: none; /* Mencegah efek tarik layar */
     }
 
     body, header, nav, div, button, input, select, table, tr, td, th {
@@ -1338,7 +1340,7 @@
     </div>
   </div>
 
-  <!-- ==================== NOTIFIKASI POP-UP KONFIRMASI ==================== -->
+  <!-- ==================== NOTIFIKASI POP-UP KONFIRMASI (SUCCESS MODAL FIX) ==================== -->
   <div id="customAlertModal" class="modal-backdrop fixed inset-0 z-[110] flex items-center justify-center bg-slate-900/60 backdrop-blur-sm opacity-0 pointer-events-none p-4">
     <div class="modal-content bg-white dark:bg-darkcard border border-blue-500/30 rounded-3xl max-w-sm w-full p-6 shadow-2xl transform scale-95 text-center space-y-4" id="customAlertContainer">
       <div id="alertIconBg" class="w-16 h-16 rounded-2xl bg-blue-500/10 text-blue-600 dark:text-blue-400 flex items-center justify-center text-3xl mx-auto shadow-inner border border-blue-500/20">
@@ -2116,13 +2118,15 @@
       }
     }
 
+    // FIX BUG 1: PIN AKSES & STATE HANDLING SINKRON
     function appendPin(num) {
       if (enteredPin.length < 6) {
         enteredPin += num;
         updatePinDots();
 
         if (enteredPin.length === 6) {
-          setTimeout(checkPin, 80);
+          // Eksekusi verifikasi tanpa jeda glitch, langsung responsif
+          setTimeout(checkPin, 50);
         }
       }
     }
@@ -2169,7 +2173,7 @@
           setTimeout(() => {
             pinScreen.style.display = 'none';
             clearPin();
-          }, 300);
+          }, 250);
         }
         resetInactivityTimer();
       } else {
@@ -2912,8 +2916,9 @@
         renderDashboard();
 
         playTransactionChimeSound();
+        // FIX BUG 3: Tampilkan pop-up sukses secara bersih tanpa gangguan state
         showCustomAlert('Berhasil!', 'Catatan transaksi telah tersimpan.', 'success');
-      }, 800);
+      }, 500);
     }
 
     function promptDeleteTransaction(id) {
