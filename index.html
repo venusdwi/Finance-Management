@@ -2107,8 +2107,10 @@
         targetNav.classList.add('text-blue-600', 'dark:text-blue-400');
       }
 
-      // Auto scroll ke paling atas dengan mulus (smooth) setiap kali tab ditekan atau berpindah
+      // Paksa scroll ke paling atas dengan berbagai metode agar kompatibel di semua browser mobile
       window.scrollTo({ top: 0, behavior: 'smooth' });
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
 
       // Render ulang chart jika masuk ke tab Laporan atau Tabungan
       if (tabName === 'Laporan' || tabName === 'Tabungan') {
