@@ -71,8 +71,6 @@
       position: relative;
     }
 
-    /* Perbaikan: Batasi transisi hanya pada properti warna latar dan teks utama body/card 
-       untuk mencegah flicker/glitch pada animasi PIN dan perpindahan mode tema */
     body {
       transition: background-color 200ms ease, color 200ms ease;
     }
@@ -820,13 +818,13 @@
     </div>
   </nav>
 
-  <!-- ==================== LOCK / PIN ACCESS SCREEN ==================== -->
-  <div id="pinScreen" class="fixed inset-0 z-[100] flex flex-col items-center justify-center p-4 overflow-hidden select-none bg-slate-100 dark:bg-slate-950" style="display: flex; background-color: #070a13 !important;">
+  <!-- ==================== LOCK / PIN ACCESS SCREEN (DIPERBAIKI AGAR TIDAK TERPOTONG/GLITCH) ==================== -->
+  <div id="pinScreen" class="fixed inset-0 z-[100] flex flex-col items-center justify-center p-4 overflow-y-auto select-none bg-slate-100 dark:bg-slate-950" style="display: flex; min-height: 100dvh; background-color: #070a13 !important;">
     <div class="absolute inset-0 bg-gradient-to-br from-slate-100 via-blue-50 to-slate-200 dark:from-slate-950 dark:via-blue-950 dark:to-slate-950 opacity-95 pointer-events-none"></div>
     <div class="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-blue-600/10 dark:bg-blue-600/20 rounded-full blur-[100px] pointer-events-none"></div>
     <div class="absolute bottom-1/4 left-1/2 -translate-x-1/2 translate-y-1/2 w-80 h-80 bg-indigo-600/10 dark:bg-indigo-600/15 rounded-full blur-[90px] pointer-events-none"></div>
 
-    <div id="pinBoxContainer" class="relative z-10 w-full max-w-sm flex flex-col items-center">
+    <div id="pinBoxContainer" class="relative z-10 w-full max-w-sm flex flex-col items-center my-auto py-6">
       <div class="mb-6 text-center flex flex-col items-center pointer-events-none">
         <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500 via-blue-600 to-indigo-800 flex items-center justify-center text-white text-2xl shadow-xl shadow-blue-600/30 border border-blue-400/30 mb-3">
           <i class="fa-solid fa-chart-line text-blue-100"></i>
@@ -2084,9 +2082,6 @@
       if (txSym) txSym.textContent = sym;
     }
 
-    // =========================================================================
-    // PERBAIKAN UTAMA: SWITCH TAB & AUTOMATIC SCROLL TO TOP (TANPA BUG)
-    // =========================================================================
     function switchTab(tabName) {
       const targetViewId = `view${tabName}`;
       const targetView = document.getElementById(targetViewId);
