@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Finance Management (Finance HV)</title>
 
-  <!-- Script Penentu Tema & Warna Latar Instan (Cegah Flicker Total Sejak Milidetik Pertama) -->
+  <!-- Script Penentu Tema Instan (Mencegah Flicker Sejak Milidetik Pertama) -->
   <script>
     (function() {
       const isDark = localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches);
@@ -64,17 +64,16 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
 
   <style>
-    /* Mencegah pull-up / pull-down refresh bounce effect secara total */
+    /* Mencegah overscroll bounce effect */
     html, body {
       overscroll-behavior-y: none !important;
       overscroll-behavior: none !important;
       position: relative;
-      transition: background-color 300ms ease, color 300ms ease;
     }
 
-    /* Transisi halus mulus pada perpindahan mode terang ke gelap dan elemen interaktif */
-    body, header, nav, div, button, input, select, .modal-backdrop, .modal-content, card {
-      transition: background-color 300ms ease, border-color 300ms ease, color 300ms ease, opacity 200ms ease, transform 200ms ease !important;
+    /* Transisi halus mulus pada perpindahan mode terang ke gelap */
+    body, header, nav, div, button, input, select {
+      transition: background-color 250ms ease, border-color 250ms ease, color 250ms ease !important;
     }
 
     html {
@@ -778,7 +777,7 @@
         <div class="flex items-center justify-between">
           <div>
             <h4 class="font-bold text-slate-900 dark:text-white text-sm">Pusat Bantuan & Panduan</h4>
-            <p class="text-xs text-slate-500 dark:text-slate-400">Cara penggunaan aplikasi & informasi versi v1.7.0.</p>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Cara penggunaan aplikasi & informasi versi.</p>
           </div>
           <button onclick="openHelpModal()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-semibold select-none">
             Panduan
@@ -2084,6 +2083,9 @@
       if (txSym) txSym.textContent = sym;
     }
 
+    // =========================================================================
+    // PERBAIKAN UTAMA: SWITCH TAB & AUTOMATIC SCROLL TO TOP (TANPA BUG)
+    // =========================================================================
     function switchTab(tabName) {
       const targetViewId = `view${tabName}`;
       const targetView = document.getElementById(targetViewId);
@@ -2102,6 +2104,7 @@
         targetNav.classList.add('text-blue-600', 'dark:text-blue-400');
       }
 
+      // Logika scroll otomatis kembali ke atas halaman dengan sempurna
       if (isAlreadyActive) {
         window.scrollTo({ top: 0, behavior: 'smooth' });
       } else {
