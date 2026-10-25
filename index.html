@@ -138,6 +138,15 @@
       animation: privacyFlash 180ms ease-out forwards;
     }
   </style>
+
+  <!-- Script Cek Sesi Unlock Sebelum Render untuk Mencegah Flicker -->
+  <script>
+    if (sessionStorage.getItem('fm_is_unlocked') === 'true') {
+      document.documentElement.classList.remove('lock-scroll');
+    } else {
+      document.documentElement.classList.add('lock-scroll');
+    }
+  </script>
 </head>
 <body class="bg-slate-50 dark:bg-darkbg text-slate-800 dark:text-slate-100 min-h-screen pb-24 relative" onclick="resetInactivityTimer()" onmousemove="resetInactivityTimer()" onkeypress="resetInactivityTimer()" ontouchstart="resetInactivityTimer()">
 
@@ -819,12 +828,10 @@
   </nav>
 
   <!-- ==================== LOCK / PIN ACCESS SCREEN (DIPERBAIKI AGAR BEBAS FLICKER) ==================== -->
-  <div id="pinScreen" class="fixed inset-0 z-[100] flex flex-col items-center justify-center p-4 overflow-y-auto select-none bg-slate-100 dark:bg-slate-950" style="display: none; background-color: #070a13 !important;">
-    <!-- Script Inline Cepat untuk Menentukan Tampilan Awal PIN Screen Tanpa Flicker -->
+  <div id="pinScreen" class="fixed inset-0 z-[100] flex flex-col items-center justify-center p-4 overflow-y-auto select-none bg-slate-100 dark:bg-slate-950 transition-opacity duration-300" style="background-color: #070a13 !important;">
     <script>
-      if (sessionStorage.getItem('fm_is_unlocked') !== 'true') {
-        document.getElementById('pinScreen').style.display = 'flex';
-        document.body.classList.add('lock-scroll');
+      if (sessionStorage.getItem('fm_is_unlocked') === 'true') {
+        document.getElementById('pinScreen').style.display = 'none';
       }
     </script>
     <div class="absolute inset-0 bg-gradient-to-br from-slate-100 via-blue-50 to-slate-200 dark:from-slate-950 dark:via-blue-950 dark:to-slate-950 opacity-95 pointer-events-none"></div>
@@ -2179,6 +2186,7 @@
       sessionStorage.removeItem('fm_is_unlocked');
       clearPin();
       document.body.classList.add('lock-scroll');
+      document.documentElement.classList.add('lock-scroll');
       const pinScreen = document.getElementById('pinScreen');
       if (pinScreen) {
         pinScreen.style.display = 'flex';
