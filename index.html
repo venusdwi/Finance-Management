@@ -2092,26 +2092,25 @@
       const targetViewId = `view${tabName}`;
       const targetView = document.getElementById(targetViewId);
       const targetNav = document.getElementById(`nav${tabName}`);
-      const isAlreadyActive = targetView && !targetView.classList.contains('hidden');
-
+      
+      // Sembunyikan semua view dan reset status aktif navbar
       document.querySelectorAll('.tab-view').forEach(view => view.classList.add('hidden'));
       document.querySelectorAll('.nav-btn').forEach(btn => {
         btn.classList.remove('text-blue-600', 'dark:text-blue-400');
         btn.classList.add('text-slate-400');
       });
 
+      // Tampilkan view yang dituju
       if (targetView) targetView.classList.remove('hidden');
       if (targetNav) {
         targetNav.classList.remove('text-slate-400');
         targetNav.classList.add('text-blue-600', 'dark:text-blue-400');
       }
 
-      if (isAlreadyActive) {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      } else {
-        window.scrollTo({ top: 0, behavior: 'instant' });
-      }
+      // Auto scroll ke paling atas dengan mulus (smooth) setiap kali tab ditekan atau berpindah
+      window.scrollTo({ top: 0, behavior: 'smooth' });
 
+      // Render ulang chart jika masuk ke tab Laporan atau Tabungan
       if (tabName === 'Laporan' || tabName === 'Tabungan') {
         setTimeout(renderCharts, 100);
       }
