@@ -827,8 +827,27 @@
     </div>
   </nav>
 
+  <!-- ==================== SPLASH SCREEN (LAYAR PEMBUKA) ==================== -->
+  <div id="splashScreen" class="fixed inset-0 z-[120] flex flex-col items-center justify-center p-4 select-none bg-slate-950 transition-opacity duration-500" style="background-color: #070a13 !important;">
+    <div class="absolute inset-0 bg-gradient-to-br from-slate-950 via-blue-950 to-slate-950 opacity-95 pointer-events-none"></div>
+    <div class="absolute w-72 h-72 bg-blue-600/20 rounded-full blur-[90px] pointer-events-none animate-pulse"></div>
+    
+    <div class="relative z-10 flex flex-col items-center text-center space-y-4">
+      <div class="w-20 h-20 rounded-2xl bg-gradient-to-br from-blue-500 via-blue-600 to-indigo-800 flex items-center justify-center text-white text-3xl shadow-2xl shadow-blue-600/40 border border-blue-400/30 animate-bounce">
+        <i class="fa-solid fa-chart-line text-blue-100"></i>
+      </div>
+      <div>
+        <h1 class="brand-title text-2xl font-black tracking-tight text-white drop-shadow-md">
+          Finance Management
+        </h1>
+        <p class="text-xs text-blue-300/70 font-medium tracking-widest uppercase mt-1">PENGELOLAAN KEUANGAN CERDAS</p>
+      </div>
+      <div class="w-8 h-8 border-4 border-blue-500/30 border-t-blue-500 rounded-full animate-spin mt-4"></div>
+    </div>
+  </div>
+
   <!-- ==================== LOCK / PIN ACCESS SCREEN (DIPERBAIKI AGAR BEBAS FLICKER) ==================== -->
-  <div id="pinScreen" class="fixed inset-0 z-[100] flex flex-col items-center justify-center p-4 overflow-y-auto select-none bg-slate-100 dark:bg-slate-950 transition-opacity duration-300" style="background-color: #070a13 !important;">
+  <div id="pinScreen" class="fixed inset-0 z-[100] flex flex-col items-center justify-center p-4 overflow-y-auto select-none bg-slate-100 dark:bg-slate-950 transition-opacity duration-300 hidden" style="background-color: #070a13 !important;">
     <script>
       if (sessionStorage.getItem('fm_is_unlocked') === 'true') {
         document.getElementById('pinScreen').style.display = 'none';
@@ -1608,20 +1627,32 @@
 
     document.addEventListener("DOMContentLoaded", () => {
       const pinScreen = document.getElementById('pinScreen');
+      const splashScreen = document.getElementById('splashScreen');
 
-      if (isUnlocked) {
-        document.body.classList.remove('lock-scroll', 'overflow-hidden');
-        document.documentElement.classList.remove('lock-scroll', 'overflow-hidden');
-        if (pinScreen) {
-          pinScreen.style.display = 'none';
+      // Tampilkan splash screen selama 1.5 detik lalu lanjut ke layar PIN atau Beranda
+      setTimeout(() => {
+        if (splashScreen) {
+          splashScreen.style.opacity = '0';
+          setTimeout(() => {
+            splashScreen.style.display = 'none';
+          }, 500);
         }
-        resetInactivityTimer();
-      } else {
-        document.body.classList.add('lock-scroll');
-        if (pinScreen) {
-          pinScreen.style.display = 'flex';
+
+        if (isUnlocked) {
+          document.body.classList.remove('lock-scroll', 'overflow-hidden');
+          document.documentElement.classList.remove('lock-scroll', 'overflow-hidden');
+          if (pinScreen) {
+            pinScreen.style.display = 'none';
+          }
+          resetInactivityTimer();
+        } else {
+          document.body.classList.add('lock-scroll');
+          if (pinScreen) {
+            pinScreen.style.display = 'flex';
+            pinScreen.classList.remove('hidden');
+          }
         }
-      }
+      }, 1500);
 
       const monthPicker = document.getElementById('reportMonthPicker');
       if (monthPicker) {
@@ -2190,6 +2221,7 @@
       const pinScreen = document.getElementById('pinScreen');
       if (pinScreen) {
         pinScreen.style.display = 'flex';
+        pinScreen.classList.remove('hidden');
       }
     }
 
@@ -2879,7 +2911,6 @@
       btnSaveText.textContent = "Menyimpan...";
       btnSaveSpinner.classList.remove('hidden');
 
-      // Durasi loading diubah menjadi 3 detik (3000 ms)
       setTimeout(() => {
         btnSaveTx.disabled = false;
         btnSaveText.textContent = "Simpan Transaksi";
