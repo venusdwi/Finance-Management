@@ -2879,6 +2879,7 @@
       btnSaveText.textContent = "Menyimpan...";
       btnSaveSpinner.classList.remove('hidden');
 
+      // Durasi loading diubah menjadi 3 detik (3000 ms)
       setTimeout(() => {
         btnSaveTx.disabled = false;
         btnSaveText.textContent = "Simpan Transaksi";
@@ -2912,7 +2913,7 @@
 
         playTransactionChimeSound();
         showCustomAlert('Berhasil!', 'Catatan transaksi telah tersimpan.', 'success');
-      }, 200);
+      }, 3000);
     }
 
     function promptDeleteTransaction(id) {
