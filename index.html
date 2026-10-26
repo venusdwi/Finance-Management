@@ -824,9 +824,8 @@
   </nav>
 
   <!-- ==================== SPLASH SCREEN (LAYAR PEMBUKA) ==================== -->
-  <div id="splashScreen" class="fixed inset-0 z-[120] flex flex-col items-center justify-center p-4 select-none bg-slate-950 transition-opacity duration-300" style="background-color: #070a13 !important;">
+  <div id="splashScreen" class="fixed inset-0 z-[120] flex flex-col items-center justify-center p-4 select-none bg-slate-950 transition-opacity duration-700 ease-in-out" style="background-color: #070a13 !important;">
     <script>
-      // Sembunyikan splash screen secara instan jika sudah unlocked agar tidak menutupi PIN screen
       if (sessionStorage.getItem('fm_is_unlocked') === 'true') {
         document.getElementById('splashScreen').style.display = 'none';
       }
@@ -849,7 +848,7 @@
   </div>
 
   <!-- ==================== LOCK / PIN ACCESS SCREEN ==================== -->
-  <div id="pinScreen" class="fixed inset-0 z-[100] flex flex-col items-center justify-center p-4 overflow-y-auto select-none bg-slate-100 dark:bg-slate-950 transition-opacity duration-300" style="background-color: #070a13 !important; display: none;">
+  <div id="pinScreen" class="fixed inset-0 z-[100] flex flex-col items-center justify-center p-4 overflow-y-auto select-none bg-slate-100 dark:bg-slate-950 transition-all duration-500" style="background-color: #070a13 !important; display: none;">
     <script>
       if (sessionStorage.getItem('fm_is_unlocked') !== 'true') {
         document.getElementById('pinScreen').style.display = 'flex';
@@ -1639,16 +1638,16 @@
         if (splashScreen) splashScreen.style.display = 'flex';
       }
 
-      // Jika belum unlocked, berikan jeda singkat untuk splash screen lalu fade-out
+      // Splash screen berdurasi tepat 2 detik dengan transisi smooth fade-out
       if (!isUnlocked) {
         setTimeout(() => {
           if (splashScreen) {
             splashScreen.style.opacity = '0';
             setTimeout(() => {
               splashScreen.style.display = 'none';
-            }, 300);
+            }, 700); // Sinkron dengan durasi CSS transition duration-700
           }
-        }, 1000);
+        }, 2000);
       } else {
         if (splashScreen) splashScreen.style.display = 'none';
         document.body.classList.remove('lock-scroll', 'overflow-hidden');
