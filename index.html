@@ -16,6 +16,12 @@
         document.documentElement.classList.remove('dark');
         document.documentElement.style.backgroundColor = '#f8fafc';
       }
+
+      // Cek status kunci langsung di head untuk mencegah layout shift/bocor
+      const isUnlocked = sessionStorage.getItem('fm_is_unlocked') === 'true';
+      if (!isUnlocked) {
+        document.documentElement.classList.add('lock-scroll');
+      }
     })();
   </script>
   
@@ -138,15 +144,6 @@
       animation: privacyFlash 180ms ease-out forwards;
     }
   </style>
-
-  <!-- Script Cek Sesi Unlock Sebelum Render untuk Mencegah Flicker -->
-  <script>
-    if (sessionStorage.getItem('fm_is_unlocked') === 'true') {
-      document.documentElement.classList.remove('lock-scroll');
-    } else {
-      document.documentElement.classList.add('lock-scroll');
-    }
-  </script>
 </head>
 <body class="bg-slate-50 dark:bg-darkbg text-slate-800 dark:text-slate-100 min-h-screen pb-24 relative" onclick="resetInactivityTimer()" onmousemove="resetInactivityTimer()" onkeypress="resetInactivityTimer()" ontouchstart="resetInactivityTimer()">
 
@@ -608,7 +605,7 @@
         <p class="text-sm text-slate-500 dark:text-slate-400">Atur keamanan, transaksi rutin, dompet, kategori, dan data.</p>
       </div>
 
-      <!-- KARTU 0: TAMPILAN & TEMA (DIPINDAHKAN KE SETELAN) -->
+      <!-- KARTU 0: TAMPILAN & TEMA -->
       <div class="bg-white dark:bg-darkcard rounded-2xl p-6 shadow-sm border border-slate-200 dark:border-darkborder space-y-5">
         <div class="flex items-center gap-2 pb-2 border-b border-slate-100 dark:border-slate-800 text-blue-600 dark:text-blue-400 font-bold text-xs uppercase tracking-wider">
           <i class="fa-solid fa-palette"></i> Tampilan & Tema Aplikasi
@@ -843,7 +840,7 @@
   </nav>
 
   <!-- ==================== SPLASH SCREEN (LAYAR PEMBUKA) ==================== -->
-  <div id="splashScreen" class="fixed inset-0 z-[120] flex flex-col items-center justify-center p-4 select-none transition-opacity duration-500" style="background-color: #070a13 !important;">
+  <div id="splashScreen" class="fixed inset-0 z-[120] flex flex-col items-center justify-center p-4 select-none transition-opacity duration-500" style="background-color: #070a13 !important; display: flex;">
     <script>
       if (sessionStorage.getItem('fm_is_unlocked') === 'true') {
         document.getElementById('splashScreen').style.display = 'none';
@@ -869,8 +866,8 @@
   <!-- ==================== LOCK / PIN ACCESS SCREEN ==================== -->
   <div id="pinScreen" class="fixed inset-0 z-[100] flex flex-col items-center justify-center p-4 overflow-y-auto select-none transition-opacity duration-300" style="background-color: #070a13 !important; display: none;">
     <script>
-      if (sessionStorage.getItem('fm_is_unlocked') !== 'true') {
-        document.getElementById('pinScreen').style.display = 'flex';
+      if (sessionStorage.getItem('fm_is_unlocked') === 'true') {
+        document.getElementById('pinScreen').style.display = 'none';
       }
     </script>
     <div class="absolute inset-0 bg-gradient-to-br from-slate-100 via-blue-50 to-slate-200 dark:from-slate-950 dark:via-blue-950 dark:to-slate-950 opacity-95 pointer-events-none"></div>
@@ -1660,8 +1657,6 @@
           splashScreen.style.opacity = '1';
         }
         if (pinScreen) pinScreen.style.display = 'none';
-        document.body.classList.add('lock-scroll');
-        document.documentElement.classList.add('lock-scroll');
 
         setTimeout(() => {
           if (splashScreen) {
