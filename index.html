@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Finance Management (Finance HV)</title>
 
-  <!-- Script Penentu Tema & Status Kunci Instan (Mencegah Flicker Sejak Milidetik Pertama) -->
+  <!-- Script Penentu Tema & Status Kunci Instan -->
   <script>
     (function() {
       const isDark = localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches);
@@ -17,7 +17,6 @@
         document.documentElement.style.backgroundColor = '#f8fafc';
       }
 
-      // Cek status kunci instan sebelum DOM dirender untuk mencegah flicker
       if (sessionStorage.getItem('fm_is_unlocked') === 'true') {
         document.documentElement.classList.remove('lock-scroll');
       } else {
@@ -71,7 +70,6 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
 
   <style>
-    /* Mencegah overscroll bounce effect */
     html, body {
       overscroll-behavior-y: none !important;
       overscroll-behavior: none !important;
@@ -826,7 +824,13 @@
   </nav>
 
   <!-- ==================== SPLASH SCREEN (LAYAR PEMBUKA) ==================== -->
-  <div id="splashScreen" class="fixed inset-0 z-[120] flex flex-col items-center justify-center p-4 select-none bg-slate-950 transition-opacity duration-500" style="background-color: #070a13 !important;">
+  <div id="splashScreen" class="fixed inset-0 z-[120] flex flex-col items-center justify-center p-4 select-none bg-slate-950 transition-opacity duration-300" style="background-color: #070a13 !important;">
+    <script>
+      // Sembunyikan splash screen secara instan jika sudah unlocked agar tidak menutupi PIN screen
+      if (sessionStorage.getItem('fm_is_unlocked') === 'true') {
+        document.getElementById('splashScreen').style.display = 'none';
+      }
+    </script>
     <div class="absolute inset-0 bg-gradient-to-br from-slate-950 via-blue-950 to-slate-950 opacity-95 pointer-events-none"></div>
     <div class="absolute w-72 h-72 bg-blue-600/20 rounded-full blur-[90px] pointer-events-none animate-pulse"></div>
     
@@ -847,7 +851,6 @@
   <!-- ==================== LOCK / PIN ACCESS SCREEN ==================== -->
   <div id="pinScreen" class="fixed inset-0 z-[100] flex flex-col items-center justify-center p-4 overflow-y-auto select-none bg-slate-100 dark:bg-slate-950 transition-opacity duration-300" style="background-color: #070a13 !important; display: none;">
     <script>
-      // Sembunyikan atau tampilkan PIN screen secara instan tanpa menunggu DOMContentLoaded
       if (sessionStorage.getItem('fm_is_unlocked') !== 'true') {
         document.getElementById('pinScreen').style.display = 'flex';
       }
@@ -1374,7 +1377,7 @@
     </div>
   </div>
 
-  <!-- ==================== NOTIFIKASI POP-UP KONFIRMASI (SUCCESS MODAL FIX) ==================== -->
+  <!-- ==================== NOTIFIKASI POP-UP KONFIRMASI ==================== -->
   <div id="customAlertModal" class="modal-backdrop fixed inset-0 z-[110] flex items-center justify-center bg-slate-900/60 backdrop-blur-sm opacity-0 pointer-events-none p-4">
     <div class="modal-content bg-white dark:bg-darkcard border border-blue-500/30 rounded-3xl max-w-sm w-full p-6 shadow-2xl transform scale-95 text-center space-y-4" id="customAlertContainer">
       <div id="alertIconBg" class="w-16 h-16 rounded-2xl bg-blue-500/10 text-blue-600 dark:text-blue-400 flex items-center justify-center text-3xl mx-auto shadow-inner border border-blue-500/20">
@@ -1628,7 +1631,6 @@
       const pinScreen = document.getElementById('pinScreen');
       const splashScreen = document.getElementById('splashScreen');
 
-      // Sinkronisasi status awal agar mulus tanpa flicker
       if (isUnlocked) {
         if (pinScreen) pinScreen.style.display = 'none';
         if (splashScreen) splashScreen.style.display = 'none';
@@ -1637,27 +1639,23 @@
         if (splashScreen) splashScreen.style.display = 'flex';
       }
 
-      setTimeout(() => {
-        if (splashScreen) {
-          splashScreen.style.opacity = '0';
-          setTimeout(() => {
-            splashScreen.style.display = 'none';
-          }, 500);
-        }
-
-        if (isUnlocked) {
-          document.body.classList.remove('lock-scroll', 'overflow-hidden');
-          document.documentElement.classList.remove('lock-scroll', 'overflow-hidden');
-          if (pinScreen) pinScreen.style.display = 'none';
-          resetInactivityTimer();
-        } else {
-          document.body.classList.add('lock-scroll');
-          if (pinScreen) {
-            pinScreen.style.display = 'flex';
-            pinScreen.classList.remove('hidden');
+      // Jika belum unlocked, berikan jeda singkat untuk splash screen lalu fade-out
+      if (!isUnlocked) {
+        setTimeout(() => {
+          if (splashScreen) {
+            splashScreen.style.opacity = '0';
+            setTimeout(() => {
+              splashScreen.style.display = 'none';
+            }, 300);
           }
-        }
-      }, 1500);
+        }, 1000);
+      } else {
+        if (splashScreen) splashScreen.style.display = 'none';
+        document.body.classList.remove('lock-scroll', 'overflow-hidden');
+        document.documentElement.classList.remove('lock-scroll', 'overflow-hidden');
+        if (pinScreen) pinScreen.style.display = 'none';
+        resetInactivityTimer();
+      }
 
       const monthPicker = document.getElementById('reportMonthPicker');
       if (monthPicker) {
