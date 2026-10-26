@@ -168,11 +168,6 @@
           <i id="privacyIcon" class="fa-solid fa-eye text-sm"></i>
         </button>
 
-        <button onclick="toggleTheme()" class="w-10 h-10 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 flex items-center justify-center select-none border border-slate-200 dark:border-slate-700/80 shadow-sm" title="Ubah Tema">
-          <i class="fa-solid fa-moon dark:hidden text-sm"></i>
-          <i class="fa-solid fa-sun hidden dark:block text-slate-300 hover:text-slate-100 text-sm"></i>
-        </button>
-
         <button onclick="lockApp()" class="w-10 h-10 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 flex items-center justify-center select-none border border-slate-200 dark:border-slate-700/80 shadow-sm" title="Kunci Aplikasi">
           <i class="fa-solid fa-lock text-sm"></i>
         </button>
@@ -613,6 +608,26 @@
         <p class="text-sm text-slate-500 dark:text-slate-400">Atur keamanan, transaksi rutin, dompet, kategori, dan data.</p>
       </div>
 
+      <!-- KARTU 0: TAMPILAN & TEMA (DIPINDAHKAN KE SETELAN) -->
+      <div class="bg-white dark:bg-darkcard rounded-2xl p-6 shadow-sm border border-slate-200 dark:border-darkborder space-y-5">
+        <div class="flex items-center gap-2 pb-2 border-b border-slate-100 dark:border-slate-800 text-blue-600 dark:text-blue-400 font-bold text-xs uppercase tracking-wider">
+          <i class="fa-solid fa-palette"></i> Tampilan & Tema Aplikasi
+        </div>
+
+        <div class="flex items-center justify-between">
+          <div>
+            <h4 class="font-bold text-slate-900 dark:text-white text-sm">Mode Tampilan (Terang / Gelap)</h4>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Sesuaikan tema warna antarmuka aplikasi sesuai kenyamanan.</p>
+          </div>
+          <button onclick="toggleTheme()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-semibold select-none flex items-center gap-2">
+            <i class="fa-solid fa-moon dark:hidden"></i>
+            <i class="fa-solid fa-sun hidden dark:block text-amber-400"></i>
+            <span class="dark:hidden">Mode Gelap</span>
+            <span class="hidden dark:inline">Mode Terang</span>
+          </button>
+        </div>
+      </div>
+
       <!-- KARTU 1: KEAMANAN & AKSES -->
       <div class="bg-white dark:bg-darkcard rounded-2xl p-6 shadow-sm border border-slate-200 dark:border-darkborder space-y-5">
         <div class="flex items-center gap-2 pb-2 border-b border-slate-100 dark:border-slate-800 text-blue-600 dark:text-blue-400 font-bold text-xs uppercase tracking-wider">
@@ -829,6 +844,11 @@
 
   <!-- ==================== SPLASH SCREEN (LAYAR PEMBUKA) ==================== -->
   <div id="splashScreen" class="fixed inset-0 z-[120] flex flex-col items-center justify-center p-4 select-none bg-slate-950 transition-opacity duration-500" style="background-color: #070a13 !important;">
+    <script>
+      if (sessionStorage.getItem('fm_is_unlocked') === 'true') {
+        document.getElementById('splashScreen').style.display = 'none';
+      }
+    </script>
     <div class="absolute inset-0 bg-gradient-to-br from-slate-950 via-blue-950 to-slate-950 opacity-95 pointer-events-none"></div>
     <div class="absolute w-72 h-72 bg-blue-600/20 rounded-full blur-[90px] pointer-events-none animate-pulse"></div>
     
@@ -846,7 +866,7 @@
     </div>
   </div>
 
-  <!-- ==================== LOCK / PIN ACCESS SCREEN (DIPERBAIKI AGAR BEBAS FLICKER & TUMPANG TINDIH) ==================== -->
+  <!-- ==================== LOCK / PIN ACCESS SCREEN (BEBAS FLICKER & TUMPANG TINDIH) ==================== -->
   <div id="pinScreen" class="fixed inset-0 z-[100] flex flex-col items-center justify-center p-4 overflow-y-auto select-none bg-slate-100 dark:bg-slate-950 transition-opacity duration-300" style="background-color: #070a13 !important; display: none;">
     <script>
       if (sessionStorage.getItem('fm_is_unlocked') !== 'true') {
@@ -1629,36 +1649,33 @@
       const pinScreen = document.getElementById('pinScreen');
       const splashScreen = document.getElementById('splashScreen');
 
-      // Pengaturan awal visibilitas untuk menghindari tumpang tindih
       if (isUnlocked) {
         if (pinScreen) pinScreen.style.display = 'none';
         if (splashScreen) splashScreen.style.display = 'none';
+        document.body.classList.remove('lock-scroll', 'overflow-hidden');
+        document.documentElement.classList.remove('lock-scroll', 'overflow-hidden');
       } else {
-        if (pinScreen) pinScreen.style.display = 'none'; // Sembunyikan PIN saat splash screen aktif
-        if (splashScreen) splashScreen.style.display = 'flex';
-      }
-
-      setTimeout(() => {
         if (splashScreen) {
-          splashScreen.style.opacity = '0';
-          setTimeout(() => {
-            splashScreen.style.display = 'none';
-          }, 500);
+          splashScreen.style.display = 'flex';
+          splashScreen.style.opacity = '1';
         }
+        if (pinScreen) pinScreen.style.display = 'none';
+        document.body.classList.add('lock-scroll');
+        document.documentElement.classList.add('lock-scroll');
 
-        if (isUnlocked) {
-          document.body.classList.remove('lock-scroll', 'overflow-hidden');
-          document.documentElement.classList.remove('lock-scroll', 'overflow-hidden');
-          if (pinScreen) pinScreen.style.display = 'none';
-          resetInactivityTimer();
-        } else {
-          document.body.classList.add('lock-scroll');
-          if (pinScreen) {
-            pinScreen.style.display = 'flex';
-            pinScreen.classList.remove('hidden');
+        setTimeout(() => {
+          if (splashScreen) {
+            splashScreen.style.opacity = '0';
+            setTimeout(() => {
+              splashScreen.style.display = 'none';
+              if (pinScreen) {
+                pinScreen.style.display = 'flex';
+                pinScreen.classList.remove('hidden');
+              }
+            }, 500);
           }
-        }
-      }, 1500);
+        }, 1200);
+      }
 
       const monthPicker = document.getElementById('reportMonthPicker');
       if (monthPicker) {
@@ -2137,26 +2154,22 @@
       const targetView = document.getElementById(targetViewId);
       const targetNav = document.getElementById(`nav${tabName}`);
       
-      // Sembunyikan semua view dan reset status aktif navbar
       document.querySelectorAll('.tab-view').forEach(view => view.classList.add('hidden'));
       document.querySelectorAll('.nav-btn').forEach(btn => {
         btn.classList.remove('text-blue-600', 'dark:text-blue-400');
         btn.classList.add('text-slate-400');
       });
 
-      // Tampilkan view yang dituju
       if (targetView) targetView.classList.remove('hidden');
       if (targetNav) {
         targetNav.classList.remove('text-slate-400');
         targetNav.classList.add('text-blue-600', 'dark:text-blue-400');
       }
 
-      // Paksa scroll ke paling atas dengan berbagai metode agar kompatibel di semua browser mobile
       window.scrollTo({ top: 0, behavior: 'smooth' });
       document.documentElement.scrollTop = 0;
       document.body.scrollTop = 0;
 
-      // Render ulang chart jika masuk ke tab Laporan atau Tabungan
       if (tabName === 'Laporan' || tabName === 'Tabungan') {
         setTimeout(renderCharts, 100);
       }
@@ -3887,7 +3900,7 @@
       }
       if (!/^\d{6}$/.test(newPin)) {
         err.textContent = "PIN baru harus 6 digit angka!";
-        err.classList.remove('hidden');
+        err.classList.add('hidden');
         return;
       }
 
